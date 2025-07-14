@@ -1,0 +1,85 @@
+<nz-space nzDirection="vertical" nzSize="large">
+  <nz-card class="mb-4" *nzSpaceItem>
+    <nz-descriptions
+      nzTitle="UNIDAD EDUCATIVA"
+      nzLayout="vertical"
+      nzSize="small"
+      [nzColumn]="3"
+    >
+      <nz-descriptions-item nzTitle="Nombre">Oscar Unzaga de la Vega</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="SIE">800100112</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Live">Hangzhou, Zhejiang</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Remark">Empty</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Address" [nzSpan]="2">
+        No. 18, Wantang Road, Xihu District, Hangzhou, Zhejiang, China
+      </nz-descriptions-item>
+    </nz-descriptions>
+  </nz-card>
+
+  <nz-card *nzSpaceItem>
+    <div nz-row>
+      <div nz-col [nzSpan]="18">
+        <h5 nz-typography class="mb-3">INSCRIPCION DE LA UNIDAD EDUCATIVA</h5>
+
+        <nz-tabset
+          nzType="card"
+          [nzTabPosition]="nzTabPosition"
+          [(nzSelectedIndex)]="selectedIndex"
+          (nzSelectChange)="log([$event])"
+        >
+          @for (tab of tabs; track tab) {
+            {{ 'NIVEL' }}
+            <nz-tab
+              [nzTitle]="tab.name"
+              [nzDisabled]="tab.disabled"
+              (nzSelect)="log(['select', tab])"
+              (nzClick)="log(['click', tab])"
+              (nzContextmenu)="log(['contextmenu', tab])"
+              (nzDeselect)="log(['deselect', tab])"
+            >
+              @if(tab.name == 'Tab 0') {
+                <ng-container >
+                  <nz-tabset nzType="card" nzTabPosition="left">
+                    <nz-tab nzTitle="SubTab 1">
+                      Contenido del subtab 1
+                    </nz-tab>
+                    <nz-tab nzTitle="SubTab 2">
+                      <ng-container>
+                        <nz-tabset nzType="card" nzTabPosition="left">
+                          <nz-tab nzTitle="A">
+                            aqui la interfaz para llenar cupo A
+                          </nz-tab>
+                          <nz-tab nzTitle="B">
+                            aqui la interfaz para llenar cupo B
+                          </nz-tab>
+                          <nz-tab nzTitle="C">
+                            aqui la interfaz para llenar cupo C
+                          </nz-tab>
+                        </nz-tabset>
+                      </ng-container>
+                    </nz-tab>
+                  </nz-tabset>
+                </ng-container>
+              } @else {
+                <ng-container nzTabPosition="left">
+                  {{ tab.content }}
+                </ng-container>
+              }
+
+            </nz-tab>
+          }
+        </nz-tabset>
+
+      </div>
+      <div nz-col [nzSpan]="6" >
+        <h5 nz-typography class="mb-3">CURSOS SELECCIONADOS</h5>
+        <nz-list class="demo-loadmore-list" [nzLoading]="initLoading">
+
+          <div class="loadmore" nz-list-load-more>
+            <button nz-button class="login-form-button login-form-margin" [nzType]="'primary'">CONSOLIDAR</button>
+          </div>
+        </nz-list>
+      </div>
+    </div>
+  </nz-card>
+</nz-space>

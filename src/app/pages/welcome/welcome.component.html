@@ -1,0 +1,80 @@
+<!-- unidad-inscripcion.component.html -->
+<div class="inscripcion-container">
+  <h2>Gestión de Inscripciones</h2>
+  
+  <div class="niveles-section">
+    <h3>Niveles Educativos</h3>
+    <div class="niveles-grid">
+      <button 
+        *ngFor="let nivel of nivelesEducativos" 
+        (click)="seleccionarNivel(nivel)"
+        [class.active]="nivelSeleccionado?.id === nivel.id">
+        {{ nivel.nombre }}
+      </button>
+    </div>
+  </div>
+
+  <div class="grados-section" *ngIf="nivelSeleccionado">
+    <h3>Grados - {{ nivelSeleccionado?.nombre }}</h3>
+    <div class="grados-grid">
+      <button 
+        *ngFor="let grado of nivelSeleccionado.grados" 
+        (click)="seleccionarGrado(grado)"
+        [class.active]="gradoSeleccionado?.id === grado.id">
+        {{ grado.nombre }}
+      </button>
+    </div>
+  </div>
+
+  <div class="paralelos-section" *ngIf="gradoSeleccionado">
+    <h3>Paralelos - {{ gradoSeleccionado?.nombre }}</h3>
+    
+    <div class="agregar-paralelo">
+      <input 
+        type="text" 
+        [(ngModel)]="nuevoParalelo" 
+        placeholder="Nuevo paralelo (ej. D)" 
+        maxlength="1">
+      <button (click)="agregarParalelo()">Agregar</button>
+    </div>
+    
+    <div class="paralelos-grid">
+      <div 
+        *ngFor="let paralelo of paralelos" 
+        class="paralelo-card"
+        [class.high-demand]="paralelo.demandaAlta">
+        <div class="paralelo-header">
+          <span class="paralelo-nombre">{{ paralelo.nombre }}</span>
+          <span class="demanda-indicator" *ngIf="paralelo.demandaAlta">ALTA DEMANDA</span>
+        </div>
+        
+        <div class="paralelo-body">
+          <div class="input-group">
+            <label>Inscritos:</label>
+            <input 
+              type="number" 
+              [(ngModel)]="paralelo.inscritos" 
+              (change)="actualizarDemanda(paralelo)"
+              min="0">
+          </div>
+          
+          <div class="input-group">
+            <label>Capacidad:</label>
+            <input 
+              type="number" 
+              [(ngModel)]="paralelo.capacidad" 
+              (change)="actualizarDemanda(paralelo)"
+              min="1">
+          </div>
+          
+          <div class="ocupacion">
+            <div class="ocupacion-bar" [style.width.%]="(paralelo.inscritos / paralelo.capacidad) * 100"></div>
+            <span>{{ paralelo.inscritos }} / {{ paralelo.capacidad }} ({{ (paralelo.inscritos / paralelo.capacidad * 100).toFixed(0) }}%)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <button class="save-button" (click)="guardarCambios()">Guardar Cambios</button>
+  </div>
+</div>
