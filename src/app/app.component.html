@@ -13,6 +13,7 @@
       </a>
     </div>
     <ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
+      <li nz-submenu nzOpen nzTitle="Dashboard" nzIcon="dashboard"></li>
       <li nz-submenu nzOpen nzTitle="Postulacion" nzIcon="inbox">
         <ul>
           <li nz-menu-item nzMatchRouter>
@@ -23,13 +24,13 @@
       <li nz-submenu nzOpen nzTitle="Bandejas" nzIcon="dashboard">
         <ul>
           <li nz-menu-item nzMatchRouter>
-            <a>Bandeja de Entrada</a>
+            <a routerLink="/main-inbox">Bandeja de Entrada</a>
           </li>
           <li nz-menu-item nzMatchRouter>
-            <a>Bandeja de Registro</a>
+            <a routerLink="/register-inbox/register">Bandeja de Registro</a>
           </li>
           <li nz-menu-item nzMatchRouter>
-            <a>Bandeja de seleccion</a>
+            <a routerLink="/selection-inbox/selection">Bandeja de seleccion</a>
           </li>
         </ul>
       </li>
@@ -40,6 +41,7 @@
           </li>
         </ul>
       </li>
+      <li nz-submenu nzOpen nzTitle="Configuración" nzIcon="setting"></li>
     </ul>
   </nz-sider>
   <nz-layout>
@@ -48,6 +50,17 @@
         <span class="header-trigger" (click)="isCollapsed = !isCollapsed">
           <nz-icon class="trigger" [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'" />
         </span>
+        <div class="header-avatar-container">
+          <nz-dropdown-menu nzPlacement="bottomRight">
+            <div nz-dropdown>
+              <nz-avatar [nzSrc]="'https://i.pravatar.cc/150?img=32'" ngSize="small" class="header-avatar"></nz-avatar>
+            </div>
+            <ul nz-menu>
+              <li nz-menu-item>Perfil</li>
+              <li nz-menu-item>Cerrar sesión</li>
+            </ul>
+          </nz-dropdown-menu>
+        </div>
       </div>
     </nz-header>
     <nz-content>

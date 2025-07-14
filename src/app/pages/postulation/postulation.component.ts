@@ -2,8 +2,11 @@ import { Component, OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { NzButtonModule } from "ng-zorro-antd/button";
 import { NzCardComponent } from "ng-zorro-antd/card";
+import { NzCheckboxModule, NzCheckboxOption } from "ng-zorro-antd/checkbox";
 import { NzDescriptionsModule } from "ng-zorro-antd/descriptions";
 import { NzGridModule } from "ng-zorro-antd/grid";
+import { NzIconModule } from "ng-zorro-antd/icon";
+import { NzInputModule } from "ng-zorro-antd/input";
 import { NzInputNumberModule } from "ng-zorro-antd/input-number";
 import { NzListModule } from "ng-zorro-antd/list";
 import { NzRadioModule } from "ng-zorro-antd/radio";
@@ -25,7 +28,10 @@ import { NzTypographyModule } from "ng-zorro-antd/typography";
     NzSpaceModule,
     NzGridModule,
     NzListModule,
-    NzButtonModule
+    NzButtonModule,
+    NzInputModule,
+    NzIconModule,
+    NzCheckboxModule
   ],
   selector: 'app-postulation',
   templateUrl: './postulation.component.html',
@@ -37,6 +43,24 @@ export class PostulationComponent implements OnInit {
 
 
   initLoading = false;
+
+
+  levels = [
+    { id: 11, name: 'Inicial en Familia Comunitaria', disabled: false, content: 'Content inicial'},
+    { id: 12, name: 'Primaria Comunitaria Vocacional', disabled: false, content: 'Content primaria'},
+    { id: 13, name: 'Secundaria Comunitaria Productiva', disabled: false, content: 'Content Secundaria'}
+  ]
+  inputValue: string | null = null;
+  list: Array<{ loading: boolean; name: any}> =[{
+    loading: false,
+    name: 'Inicial en Familia Comunitaria - Segundo - A - 123'
+  }]
+
+  allChecked = false;
+  value: Array<string | number> = ['Apple', 'Orange'];
+  options: NzCheckboxOption[] = [
+    { label: '', value: 'Apple'}
+  ]
 
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   log(args: any[]): void {
@@ -51,5 +75,8 @@ export class PostulationComponent implements OnInit {
         content: `Content of tab ${i}`
       });
     }
+  }
+  updateSingleCheked(): void {
+    this.allChecked = this.value.length === this.options.length;
   }
 }
