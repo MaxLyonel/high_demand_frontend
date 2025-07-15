@@ -18,7 +18,16 @@ interface ItemData {
   last_name_father: string;
   mothers_last_name_father: string;
   full_name_father: string;
-  relation: string;
+  expand: boolean;
+}
+
+interface ItemDataTutor {
+  nro: number;
+  identity_card_tutor: string;
+  last_name_tutor: string;
+  mothers_last_name_tutor: string;
+  full_name_tutor: string;
+  relationship: string;
 }
 
 @Component({
@@ -35,9 +44,11 @@ interface ItemData {
 })
 export class RegisterInbox implements OnInit {
   listOfData: ItemData[] = [];
+  listofChildrenData: ItemDataTutor[] = []
 
   ngOnInit(): void {
     const data: ItemData[] = []
+    const dataTutor: ItemDataTutor[] = []
     for(let i = 0; i < 20; i++) {
       data.push({
         nro: i + 1,
@@ -48,14 +59,23 @@ export class RegisterInbox implements OnInit {
         full_name: 'Leonel Maximo',
         gender: 'M',
         date_birth: '1994-02-22',
-        identity_card_father: '1231122',
-        last_name_father: 'Vargas',
-        mothers_last_name_father: 'Ulloa',
-        full_name_father: 'Ramiro Vidal',
-        relation: 'PADRE'
+        identity_card_father: 'Primaria Comunitaria Vocacional',
+        last_name_father: 'Primero - A',
+        mothers_last_name_father: '15-07-2025',
+        full_name_father: '0331821',
+        expand: false
       })
     }
+    dataTutor.push({
+      nro: 1,
+      identity_card_tutor: '3312311',
+      last_name_tutor: 'VARGAS',
+      mothers_last_name_tutor: 'ULLOA',
+      full_name_tutor: 'RAMIRO VIDAL',
+      relationship: 'PADRE',
+    })
     this.listOfData = data
+    this.listofChildrenData = dataTutor
   }
 
 }

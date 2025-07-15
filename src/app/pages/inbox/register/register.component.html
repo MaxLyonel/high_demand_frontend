@@ -24,11 +24,11 @@
       <th class="subheader-cell">Nombres</th>
       <th class="subheader-cell">Género</th>
       <th class="subheader-cell">Fecha Nac.</th>
-      <th class="subheader-cell">Carnet Identidad</th>
-      <th class="subheader-cell">Ap. Paterno</th>
-      <th class="subheader-cell">Ap. Materno</th>
-      <th class="subheader-cell">Nombres</th>
-      <th class="subheader-cell">Parentesco</th>
+      <th class="subheader-cell">Nivel</th>
+      <th class="subheader-cell">Año escolaridad</th>
+      <th class="subheader-cell">Fecha registro</th>
+      <th class="subheader-cell">N° pre inscripción</th>
+      <th class="subheader-cell" nzWidth="90px">Ver Apoderado</th>
     </tr>
   </thead>
   <tbody>
@@ -46,7 +46,8 @@
         <td class="data-cell">{{ data.last_name_father }}</td>
         <td class="data-cell">{{ data.mothers_last_name_father }}</td>
         <td class="data-cell">{{ data.full_name_father }}</td>
-        <td class="data-cell"><nz-tag>{{ data.relation }}</nz-tag></td>
+        <td [(nzExpand)]="data.expand" nzWidth="90px"></td>
+        <!-- <td class="data-cell"><nz-tag>{{ data.relation }}</nz-tag></td> -->
         <td class="data-cell actions-cell">
           <div class="action-buttons">
             <button nz-button nzType="text" nzSize="small" nzShape="circle" class="action-button" nz-tooltip nzTooltipTitle="Aprobar">
@@ -60,6 +61,30 @@
             </button>
           </div>
         </td>
+      </tr>
+      <tr [nzExpand]="data.expand" >
+        <nz-table #innerTable [nzData]="listofChildrenData" nzSize="small" [nzShowPagination]="false">
+          <thead>
+            <tr>
+              <th>Carnet Identidad</th>
+              <th>Ap. Paterno</th>
+              <th>Ap. Materno</th>
+              <th>Nombres</th>
+              <th>Parentesco</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for(data of innerTable.data; track data) {
+              <tr>
+                <td>{{ data.identity_card_tutor }}</td>
+                <td>{{ data.last_name_tutor }}</td>
+                <td>{{ data.mothers_last_name_tutor }}</td>
+                <td>{{ data.full_name_tutor }}</td>
+                <td>{{ data.relationship}} </td>
+              </tr>
+            }
+          </tbody>
+        </nz-table>
       </tr>
     }
   </tbody>
