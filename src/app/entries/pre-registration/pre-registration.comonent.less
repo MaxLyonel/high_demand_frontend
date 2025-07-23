@@ -1,0 +1,53 @@
+
+@primary-color: #0D9488;
+@primary-light: #14B8A6;
+@primary-dark: #045e56;
+@text-color: #1E293B;
+@text-secondary: #64748B;
+@border-color: #E2E8F0;
+@background-light: #e4eaf0;
+@border-radius-base: 2px;
+@screen-md-max: 991px;  // Pantallas ≤ 991px se consideran "md" (medium)
+
+@color-person: #001529;
+
+:host {
+  display: block;
+  height: 100%;
+}
+
+.pre-registration-card {
+  height: 100%;
+  border-radius: @border-radius-base;
+  transition: all 0.3s;
+  border: 1px solid @border-color;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px fade(@primary-color, 40%);
+  }
+
+  .card-header {
+    font-weight: 500;
+    color: @primary-dark;
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  .card-content {
+    color: @text-secondary;
+    margin-bottom: 24px;
+    font-size: 14px;
+  }
+
+  .action-button {
+    width: 100%;
+    background-color: @primary-color;
+    color: white;
+    border: none;
+
+    &:hover {
+      background-color: @primary-dark;
+    }
+  }
+}

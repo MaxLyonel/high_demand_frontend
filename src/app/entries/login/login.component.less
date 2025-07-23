@@ -1,0 +1,197 @@
+
+@primary-color: #0D9488;
+@primary-light: #14B8A6;
+@primary-dark: #045e56;
+@text-color: #1E293B;
+@text-secondary: #64748B;
+@border-color: #E2E8F0;
+@background-light: #e4eaf0;
+@border-radius-base: 2px;
+@screen-md-max: 991px;  // Pantallas ≤ 991px se consideran "md" (medium)
+
+@color-person: #001529;
+
+// .login-container {
+//   background-color: white;
+//   border-radius: 8px;
+//   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+//   width: 380px;
+//   padding: 40px;
+//   text-align: center;
+//   margin: 2rem auto;
+// }
+
+// .logo {
+//   color: $primary-dark;
+//   font-size: 24px;
+//   font-weight: 600;
+//   margin-bottom: 30px;
+// }
+
+// h1 {
+//   font-size: 20px;
+//   margin-bottom: 30px;
+//   color: $text-color;
+//   font-weight: 600;
+// }
+
+// .input-group {
+//   margin-bottom: 20px;
+//   text-align: left;
+
+//   label {
+//     display: block;
+//     margin-bottom: 8px;
+//     font-weight: 500;
+//     color: $text-color;
+//   }
+
+//   input {
+//     width: 100%;
+//     padding: 10px 12px;
+//     border: 1px solid $border-color;
+//     border-radius: 4px;
+//     font-size: 14px;
+//     transition: border-color 0.3s;
+//     box-sizing: border-box;
+
+//     &:focus {
+//       outline: none;
+//       border-color: $primary-light;
+//       box-shadow: 0 0 0 2px rgba($primary-light, 0.2);
+//     }
+
+//     &.invalid {
+//       border-color: #f44336;
+//     }
+//   }
+
+//   .error-message {
+//     color: #f44336;
+//     font-size: 12px;
+//     margin-top: 5px;
+//   }
+// }
+
+// .login-button {
+//   width: 100%;
+//   padding: 12px;
+//   background-color: $primary-color;
+//   color: white;
+//   border: none;
+//   border-radius: 4px;
+//   font-size: 16px;
+//   font-weight: 500;
+//   cursor: pointer;
+//   transition: background-color 0.3s;
+//   margin-top: 10px;
+
+//   &:hover {
+//     background-color: $primary-dark;
+//   }
+
+//   &:disabled {
+//     background-color: lighten($primary-color, 20%);
+//     cursor: not-allowed;
+//   }
+// }
+
+// .footer-links {
+//   margin-top: 30px;
+//   font-size: 14px;
+//   color: $text-secondary;
+
+//   a {
+//     color: $primary-color;
+//     text-decoration: none;
+//     margin: 0 5px;
+
+//     &:hover {
+//       text-decoration: underline;
+//       color: $primary-dark;
+//     }
+//   }
+// }
+
+// .divider {
+//   display: flex;
+//   align-items: center;
+//   margin: 20px 0;
+//   color: $text-secondary;
+//   font-size: 14px;
+
+//   &::before, &::after {
+//     content: "";
+//     flex: 1;
+//     border-bottom: 1px solid $border-color;
+//   }
+
+//   &::before {
+//     margin-right: 10px;
+//   }
+
+//   &::after {
+//     margin-left: 10px;
+//   }
+// }
+
+:host {
+  display: block;
+  height: 100%;
+}
+
+.login-card {
+  height: 100%;
+  border-radius: @border-radius-base;
+  transition: all 0.3s;
+  border: 1px solid @border-color;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px fade(@primary-color, 40%);
+  }
+
+  .card-header {
+    font-weight: 500;
+    color: @primary-dark;
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  form {
+    nz-form-item {
+      margin-bottom: 16px;
+    }
+
+    .login-button {
+      width: 100%;
+      background-color: @primary-color;
+      color: white;
+      border: none;
+
+      &:hover {
+        background-color: @primary-dark;
+      }
+
+      &[disabled] {
+        background-color: fade(@primary-color, 60%);
+      }
+    }
+  }
+
+  .footer-links {
+    margin-top: 16px;
+    text-align: center;
+    font-size: 12px;
+
+    a {
+      color: @primary-color;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+        color: @primary-dark;
+      }
+    }
+  }
+}

@@ -1,0 +1,111 @@
+@primary-color: #0D9488;
+@primary-light: #14B8A6;
+@primary-dark: #045e56;
+@text-color: #1E293B;
+@text-secondary: #64748B;
+@border-color: #E2E8F0;
+@background-light: #e4eaf0;
+@border-radius-base: 2px;
+@screen-md-max: 991px;  // Pantallas ≤ 991px se consideran "md" (medium)
+
+@color-person: #001529;
+
+.layout-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: @background-light;
+  padding: 24px;
+
+  .main-card {
+    width: 100%;
+    max-width: 1200px;
+
+    .centered-card {
+      border-radius: @border-radius-base + 2;
+      box-shadow: 0 6px 16px fade(#113d66, 15%);
+
+      &:hover {
+        transform: translateY(-1px);
+        // box-shadow: 0 6px 16px fade(#113d66, 30%);
+      }
+
+      .sections-row {
+        margin: 0 -8px;
+
+        ::ng-deep {
+          app-pre-registration,
+          app-follow-up,
+          app-login {
+            display: block;
+            height: 100%;
+
+            nz-card {
+              height: 100%;
+              border-radius: @border-radius-base;
+              transition: all 0.3s;
+
+              &:hover {
+                transform: translateY(-4px);
+                box-shadow: 0px 6px 16px @primary-color;
+              }
+
+              .ant-card-head {
+                border-bottom: 1px solid @border-color;
+
+                .ant-card-head-title {
+                  font-weight: 500;
+                  color: @primary-dark;
+                }
+              }
+
+              .ant-card-body {
+                p {
+                  color: @text-secondary;
+                  margin-bottom: 24px;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive
+@media (max-width: @screen-md-max) {
+  .layout-container {
+    .main-card {
+      .centered-card {
+        .sections-row {
+          flex-direction: column;
+
+          // .section-card {
+          //   width: 100%;
+          //   max-width: 400px;
+          //   margin: 0 auto 16px;
+          //   padding: 0;
+
+          //   &:last-child {
+          //     margin-bottom: 0;
+          //   }
+          // }
+          ::ng-deep {
+            app-pre-registration,
+            app-follow-up,
+            app-login {
+              margin-bottom: 16px;
+              max-width: 100%;
+
+              &:last-child {
+                margin-bottom: 0;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,52 @@
+  <nz-card class="login-card" nzHoverable>
+    <div class="card-header">Inicio de sesión</div>
+    <form nz-form [formGroup]="loginForm" (ngSubmit)="onSubmitLogin()">
+      <nz-form-item>
+        <nz-form-control [nzErrorTip]="emailErrorTpl">
+          <input
+            nz-input
+            formControlName="username"
+            placeholder="Usuario"
+            type="text"
+          />
+          <ng-template #emailErrorTpl let-control>
+            <ng-container *ngIf="control.hasError('required')">
+              El email es requerido
+            </ng-container>
+            <!-- <ng-container *ngIf="control.hasError('email')"> -->
+            <ng-container>
+              Email no válido
+            </ng-container>
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-control [nzErrorTip]="passwordErrorTpl">
+          <input
+            nz-input
+            formControlName="password"
+            placeholder="Contraseña"
+            type="password"
+          />
+          <ng-template #passwordErrorTpl let-control>
+            La contraseña es requerida
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+
+      <button
+        nz-button
+        nzType="primary"
+        nzBlock
+        [nzLoading]="isLoginLoading"
+        [disabled]="loginForm.invalid"
+      >
+        Iniciar sesión
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <a routerLink="/forgot-password">¿Olvidaste tu contraseña?</a>
+    </div>
+  </nz-card>
