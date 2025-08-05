@@ -1,7 +1,7 @@
 import { ApplicationConfig, provideZoneChangeDetection, importProvidersFrom } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
-import { routes } from './app.routes';
+import { mainRoutes } from './app.routes';
 import { icons } from '../icons-provider';
 import { provideNzIcons } from 'ng-zorro-antd/icon';
 import { es_ES, provideNzI18n } from 'ng-zorro-antd/i18n';
@@ -14,5 +14,12 @@ import { provideHttpClient } from '@angular/common/http';
 registerLocaleData(es);
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes), provideNzIcons(icons), provideNzI18n(es_ES), importProvidersFrom(FormsModule), provideAnimationsAsync(), provideHttpClient()]
+  providers: [
+    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideRouter(mainRoutes),
+    provideNzIcons(icons),
+    provideNzI18n(es_ES),
+    importProvidersFrom(FormsModule),
+    provideAnimationsAsync(),
+    provideHttpClient()]
 };

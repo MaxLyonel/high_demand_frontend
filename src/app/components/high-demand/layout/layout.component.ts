@@ -23,6 +23,6 @@ import { NzMenuModule } from "ng-zorro-antd/menu";
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.less'
 })
-export class LayoutComponent {
+export default class LayoutComponent {
   isCollapsed = false;
 }

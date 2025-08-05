@@ -10,9 +10,11 @@
             type="text"
           />
           <ng-template #emailErrorTpl let-control>
-            <ng-container *ngIf="control.hasError('required')">
-              El email es requerido
-            </ng-container>
+            @if(control.hasError('required')) {
+              <ng-container>
+                El email es requerido
+              </ng-container>
+            }
             <!-- <ng-container *ngIf="control.hasError('email')"> -->
             <ng-container>
               Email no válido

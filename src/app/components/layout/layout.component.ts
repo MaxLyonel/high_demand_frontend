@@ -5,9 +5,9 @@ import { NzCardModule } from "ng-zorro-antd/card";
 import { NzFormModule } from "ng-zorro-antd/form";
 import { NzGridModule } from "ng-zorro-antd/grid";
 import { NzInputModule } from "ng-zorro-antd/input";
-import { PreRegistrationComponent } from "./pre-registration/pre-registration.component";
-import { FollowUpComponent } from "./follow-up/follow-up.component";
-import { LoginComponent } from "./login/login.component";
+import { PreRegistrationComponent } from "./components/pre-registration/pre-registration.component";
+import { FollowUpComponent } from "./components/follow-up/follow-up.component";
+import { LoginComponent } from "./components/login/login.component";
 
 @Component({
   selector: 'app-auth-layout',

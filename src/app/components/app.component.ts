@@ -7,7 +7,8 @@ import UserDetailDisplayer from '../domain/user-detail-displayer';
   imports: [RouterOutlet],
   template: `<router-outlet/>`,
   providers: [
-    { provide: 'IDisplayUserDetail', useClass: UserDetailDisplayer }
+    { provide: 'IDisplayUserDetail', useClass: UserDetailDisplayer },
+    // { provide: 'IManageAuth', useClass: }
   ]
 })
 export class AppComponent {

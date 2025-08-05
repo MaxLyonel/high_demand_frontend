@@ -10,3 +10,32 @@
 @primary-color: #0d9488;
 // @primary-color: #facc15;
 /* You can add global styles to this file, and also import other style files */
+
+
+// Variables de la scrollbar
+@sb-track-color: #f1f1f1;
+// @sb-thumb-color: #4de298;
+@sb-thumb-color: #029488;
+@sb-size: 1px;
+
+// Estilos para navegadores WebKit (Chrome, Edge, Safari)
+*::-webkit-scrollbar {
+  width: @sb-size;
+  height: @sb-size;
+}
+
+*::-webkit-scrollbar-track {
+  background: @sb-track-color;
+  border-radius: 1px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: @sb-thumb-color;
+  border-radius: 1px;
+}
+
+// Estilos para Firefox
+* {
+  scrollbar-width: thin;
+  scrollbar-color: @sb-thumb-color @sb-track-color;
+}
