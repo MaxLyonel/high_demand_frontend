@@ -7,7 +7,7 @@ export interface AuthCredentials {
 
 export interface AuthenticatedUser {
   id: number;
-  usernam: string;
+  username: string;
   token: string;
   roles: string[];
 }

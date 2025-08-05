@@ -6,7 +6,7 @@ import { AuthCredentials, AuthenticatedUser } from "./i-authorize-user";
 
 
 
-export default interface IManageAuth {
+export default interface IManagerAuth {
 
   login(credentials: AuthCredentials): Observable<AuthenticatedUser>;
   logout(): Observable<void>;

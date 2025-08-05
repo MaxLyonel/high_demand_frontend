@@ -1,14 +1,13 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import UserDetailDisplayer from '../domain/user-detail-displayer';
+import { AuthAdapterService } from '../adapters/auth-api.service';
 
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet],
   template: `<router-outlet/>`,
   providers: [
-    { provide: 'IDisplayUserDetail', useClass: UserDetailDisplayer },
-    // { provide: 'IManageAuth', useClass: }
+    { provide: 'IManagerAuth', useClass: AuthAdapterService }
   ]
 })
 export class AppComponent {
