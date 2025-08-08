@@ -4,14 +4,15 @@
       nzTitle="UNIDAD EDUCATIVA"
       nzLayout="vertical"
       nzSize="small"
-      [nzColumn]="3"
+      [nzColumn]="4"
     >
-      <nz-descriptions-item nzTitle="Nombre">Oscar Unzaga de la Vega</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="SIE">800100112</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Dirección">Potosí, UNCIA, calle Libertad </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Dependencia">Convenio</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Director" [nzSpan]="2">
-        Vargas Ramírez Leonel Maximo
+      <nz-descriptions-item nzTitle="Nombre" >{{ institution?.name | lowercase }} </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="SIE">{{ institution?.id }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Estado">{{ institution?.state | lowercase }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Ambito">{{ institution?.scope | lowercase }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Dependencia">{{ institution?.scope | lowercase }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Dirección" [nzSpan]="2">
+        {{ institution?.direction | lowercase }}
       </nz-descriptions-item>
     </nz-descriptions>
   </nz-card>

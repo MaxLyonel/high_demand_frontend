@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Inject, OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { NzButtonModule } from "ng-zorro-antd/button";
 import { NzCardComponent } from "ng-zorro-antd/card";
@@ -13,11 +13,15 @@ import { NzRadioModule } from "ng-zorro-antd/radio";
 import { NzSpaceModule } from "ng-zorro-antd/space";
 import { NzTabPosition, NzTabsModule } from "ng-zorro-antd/tabs";
 import { NzTypographyModule } from "ng-zorro-antd/typography";
+import IInstituionDetail from "../../../domain/ports/i-institution-detail";
+import { map, tap } from "rxjs";
+import { CommonModule } from "@angular/common";
 
 
 @Component({
   standalone: true,
   imports: [
+    CommonModule,
     NzDescriptionsModule,
     FormsModule,
     NzTabsModule,
@@ -62,12 +66,23 @@ export class PostulationComponent implements OnInit {
     { label: '', value: 'Apple'}
   ]
 
+  // mis variables
+  institution!: any
+
+  constructor(@Inject('IInstituionDetail') private _institution: IInstituionDetail) {}
+
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   log(args: any[]): void {
     console.log(args);
   }
 
   ngOnInit(): void {
+    this._institution.getInfoInstitution(30680007).subscribe(
+      (institution: any) => {
+        console.log("institution", institution)
+        this.institution = institution
+      }
+    )
     for (let i = 0; i < 3; i++) {
       this.tabs.push({
         name: `Tab ${i}`,
