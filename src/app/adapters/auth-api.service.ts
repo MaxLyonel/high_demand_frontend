@@ -12,7 +12,7 @@ export class AuthAdapterService implements IManagerAuth {
   private http = inject(HttpClient);
 
   login(credentials: AuthCredentials): Observable<AuthenticatedUser> {
-    return this.http.post<AuthenticatedUser>('/api/auth/login', credentials).pipe(
+    return this.http.post<AuthenticatedUser>('api/auth/login', credentials).pipe(
       tap(user => this.currentUser$.next(user))
     )
   }

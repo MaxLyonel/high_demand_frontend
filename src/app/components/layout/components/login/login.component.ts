@@ -6,6 +6,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import IAuthorizeUser from '../../../../domain/ports/i-authorize-user';
+import { Router } from '@angular/router';
 
 @Component({
   imports: [
@@ -18,13 +19,16 @@ import IAuthorizeUser from '../../../../domain/ports/i-authorize-user';
   ],
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.less']
+  styleUrls: ['./login.component.less'],
 })
 export class LoginComponent {
   loginForm: FormGroup;
   isLoginLoading = false;
-// @Inject('IAuthorizeUser') private auth: IAuthorizeUser
-  constructor(private fb: FormBuilder) {
+
+  private router = inject(Router)
+  private fb = inject(FormBuilder);
+
+  constructor(@Inject('IAuthorizeUser') private auth: IAuthorizeUser) {
     this.loginForm = this.fb.group({
       username: ['', [Validators.required]],
       password: ['', Validators.required]
@@ -34,12 +38,11 @@ export class LoginComponent {
   onSubmitLogin() {
     if (this.loginForm.valid) {
       this.isLoginLoading = true;
-      console.log('Login form submitted', this.loginForm.value);
-      // Simular llamada API
       const { username, password } = this.loginForm.value
-      // this.auth.login({ username, password }).subscribe(user => {
-      //   console.log('Autenticado: ', user)
-      // })
+      this.auth.performLogin({ username, password }).subscribe(user => {
+        console.log('Autenticado: ', user)
+      })
+      this.router.navigate(['alta-demanda/postulacion'])
       setTimeout(() => {
         this.isLoginLoading = false;
       }, 2500);
