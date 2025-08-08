@@ -18,84 +18,94 @@
   </nz-card>
 
   <nz-card *nzSpaceItem>
-    <div nz-row>
-      <div nz-col [nzSpan]="17">
+    <div nz-row [nzGutter]="15">
+      <div nz-col [nzSpan]="14">
         <h5 nz-typography class="mb-3">INSCRIPCION DE LA UNIDAD EDUCATIVA</h5>
 
         <nz-tabset
           nzType="card"
-          [nzTabPosition]="nzTabPosition"
-          [(nzSelectedIndex)]="selectedIndex"
-          (nzSelectChange)="log([$event])"
+          nzTabPosition="left"
+          [(nzSelectedIndex)]="selectedLevelIndex"
+          (nzSelectChange)="onLevelChange([$event])"
         >
           @for (level of levels; track level) {
             <nz-tab
-              [nzTitle]="level.name"
+              [nzTitle]="level.levelName"
               [nzDisabled]="level.disabled"
-              (nzSelect)="log(['select', level])"
-              (nzClick)="log(['click', level])"
-              (nzContextmenu)="log(['contextmenu', level])"
-              (nzDeselect)="log(['deselect', level])"
             >
-              @if(level.id == 11) {
-                <ng-container >
-                  <nz-tabset nzType="card" nzTabPosition="left">
-                    <nz-tab nzTitle="Primero">
-                      Contenido del subtab 1
-                    </nz-tab>
-                    <nz-tab nzTitle="Segundo">
-                      <ng-container>
-                        <nz-tabset nzType="card" nzTabPosition="left">
-                          <nz-tab nzTitle="A">
-                            <label for="">Número de plazas</label>
-                            <nz-input-group [nzSuffix]="inputClearTpl">
-                              <input type="text" nz-input [(ngModel)]="inputValue" placeholder="Ingrese el número de plazas">
-                            </nz-input-group>
-                            <ng-template #inputClearTpl>
-                              @if(inputValue) {
-                                <nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle" (click)="inputValue = null"/>
-                              }
-                            </ng-template>
-                            <button nz-button class="login-form-button login-form-margin" [nzType]="'primary'">REGISTRAR</button>
+              <!-- (nzSelect)="log(['select', level])" -->
+              <!-- (nzClick)="log(['click', level])"
+              (nzContextmenu)="log(['contextmenu', level])"
+              (nzDeselect)="log(['deselect', level])" -->
+              <ng-container>
+                <nz-tabset
+                  nzType="card"
+                  nzTabPosition="left"
+                  [(nzSelectedIndex)]="selectedGradeIndex"
+                  (nzSelectChange)="onGradeChange([$event])"
+                >
+                  @for(grade of level.grades; track grade) {
+                    <nz-tab [nzTitle]="grade.gradeName">
+                      <nz-tabset
+                        nzType="card"
+                        nzTabPosition="left"
+                        [(nzSelectedIndex)]="selectedParallelIndex"
+                        (nzSelectChange)="onParallelChange([$event])"
+                      >
+                        @for(parallel of grade.parallels; track parallel) {
+                          <nz-tab [nzTitle]="parallel.parallelName">
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                              <label style="text-align: center;">Número de plazas</label>
+
+                              <nz-input-group [nzSuffix]="inputClearTpl" style="width: 120px;">
+                                <input
+                                  type="text"
+                                  nz-input
+                                  [(ngModel)]="inputValue"
+                                  placeholder="Nro plaza"
+                                  style="width: 100%;"
+                                >
+                              </nz-input-group>
+
+                              <ng-template #inputClearTpl>
+                                <nz-icon
+                                  *ngIf="inputValue"
+                                  class="ant-input-clear-icon"
+                                  nzTheme="fill"
+                                  nzType="close-circle"
+                                  (click)="inputValue = null"
+                                ></nz-icon>
+                              </ng-template>
+
+                              <button
+                                nz-button
+                                [nzType]="'primary'" style="align-self: center;"
+                                (click)="showConfirmRegistrationQuota()"
+                              >
+                                REGISTRAR
+                              </button>
+                            </div>
                           </nz-tab>
-                          <nz-tab nzTitle="B">
-                            aqui la interfaz para llenar cupo B
-                          </nz-tab>
-                          <nz-tab nzTitle="C">
-                            aqui la interfaz para llenar cupo C
-                          </nz-tab>
-                        </nz-tabset>
-                      </ng-container>
+
+                        }
+                      </nz-tabset>
                     </nz-tab>
-                    <nz-tab nzTitle="Tercero">
-                      Contenido del subtab 1
-                    </nz-tab>
-                    <nz-tab nzTitle="Cuarto">
-                      Contenido del subtab 1
-                    </nz-tab>
-                  </nz-tabset>
-                </ng-container>
-              } @else {
-                <ng-container nzTabPosition="left">
-                  {{ level.content }}
-                </ng-container>
-              }
+                  }
+                </nz-tabset>
+              </ng-container>
             </nz-tab>
           }
         </nz-tabset>
 
       </div>
-      <div nz-col [nzSpan]="7" >
+      <div nz-col [nzSpan]="10" >
         <h5 nz-typography class="mb-3">CURSOS SELECCIONADOS</h5>
         <nz-list class="demo-loadmore-list" [nzLoading]="initLoading">
-          @for (item of list; track item) {
-            <ng-container>
+          @for (item of listCourse; track item) {
+            <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
               <nz-list-item-meta
-                nzDescription="Inicial en Familia Comunitaria - Segundo - A - 123"
+                [nzDescription]="item.name"
               >
-                <nz-list-item-meta-title>
-                  <a href=""></a>
-                </nz-list-item-meta-title>
               </nz-list-item-meta>
               <ul nz-list-item-actions>
                 <nz-list-item-action>
@@ -106,12 +116,17 @@
                   >
                   </nz-checkbox-group>
                 </nz-list-item-action>
-                <!-- <nz-list-item-action>checkbox</nz-list-item-action> -->
               </ul>
-            </ng-container>
+            </div>
           }
-          <div class="loadmore" nz-list-load-more>
-            <button nz-button class="login-form-button login-form-margin" [nzType]="'primary'">CONSOLIDAR</button>
+          <div class="loadmore" nz-list-load-more style="display: flex; flex-direction: column;">
+            <button
+              nz-button
+              class="login-form-button login-form-margin"
+              [nzType]="'primary'"
+              style="align-self: center;"
+              (click)="showConfirmRegistrationHighDemand()"
+            >CONSOLIDAR</button>
           </div>
         </nz-list>
       </div>

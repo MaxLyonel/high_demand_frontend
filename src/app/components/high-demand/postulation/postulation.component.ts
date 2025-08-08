@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from "@angular/core";
+import { Component, inject, Inject, OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { NzButtonModule } from "ng-zorro-antd/button";
 import { NzCardComponent } from "ng-zorro-antd/card";
@@ -16,7 +16,16 @@ import { NzTypographyModule } from "ng-zorro-antd/typography";
 import IInstituionDetail from "../../../domain/ports/i-institution-detail";
 import { map, tap } from "rxjs";
 import { CommonModule } from "@angular/common";
+import ICourseList from "../../../domain/ports/i-course-list";
+import { NzModalModule, NzModalRef, NzModalService } from "ng-zorro-antd/modal";
 
+
+interface CourseRegister {
+  id: number;
+  level: number;
+  grade: number;
+  parallel: number;
+}
 
 @Component({
   standalone: true,
@@ -35,45 +44,68 @@ import { CommonModule } from "@angular/common";
     NzButtonModule,
     NzInputModule,
     NzIconModule,
-    NzCheckboxModule
+    NzCheckboxModule,
+    //modal
+    NzModalModule,
   ],
   selector: 'app-postulation',
   templateUrl: './postulation.component.html',
 })
 export class PostulationComponent implements OnInit {
-  tabs: Array<{ name: string; content: string; disabled: boolean }> = [];
-  nzTabPosition: NzTabPosition = 'left';
-  selectedIndex = 2;
+  selectedLevelIndex = 0;
+  selectedGradeIndex = 0;
+  selectedParallelIndex = 0;
 
 
   initLoading = false;
 
-
-  levels = [
-    { id: 11, name: 'Inicial en Familia Comunitaria', disabled: false, content: 'Content inicial'},
-    { id: 12, name: 'Primaria Comunitaria Vocacional', disabled: false, content: 'Content primaria'},
-    { id: 13, name: 'Secundaria Comunitaria Productiva', disabled: false, content: 'Content Secundaria'}
-  ]
   inputValue: string | null = null;
-  list: Array<{ loading: boolean; name: any}> =[{
-    loading: false,
-    name: 'Inicial en Familia Comunitaria - Segundo - A - 123'
-  }]
+  // listCourse: Array<{ loading: boolean; name: any}> =[]
 
   allChecked = false;
-  value: Array<string | number> = ['Apple', 'Orange'];
+  value: Array<string | number> = ['1', '2'];
   options: NzCheckboxOption[] = [
-    { label: '', value: 'Apple'}
+    { label: '', value: '1'}
   ]
 
   // mis variables
   institution!: any
+  levels!: any
+  // modal
+  modal = inject(NzModalService)
+  confirmModal?: NzModalRef;
 
-  constructor(@Inject('IInstituionDetail') private _institution: IInstituionDetail) {}
+  registeredCourses: Array<CourseRegister[]> = []
 
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  log(args: any[]): void {
-    console.log(args);
+  selectedLevelId?: number;
+  selectedGradeId?: number;
+  selectedParallelId?: number;
+  listCourse: Array<{ name: string, checked?: boolean }> = [];
+
+  constructor(
+    @Inject('IInstituionDetail') private _institution: IInstituionDetail,
+    @Inject('ICourseList') private _courses: ICourseList
+  ) {}
+
+
+  onCheckChange(index: number): void {
+    console.log(this.listCourse[index].name, 'checked?', this.listCourse[index].checked);
+  }
+
+  onLevelChange(index: any[]): void {
+    this.selectedLevelId = this.levels[this.selectedLevelIndex]?.levelId
+  }
+
+  onGradeChange(index: any[]): void {
+    const levelSelected = this.levels[this.selectedLevelIndex]
+    this.selectedGradeId = levelSelected.grades[this.selectedGradeIndex]?.gradeId;
+  }
+
+  onParallelChange(obj: any[]): void {
+    const levelSelected = this.levels[this.selectedLevelIndex]
+    const gradeSelected = levelSelected.grades[this.selectedGradeIndex]
+    this.selectedParallelId = gradeSelected.parallels[this.selectedParallelIndex]?.parallelId
+    console.log("this.selectedParallelId: ", this.selectedParallelId)
   }
 
   ngOnInit(): void {
@@ -83,15 +115,41 @@ export class PostulationComponent implements OnInit {
         this.institution = institution
       }
     )
-    for (let i = 0; i < 3; i++) {
-      this.tabs.push({
-        name: `Tab ${i}`,
-        disabled: i === 4,
-        content: `Content of tab ${i}`
-      });
-    }
+
+    this._courses.showCourses(30680007, 2025).subscribe(
+      (courses: any) => {
+        console.log("cursos obtenidos ", courses)
+        this.levels = courses
+      }
+    )
   }
   updateSingleCheked(): void {
     this.allChecked = this.value.length === this.options.length;
+  }
+
+  showConfirmRegistrationQuota(): void {
+    this.confirmModal = this.modal.confirm({
+      nzTitle: 'Registrar la cantidad de cupos',
+      nzContent: 'Asegurese de registrar la cantidad correcta de cupos',
+      nzOnOk: () =>
+        new Promise((resolve, reject) => {
+          setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
+          this.listCourse.push({
+            checked: true,
+            name: `${this.selectedLevelId} ${this.selectedGradeId} ${this.selectedParallelId} ${this.inputValue}`
+          })
+        }).catch(() => console.log('Oops errors!'))
+    });
+  }
+
+  showConfirmRegistrationHighDemand(): void {
+    this.confirmModal = this.modal.confirm({
+      nzTitle: 'Registrar la Unidad Educativa como Alta Demanda',
+      nzContent: 'Revise antes de confirmar',
+      nzOnOk: () =>
+        new Promise((resolve, reject) => {
+          setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
+        }).catch(() => console.log('Oops errors!'))
+    })
   }
 }

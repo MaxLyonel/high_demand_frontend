@@ -4,6 +4,8 @@ import { AuthAdapterService } from '../adapters/auth-api.service';
 import UserAuthManager from '../domain/user-auth-manager';
 import { InstitutionAdapterService } from '../adapters/institution-api.service';
 import InstitutionManager from '../domain/institution-manager';
+import { InstitutionCourseAdapterService } from '../adapters/institution-course.service';
+import CourseManager from '../domain/course-manager';
 
 @Component({
   selector: 'app-root',
@@ -14,7 +16,10 @@ import InstitutionManager from '../domain/institution-manager';
     { provide: 'IAuthorizeUser', useClass: UserAuthManager },
 
     { provide: 'IManagerInstitution', useClass: InstitutionAdapterService }, // ADAPTER
-    { provide: 'IInstituionDetail', useClass: InstitutionManager }
+    { provide: 'IInstituionDetail', useClass: InstitutionManager },
+
+    { provide: 'IManagerInstitutionCourse', useClass: InstitutionCourseAdapterService },
+    { provide: 'ICourseList', useClass: CourseManager }
   ]
 })
 export class AppComponent {

@@ -4,7 +4,8 @@ import { Inject, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 // own implementations
 import IInstituionDetail from "./ports/i-institution-detail";
-import IManagerInstitution, { InstitutionInfo } from "./ports/i-manager-institution";
+import IManagerInstitution from "./ports/i-manager-institution";
+import { InstitutionInfo } from "./models/institution-info.model";
 
 
 @Injectable()

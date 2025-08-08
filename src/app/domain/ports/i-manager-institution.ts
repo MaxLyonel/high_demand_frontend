@@ -1,13 +1,6 @@
 import { Observable } from "rxjs";
+import { InstitutionInfo } from "../models/institution-info.model";
 
-
-export interface InstitutionInfo {
-  id: number;
-  name: string;
-  state: string;
-  scope: string;
-  direction: string;
-}
 
 
 export default interface IManagerInstitution {

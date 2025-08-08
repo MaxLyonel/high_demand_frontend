@@ -39,3 +39,12 @@
   scrollbar-width: thin;
   scrollbar-color: @sb-thumb-color @sb-track-color;
 }
+
+
+::ng-deep .ant-tabs-left > .ant-tabs-content-holder {
+  padding-left: 0 !important;  /* Elimina padding izquierdo del contenido */
+}
+
+::ng-deep .ant-tabs-left > .ant-tabs-nav {
+  margin-left: 0 !important;   /* Elimina margen izquierdo de la pestaña */
+}

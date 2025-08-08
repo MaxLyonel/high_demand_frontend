@@ -1,6 +1,5 @@
 import { Observable } from "rxjs";
-import { InstitutionInfo } from "./i-manager-institution";
-
+import { InstitutionInfo } from "../models/institution-info.model";
 
 
 

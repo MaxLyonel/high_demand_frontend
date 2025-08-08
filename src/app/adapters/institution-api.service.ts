@@ -1,7 +1,8 @@
 import { inject, Injectable } from "@angular/core";
-import IManagerInstitution, { InstitutionInfo } from "../domain/ports/i-manager-institution";
+import IManagerInstitution from "../domain/ports/i-manager-institution";
 import { catchError, Observable, tap, throwError } from "rxjs";
 import { HttpClient } from "@angular/common/http";
+import { InstitutionInfo } from "../domain/models/institution-info.model";
 
 
 
