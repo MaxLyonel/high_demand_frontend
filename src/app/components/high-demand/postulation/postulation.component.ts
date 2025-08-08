@@ -77,9 +77,9 @@ export class PostulationComponent implements OnInit {
 
   registeredCourses: Array<CourseRegister[]> = []
 
-  selectedLevelId?: number;
-  selectedGradeId?: number;
-  selectedParallelId?: number;
+  selectedLevel?: any;
+  selectedGrade?: any;
+  selectedParallel?: any;
   listCourse: Array<{ name: string, checked?: boolean }> = [];
 
   constructor(
@@ -93,19 +93,19 @@ export class PostulationComponent implements OnInit {
   }
 
   onLevelChange(index: any[]): void {
-    this.selectedLevelId = this.levels[this.selectedLevelIndex]?.levelId
+    this.selectedLevel = this.levels[this.selectedLevelIndex]
   }
 
   onGradeChange(index: any[]): void {
     const levelSelected = this.levels[this.selectedLevelIndex]
-    this.selectedGradeId = levelSelected.grades[this.selectedGradeIndex]?.gradeId;
+    this.selectedGrade = levelSelected.grades[this.selectedGradeIndex];
   }
 
   onParallelChange(obj: any[]): void {
     const levelSelected = this.levels[this.selectedLevelIndex]
     const gradeSelected = levelSelected.grades[this.selectedGradeIndex]
-    this.selectedParallelId = gradeSelected.parallels[this.selectedParallelIndex]?.parallelId
-    console.log("this.selectedParallelId: ", this.selectedParallelId)
+    this.selectedParallel = gradeSelected.parallels[this.selectedParallelIndex]
+    console.log("this.selectedParallelId: ", this.selectedParallel)
   }
 
   ngOnInit(): void {
@@ -136,7 +136,7 @@ export class PostulationComponent implements OnInit {
           setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
           this.listCourse.push({
             checked: true,
-            name: `${this.selectedLevelId} ${this.selectedGradeId} ${this.selectedParallelId} ${this.inputValue}`
+            name: `${this.selectedLevel.levelName} ${this.selectedGrade.gradeName} ${this.selectedParallel.parallelName} cupos: ${this.inputValue}`
           })
         }).catch(() => console.log('Oops errors!'))
     });
