@@ -51,13 +51,20 @@
           <nz-icon class="trigger" [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'" />
         </span>
         <div class="header-avatar-container">
-          <nz-dropdown-menu nzPlacement="bottomRight">
-            <div nz-dropdown>
-              <nz-avatar [nzSrc]="'https://i.pravatar.cc/150?img=32'" ngSize="small" class="header-avatar"></nz-avatar>
-            </div>
+          <div nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click" nzPlacement="bottomRight">
+            <nz-avatar
+              [nzSrc]="'https://i.pravatar.cc/150?img=32'"
+              nzSize="default" 
+              class="header-avatar">
+            </nz-avatar>
+          </div>
+
+          <nz-dropdown-menu #menu="nzDropdownMenu">
             <ul nz-menu>
-              <li nz-menu-item>Perfil</li>
-              <li nz-menu-item>Cerrar sesión</li>
+              <li nz-menu-item (click)="goToProfile()">Perfil</li>
+              <!-- <li nz-menu-item >Perfil</li> -->
+              <li nz-menu-item (click)="logout()">Cerrar sesión</li>
+              <!-- <li nz-menu-item >Cerrar sesión</li> -->
             </ul>
           </nz-dropdown-menu>
         </div>

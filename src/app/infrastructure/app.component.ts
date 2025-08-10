@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AuthAdapterService } from '../adapters/auth-api.service';
 import UserAuthManager from '../domain/user-auth-manager';
@@ -6,6 +6,7 @@ import { InstitutionAdapterService } from '../adapters/institution-api.service';
 import InstitutionManager from '../domain/institution-manager';
 import { InstitutionCourseAdapterService } from '../adapters/institution-course.service';
 import CourseManager from '../domain/course-manager';
+import { AbilityService } from './services/ability.service';
 
 @Component({
   selector: 'app-root',
@@ -22,6 +23,14 @@ import CourseManager from '../domain/course-manager';
     { provide: 'ICourseList', useClass: CourseManager }
   ]
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'Alta Demanda'
+
+    constructor(private abilityService: AbilityService) {}
+
+    ngOnInit() {
+    this.abilityService.loadAbilities().subscribe(() => {
+      console.log('Abilities cargadas');
+    });
+  }
 }

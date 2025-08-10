@@ -17,11 +17,14 @@
 }
 
 .header-trigger {
+  display: flex; /* para centrar internamente */
+  align-items: center; /* verticalmente */
+  justify-content: center; /* horizontalmente */
   height: 64px;
-  padding: 20px 24px;
+  padding: 0 14px; /* quitamos el padding vertical excesivo */
   font-size: 20px;
   cursor: pointer;
-  transition: all .3s,padding 0s;
+  transition: all .3s, padding 0s;
 }
 
 .trigger:hover {
@@ -61,14 +64,26 @@ nz-header {
   z-index: 2;
 }
 
+// .app-header {
+//   position: relative;
+//   height: 64px;
+//   padding: 0;
+//   background: #fff;
+//   box-shadow: 0 1px 4px rgba(0,21,41,.08);
+//   justify-content: space-between;
+//   align-items: center;
+// }
+
 .app-header {
   position: relative;
   height: 64px;
-  padding: 0;
+  padding: 0 16px;
   background: #fff;
   box-shadow: 0 1px 4px rgba(0,21,41,.08);
+  display: flex; /* <-- agregado */
   justify-content: space-between;
   align-items: center;
+  z-index: 1000; /* Asegura que esté por encima del contenido */
 }
 
 nz-content {
@@ -90,4 +105,10 @@ nz-content {
 
 .header-avatar {
   cursor: pointer;
+}
+
+.cdk-overlay-container,
+.cdk-overlay-pane,
+.nz-dropdown {
+  z-index: 1050 !important; /* Más alto que el header */
 }

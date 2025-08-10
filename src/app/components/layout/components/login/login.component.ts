@@ -7,6 +7,7 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import IAuthorizeUser from '../../../../domain/ports/i-authorize-user';
 import { Router } from '@angular/router';
+// import { NotificationService } from '../../../../infrastructure/services/notify.service';
 
 @Component({
   imports: [
@@ -27,6 +28,7 @@ export class LoginComponent {
 
   private router = inject(Router)
   private fb = inject(FormBuilder);
+  // private notificationService = inject(NotificationService)
 
   constructor(@Inject('IAuthorizeUser') private auth: IAuthorizeUser) {
     this.loginForm = this.fb.group({
@@ -39,10 +41,10 @@ export class LoginComponent {
     if (this.loginForm.valid) {
       this.isLoginLoading = true;
       const { username, password } = this.loginForm.value
-      this.auth.performLogin({ username, password }).subscribe(user => {
-        console.log('Autenticado: ', user)
+      this.auth.performLogin({ username, password }).subscribe({
+        next: () => this.router.navigate(['/alta-demanda/postulacion']),
+        // error: () => this.notificationService.error('Error', 'Credenciales inválidas')
       })
-      this.router.navigate(['alta-demanda/postulacion'])
       setTimeout(() => {
         this.isLoginLoading = false;
       }, 2500);

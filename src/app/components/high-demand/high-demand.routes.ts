@@ -14,5 +14,9 @@ export const HIGH_DEMAND: Routes = [
       { path: 'register-inbox', component: RegisterInbox },
       { path: 'selection-inbox', component: SelectionInbox }
     ]
-  }
+  },
+  {
+    path: '**',
+    redirectTo: ''
+  },
 ]
