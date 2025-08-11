@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterLink, RouterOutlet } from "@angular/router";
 import { NzAvatarModule } from "ng-zorro-antd/avatar";
@@ -27,7 +27,7 @@ import { AuthAdapterService } from "../../../adapters/auth-api.service";
 export default class LayoutComponent {
   isCollapsed = false;
 
-  private router = inject(Router)
+  public router = inject(Router)
   private authService = inject(AuthAdapterService)
 
   goToProfile() {

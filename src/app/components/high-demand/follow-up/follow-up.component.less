@@ -1,0 +1,108 @@
+
+// Variables (manteniendo tu estilo)
+@screen-md-max: 991px;
+@primary-color: #0D9488;
+@primary-light: #14B8A6;
+@primary-dark: #045e56;
+@text-color: #1E293B;
+@text-secondary: #64748B;
+@border-color: #E2E8F0;
+@background-light: #e4eaf0;
+
+.seguimiento-container {
+  margin: 18px;
+  border: 1px solid fade(@primary-color, 60%);
+
+  .seguimiento-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+
+    h5 {
+      margin: 0;
+      color: @primary-dark;
+      font-weight: 600;
+    }
+  }
+
+  .seguimiento-filters {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    gap: 16px;
+
+    nz-input-group {
+      width: 300px;
+    }
+
+    nz-space {
+      flex-grow: 1;
+      justify-content: flex-end;
+    }
+  }
+
+  .custom-table {
+    border: 1px solid fade(@text-color, 25%);
+    
+    .header-row {
+      background-color: @background-light;
+
+      .header-cell {
+        font-weight: 600;
+        text-align: center;
+        color: @text-color;
+        background-color: @border-color;
+        border-bottom: 1px solid @border-color;
+      }
+    }
+
+    .ant-table-tbody > tr > td {
+      vertical-align: middle;
+    }
+  }
+
+  nz-timeline {
+    padding: 20px;
+
+    .comentario {
+      color: @text-secondary;
+      font-style: italic;
+      margin-top: 8px;
+      padding-left: 20px;
+      border-left: 2px solid @primary-light;
+    }
+  }
+}
+
+.section-title {
+  color: @primary-dark;
+  font-weight: 600;
+  margin-bottom: 16px !important;
+  border-left: 4px solid @primary-color;
+  padding-left: 8px;
+}
+
+// Estilos responsivos
+@media (max-width: @screen-md-max) {
+  .seguimiento-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+
+  .seguimiento-filters {
+    flex-direction: column;
+    align-items: flex-start !important;
+
+    nz-input-group {
+      width: 100% !important;
+      margin-bottom: 16px;
+    }
+
+    nz-space {
+      width: 100%;
+      justify-content: flex-start !important;
+    }
+  }
+}

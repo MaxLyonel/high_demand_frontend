@@ -1,0 +1,78 @@
+
+// Variables de color
+@primary-color: #0D9488;
+@primary-light: #14B8A6;
+@border-color: #E2E8F0;
+@card-shadow: 0 1px 2px -2px rgba(0, 0, 0, 0.16), 0 3px 6px 0 rgba(0, 0, 0, 0.12), 0 5px 12px 4px rgba(0, 0, 0, 0.09);
+@screen-md: 991px;
+
+.config-card {
+  border: 1px solid fade(@primary-color, 60%);
+  box-shadow: @card-shadow;
+  border-radius: 8px;
+
+  .ant-card-head {
+    border-bottom: 1px solid @border-color;
+    background-color: fade(@primary-color, 10%);
+  }
+}
+
+.ant-timeline {
+  padding: 20px;
+
+  .ant-timeline-item-head-blue {
+    border-color: @primary-color;
+    color: @primary-color;
+  }
+}
+
+.phase-card {
+  border: 1px solid @border-color;
+  border-radius: 4px;
+  margin-bottom: 16px;
+
+  .ant-card-head {
+    background-color: fade(@primary-color, 5%);
+    border-bottom: 1px solid @border-color;
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid @border-color;
+}
+
+.ml-2 {
+  margin-left: 8px;
+}
+
+.mt-2 {
+  margin-top: 8px;
+}
+
+.mb-4 {
+  margin-bottom: 16px;
+}
+
+// Estilos responsivos
+@media (max-width: @screen-md) {
+  .config-card {
+    margin: 8px;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+    
+    button {
+      width: 100%;
+      margin-bottom: 8px;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}

@@ -10,15 +10,22 @@ export class NotificationService {
   ) {}
 
   showMessage(message: string, title = 'Info', type: 'success' | 'info' | 'warning' | 'error' = 'info') {
-    // this.message.create('success', message)
-    // this.notification.blank(title, message);
-    // También podés usar:
-    this.notification.success(title, message, { nzPlacement: 'bottomRight' });
-    // this.notification.error(title, message);
-    // etc.
+    switch(type) {
+      case 'success':
+        this.notification.success(title, message, { nzPlacement: 'bottomRight' });
+      break;
+      case 'info':
+        this.notification.info(title, message, { nzPlacement: 'bottomRight' });
+      break;
+      case 'warning':
+        this.notification.warning(title, message, { nzPlacement: 'bottomRight' });
+        break;
+      case 'error':
+        this.notification.error(title, message, { nzPlacement: 'bottomRight' });
+    }
   }
 
-  error(message: string, title: string) {
-    this.notification.error(message, title, { nzPlacement: 'bottomRight' })
-  }
+  // error(message: string, title: string) {
+  //   this.notification.warning(message, title, { nzPlacement: 'bottomRight' })
+  // }
 }

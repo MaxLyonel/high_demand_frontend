@@ -1,0 +1,164 @@
+// Variables de color (consistentes con tu diseño)
+@primary-color: #0D9488;
+@primary-light: #14B8A6;
+@primary-dark: #045e56;
+@text-color: #1E293B;
+@text-secondary: #64748B;
+@border-color: #E2E8F0;
+@background-light: #e4eaf0;
+@card-shadow: 0 1px 2px -2px rgba(0, 0, 0, 0.16), 0 3px 6px 0 rgba(0, 0, 0, 0.12), 0 5px 12px 4px rgba(0, 0, 0, 0.09);
+
+// Estilos generales
+.info-card, .inscription-card {
+  border: 1px solid fade(@primary-color, 60%);
+  // box-shadow: @card-shadow;
+  border-radius: 8px;
+  
+  .ant-card-head {
+    border-bottom: 1px solid @border-color;
+    background-color: fade(@primary-color, 10%);
+  }
+
+  .bold-labels .ant-descriptions-item-label {
+    font-weight: bold !important;
+  }
+}
+
+.section-title {
+  color: @primary-dark;
+  font-weight: 600;
+  margin-bottom: 16px !important;
+  border-left: 4px solid @primary-color;
+  padding-left: 8px;
+}
+
+// Estilos para los tabsets
+.custom-tabset {
+  .ant-tabs-tab {
+    margin-right: 0 !important;
+    border: 1px solid @border-color !important;
+    background: @background-light !important;
+    
+    &:hover {
+      color: @primary-color;
+    }
+  }
+  
+  .ant-tabs-tab-active {
+    background: white !important;
+    border-bottom: 1px solid white !important;
+    color: @primary-color;
+    font-weight: 500;
+  }
+  
+  .ant-tabs-ink-bar {
+    background: @primary-color;
+  }
+}
+
+// Formulario de paralelos
+.parallel-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  
+  .form-label {
+    color: @text-secondary;
+    font-weight: 500;
+  }
+  
+  .quota-input {
+    width: 120px;
+    
+    input {
+      text-align: center;
+    }
+  }
+  
+  .register-btn {
+    margin-top: 8px;
+    width: 120px;
+  }
+}
+
+// Lista de cursos
+.course-list {
+  border: 1px solid @border-color;
+  border-radius: 8px;
+  padding: 8px;
+  max-height: 500px;
+  overflow-y: auto;
+  
+  .course-item {
+    padding: 12px 8px;
+    border-bottom: 1px solid @border-color;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    .course-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+  }
+  
+  .consolidate-btn {
+    display: flex;
+    justify-content: center;
+    margin-top: 16px;
+    
+    button {
+      width: 100%;
+    }
+  }
+}
+
+// Estilos para los checkboxes
+.ant-checkbox-wrapper {
+  &:hover .ant-checkbox-inner {
+    border-color: @primary-color;
+  }
+  
+  .ant-checkbox-checked .ant-checkbox-inner {
+    background-color: @primary-color;
+    border-color: @primary-color;
+  }
+}
+
+// Efecto hover para elementos interactivos
+button, .ant-tabs-tab, .ant-checkbox-wrapper {
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-1px);
+  }
+}
+.action-buttons {
+  display: flex;
+  gap: 8px; /* Espacio entre botones */
+  width: 100%;
+  margin-top: 16px;
+  padding: 8px 0;
+  border-top: 1px solid #f0f0f0;
+
+  .flex-button {
+    flex: 1; /* Hace que cada botón ocupe el mismo espacio */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 0; /* Permite que el texto se ajuste correctamente */
+  }
+}
+
+.bold-description-labels {
+  .ant-descriptions-item-label {
+    font-weight: 600 !important;
+    color: @text-color;
+  }
+}

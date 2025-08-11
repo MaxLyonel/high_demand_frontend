@@ -1,133 +1,145 @@
 <nz-space nzDirection="vertical" nzSize="large">
-  <nz-card class="mb-4" *nzSpaceItem>
+  <!-- Tarjeta de información de la unidad educativa -->
+  <nz-card class="info-card" *nzSpaceItem [nzBordered]="true">
+
+    <h5 nz-typography class="section-title">UNIDAD EDUCATIVA</h5>
     <nz-descriptions
-      nzTitle="UNIDAD EDUCATIVA"
       nzLayout="vertical"
       nzSize="small"
       [nzColumn]="4"
+      class="bold-description-labels"
     >
-      <nz-descriptions-item nzTitle="Nombre" >{{ institution?.name | lowercase }} </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="NOMBRE" style="text-transform: capitalize;">{{ institution?.name }}</nz-descriptions-item>
       <nz-descriptions-item nzTitle="SIE">{{ institution?.id }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Estado">{{ institution?.state | lowercase }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Ambito">{{ institution?.scope | lowercase }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Dependencia">{{ institution?.scope | lowercase }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Dirección" [nzSpan]="2">
-        {{ institution?.direction | lowercase }}
+      <nz-descriptions-item nzTitle="ESTADO">
+        <nz-tag [nzColor]="institution?.state === 'Abierta' ? 'success' : 'error'">
+          {{ institution?.state | uppercase }}
+        </nz-tag>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="AMBITO">{{ institution?.scope }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="DEPENDENCIA">{{ institution?.scope }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="DIRECCION" [nzSpan]="2" style="text-transform: capitalize;">
+        {{ institution?.direction }}
       </nz-descriptions-item>
     </nz-descriptions>
   </nz-card>
 
-  <nz-card *nzSpaceItem>
+  <!-- Tarjeta de inscripción -->
+  <nz-card *nzSpaceItem [nzBordered]="true" class="inscription-card">
     <div nz-row [nzGutter]="15">
+      <!-- Sección de niveles, grados y paralelos -->
       <div nz-col [nzSpan]="14">
-        <h5 nz-typography class="mb-3">INSCRIPCION DE LA UNIDAD EDUCATIVA</h5>
+        <h5 nz-typography class="section-title">INSCRIPCIÓN DE LA UNIDAD EDUCATIVA</h5>
 
         <nz-tabset
           nzType="card"
           nzTabPosition="left"
           [(nzSelectedIndex)]="selectedLevelIndex"
           (nzSelectChange)="onLevelChange([$event])"
+          class="custom-tabset"
         >
           @for (level of levels; track level) {
             <nz-tab
               [nzTitle]="level.levelName"
               [nzDisabled]="level.disabled"
             >
-              <!-- (nzSelect)="log(['select', level])" -->
-              <!-- (nzClick)="log(['click', level])"
-              (nzContextmenu)="log(['contextmenu', level])"
-              (nzDeselect)="log(['deselect', level])" -->
-              <ng-container>
-                <nz-tabset
-                  nzType="card"
-                  nzTabPosition="left"
-                  [(nzSelectedIndex)]="selectedGradeIndex"
-                  (nzSelectChange)="onGradeChange([$event])"
-                >
-                  @for(grade of level.grades; track grade) {
-                    <nz-tab [nzTitle]="grade.gradeName">
-                      <nz-tabset
-                        nzType="card"
-                        nzTabPosition="left"
-                        [(nzSelectedIndex)]="selectedParallelIndex"
-                        (nzSelectChange)="onParallelChange([$event])"
-                      >
-                        @for(parallel of grade.parallels; track parallel) {
-                          <nz-tab [nzTitle]="parallel.parallelName">
-                            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                              <label style="text-align: center;">Número de plazas</label>
+              <nz-tabset
+                nzType="card"
+                nzTabPosition="left"
+                [(nzSelectedIndex)]="selectedGradeIndex"
+                (nzSelectChange)="onGradeChange([$event])"
+                class="custom-tabset"
+              >
+                @for(grade of level.grades; track grade) {
+                  <nz-tab [nzTitle]="grade.gradeName">
+                    <nz-tabset
+                      nzType="card"
+                      nzTabPosition="left"
+                      [(nzSelectedIndex)]="selectedParallelIndex"
+                      (nzSelectChange)="onParallelChange([$event])"
+                      class="custom-tabset"
+                    >
+                      @for(parallel of grade.parallels; track parallel) {
+                        <nz-tab [nzTitle]="parallel.parallelName">
+                          <div class="parallel-form">
+                            <label class="form-label">Número de plazas</label>
 
-                              <nz-input-group [nzSuffix]="inputClearTpl" style="width: 120px;">
-                                <input
-                                  type="text"
-                                  nz-input
-                                  [(ngModel)]="inputValue"
-                                  placeholder="Nro plaza"
-                                  style="width: 100%;"
-                                >
-                              </nz-input-group>
+                            <nz-input-group [nzSuffix]="inputClearTpl" class="quota-input">
+                              <input
+                                type="number"
+                                nz-input
+                                [(ngModel)]="inputValue"
+                                placeholder="Nro plaza"
+                              />
+                            </nz-input-group>
 
-                              <ng-template #inputClearTpl>
-                                <nz-icon
-                                  *ngIf="inputValue"
-                                  class="ant-input-clear-icon"
-                                  nzTheme="fill"
-                                  nzType="close-circle"
-                                  (click)="inputValue = null"
-                                ></nz-icon>
-                              </ng-template>
+                            <ng-template #inputClearTpl>
+                              <nz-icon
+                                *ngIf="inputValue"
+                                class="ant-input-clear-icon"
+                                nzTheme="fill"
+                                nzType="close-circle"
+                                (click)="inputValue = null"
+                              ></nz-icon>
+                            </ng-template>
 
-                              <button
-                                nz-button
-                                [nzType]="'primary'" style="align-self: center;"
-                                (click)="showConfirmRegistrationQuota()"
-                              >
-                                REGISTRAR
-                              </button>
-                            </div>
-                          </nz-tab>
-
-                        }
-                      </nz-tabset>
-                    </nz-tab>
-                  }
-                </nz-tabset>
-              </ng-container>
+                            <button
+                              nz-button
+                              nzType="primary"
+                              class="register-btn"
+                              [disabled]="(inputValue === 0 || inputValue === null) ? true : false"
+                              (click)="showConfirmRegistrationQuota()"
+                            >
+                              REGISTRAR
+                            </button>
+                          </div>
+                        </nz-tab>
+                      }
+                    </nz-tabset>
+                  </nz-tab>
+                }
+              </nz-tabset>
             </nz-tab>
           }
         </nz-tabset>
-
       </div>
-      <div nz-col [nzSpan]="10" >
-        <h5 nz-typography class="mb-3">CURSOS SELECCIONADOS</h5>
-        <nz-list class="demo-loadmore-list" [nzLoading]="initLoading">
-          @for (item of listCourse; track item) {
-            <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-              <nz-list-item-meta
-                [nzDescription]="item.name"
-              >
-              </nz-list-item-meta>
-              <ul nz-list-item-actions>
-                <nz-list-item-action>
-                  <nz-checkbox-group
-                    [nzOptions]="options"
-                    [(ngModel)]="value"
-                    (ngModelChange)="updateSingleCheked()"
-                  >
-                  </nz-checkbox-group>
-                </nz-list-item-action>
-              </ul>
-            </div>
+      <!-- Sección de cursos seleccionados -->
+      <div nz-col [nzSpan]="10">
+        <h5 nz-typography class="section-title">CURSOS SELECCIONADOS</h5>
+        <nz-list class="course-list" [nzLoading]="initLoading" nzItemLayout="horizontal">
+          @for (item of listCourse; track $index) {
+            <nz-list-item class="course-item">
+              <div class="course-content">
+                <nz-list-item-meta [nzDescription]="item.name"></nz-list-item-meta>
+                  <label
+                    nz-checkbox
+                    [(ngModel)]="item.checked"
+                    (ngModelChange)="onCheckboxChange(item, $event)"
+                  ></label>
+              </div>
+            </nz-list-item>
           }
-          <div class="loadmore" nz-list-load-more style="display: flex; flex-direction: column;">
+          <div class="action-buttons">
             <button
-              nz-button
-              class="login-form-button login-form-margin"
-              [nzType]="'primary'"
-              style="align-self: center;"
-              (click)="showConfirmRegistrationHighDemand()"
-            >CONSOLIDAR</button>
-          </div>
+            nz-button
+            nzType="primary"
+            class="mr-2"
+            (click)="showConfirmRegistrationHighDemand()"
+            class="flex-button"
+            [disabled]="(listCourse.length === 0 || selectedCourses().length === 0) ? true : false"
+          >
+            <i nz-icon nzType="check-circle"></i> CONSOLIDAR
+          </button>
+          <button
+            nz-button
+            nzType="default"
+            (click)="saveCourses()"
+            class="flex-button"
+            [disabled]="(listCourse.length === 0 || selectedCourses().length === 0) ? true : false"
+          >
+            <i nz-icon nzType="save"></i> GUARDAR
+          </button>
+        </div>
         </nz-list>
       </div>
     </div>

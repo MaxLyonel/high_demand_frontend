@@ -1,19 +1,189 @@
+<div class="student-selection-container">
+  <!-- Título y botones de acción -->
+  <div class="header-section">
+    <h5 nz-typography class="section-title">BANDEJA DE SELECCIÓN DE ESTUDIANTES</h5>
+    <div class="action-buttons">
+      <button nz-button nzType="primary" (click)="confirmSelection()" [disabled]="selectedStudents.length === 0">
+        <i nz-icon nzType="check-square"></i> Consolidar Selección ({{selectedStudents.length}})
+      </button>
+      <button nz-button nzType="default" (click)="clearFilters()">
+        <i nz-icon nzType="redo"></i> Limpiar Filtros
+      </button>
+    </div>
+  </div>
 
-<div>
-  <h5 nz-typography>BANDEJA DE SELECCIÓN DE ESTUDIANTES</h5>
+  <!-- Filtros -->
+  <div class="filter-section">
+    <nz-collapse>
+      <nz-collapse-panel nzHeader="Filtros de Búsqueda">
+        <div nz-row [nzGutter]="16">
+          <div nz-col [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label>Código RUDE</nz-form-label>
+              <nz-form-control>
+                <input nz-input [(ngModel)]="filters.rudeCode" placeholder="Buscar por RUDE">
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label>Apellidos</nz-form-label>
+              <nz-form-control>
+                <input nz-input [(ngModel)]="filters.lastName" placeholder="Buscar por apellidos">
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label>Nombres</nz-form-label>
+              <nz-form-control>
+                <input nz-input [(ngModel)]="filters.firstName" placeholder="Buscar por nombres">
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        
+        <div nz-row [nzGutter]="16" class="mt-2">
+          <div nz-col [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label>Carnet Identidad</nz-form-label>
+              <nz-form-control>
+                <input nz-input [(ngModel)]="filters.idCard" placeholder="Buscar por CI">
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label>Criterio</nz-form-label>
+              <nz-form-control>
+                <nz-select [(ngModel)]="filters.criteria" nzPlaceHolder="Seleccionar criterio">
+                  <nz-option nzValue="CRITERIO_A" nzLabel="Criterio A"></nz-option>
+                  <nz-option nzValue="CRITERIO_B" nzLabel="Criterio B"></nz-option>
+                  <nz-option nzValue="CRITERIO_C" nzLabel="Criterio C"></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label>Nivel</nz-form-label>
+              <nz-form-control>
+                <nz-select [(ngModel)]="filters.level" nzPlaceHolder="Seleccionar nivel">
+                  <nz-option nzValue="INICIAL" nzLabel="Inicial"></nz-option>
+                  <nz-option nzValue="PRIMARIA" nzLabel="Primaria"></nz-option>
+                  <nz-option nzValue="SECUNDARIA" nzLabel="Secundaria"></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        
+        <div class="filter-actions">
+          <button nz-button nzType="primary" (click)="applyFilters()">
+            <i nz-icon nzType="search"></i> Buscar
+          </button>
+          <button nz-button nzType="default" (click)="clearFilters()" class="ml-2">
+            <i nz-icon nzType="close"></i> Limpiar
+          </button>
+        </div>
+      </nz-collapse-panel>
+    </nz-collapse>
+  </div>
+
+  <!-- Tabla de estudiantes -->
+  <nz-table
+    #studentTable
+    [nzData]="filteredStudents"
+    [nzLoading]="loading"
+    [nzPageSize]="10"
+    [nzShowPagination]="true"
+    [nzScroll]="{ x: '1200px' }"
+    class="student-table"
+  >
+    <thead>
+      <tr class="header-row">
+        <th nzWidth="60px">N°</th>
+        <th nzWidth="120px">Código RUDE</th>
+        <th nzWidth="120px">Ap. Paterno</th>
+        <th nzWidth="120px">Ap. Materno</th>
+        <th nzWidth="150px">Nombres</th>
+        <th nzWidth="130px">Carnet Identidad</th>
+        <th nzWidth="120px">Criterio</th>
+        <th nzWidth="100px">Nivel</th>
+        <th nzWidth="140px">Año escolaridad</th>
+        <th nzWidth="80px">Acción</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let student of studentTable.data; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ student.rudeCode }}</td>
+        <td>{{ student.lastName1 }}</td>
+        <td>{{ student.lastName2 }}</td>
+        <td>{{ student.firstName }}</td>
+        <td>{{ student.idCard }}</td>
+        <td>
+          <nz-tag [nzColor]="getCriteriaColor(student.criteria)">
+            {{ student.criteria }}
+          </nz-tag>
+        </td>
+        <td>{{ student.level }}</td>
+        <td>{{ student.schoolYear }}</td>
+        <td>
+          <button 
+            nz-button 
+            nzType="primary" 
+            nzSize="small"
+            (click)="selectStudent(student)"
+            [nzLoading]="student.loading"
+          >
+            <i nz-icon nzType="check"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+
+  <!-- Modal de confirmación -->
+  <nz-modal
+    [(nzVisible)]="isConfirmVisible"
+    nzTitle="Confirmar Selección"
+    (nzOnCancel)="handleCancel()"
+    (nzOnOk)="handleOk()"
+    [nzOkLoading]="isConfirmLoading"
+  >
+    <ng-container *nzModalContent>
+      <p>¿Está seguro que desea seleccionar al estudiante <strong>{{selectedStudent?.firstName}} {{selectedStudent?.lastName1}}</strong>?</p>
+      <nz-alert 
+        *ngIf="selectedStudent"
+        nzType="info"
+        [nzMessage]="'Código RUDE: ' + selectedStudent?.rudeCode"
+        class="mt-2"
+      ></nz-alert>
+    </ng-container>
+  </nz-modal>
+
+  <!-- Modal de consolidación -->
+  <nz-modal
+    [(nzVisible)]="isConsolidateVisible"
+    nzTitle="Consolidar Selección"
+    (nzOnCancel)="handleConsolidateCancel()"
+    (nzOnOk)="handleConsolidateOk()"
+    [nzOkLoading]="isConsolidateLoading"
+    [nzOkText]="'Confirmar (' + selectedStudents.length + ')'"
+  >
+    <ng-container *nzModalContent>
+      <p>¿Confirmar la selección de {{selectedStudents.length}} estudiantes?</p>
+      <nz-list
+        [nzDataSource]="selectedStudents"
+        nzBordered
+        nzSize="small"
+        class="mt-3"
+      >
+        <nz-list-item *ngFor="let student of selectedStudents">
+          {{student.firstName}} {{student.lastName1}} ({{student.rudeCode}})
+        </nz-list-item>
+      </nz-list>
+    </ng-container>
+  </nz-modal>
 </div>
-<nz-table>
-  <thead>
-    <tr class="header-row">
-      <th>N°</th>
-      <th>Código RUDE</th>
-      <th>Ap. Paterno</th>
-      <th>Ap. Materno</th>
-      <th>Nombres</th>
-      <th>Carnet Identidad</th>
-      <th>Criterio</th>
-      <th>Nivel</th>
-      <th>Año escolaridad</th>
-    </tr>
-  </thead>
-</nz-table>

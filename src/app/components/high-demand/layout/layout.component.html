@@ -13,7 +13,7 @@
       </a>
     </div>
     <ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
-      <li nz-submenu nzOpen nzTitle="Dashboard" nzIcon="dashboard"></li>
+      <li nz-submenu nzOpen nzTitle="Dashboard" nzIcon="dashboard" (click)="router.navigate(['/alta-demanda/dashboard'])"></li>
       <li nz-submenu nzOpen nzTitle="Postulacion" nzIcon="inbox">
         <ul>
           <li nz-menu-item nzMatchRouter>
@@ -24,7 +24,7 @@
       <li nz-submenu nzOpen nzTitle="Bandejas" nzIcon="dashboard">
         <ul>
           <li nz-menu-item nzMatchRouter>
-            <a routerLink="/alta-demanda/main-inbox">Bandeja de Entrada</a>
+            <a routerLink="/alta-demanda/main-inbox">Bandeja</a>
           </li>
           <li nz-menu-item nzMatchRouter>
             <a routerLink="/alta-demanda/register-inbox">Bandeja de Registro</a>
@@ -37,11 +37,17 @@
       <li nz-submenu nzOpen nzTitle="Seguimiento" nzIcon="form">
         <ul>
           <li nz-menu-item nzMatchRouter>
-            <a>Basic Form</a>
+            <a routerLink="/alta-demanda/follow-up">Seguimiento</a>
           </li>
         </ul>
       </li>
-      <li nz-submenu nzOpen nzTitle="Configuración" nzIcon="setting"></li>
+      <li nz-submenu nzOpen nzTitle="Administracion" nzIcon="setting">
+        <ul>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="/alta-demanda/admin">Configuracion</a>
+          </li>
+        </ul>
+      </li>
     </ul>
   </nz-sider>
   <nz-layout>

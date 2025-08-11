@@ -1,0 +1,184 @@
+<nz-card class="seguimiento-container">
+  <div class="seguimiento-header">
+    <h5 nz-typography class="section-title">SEGUIMIENTO DE SOLICITUDES</h5>
+    <div class="seguimiento-filters">
+      <nz-input-group nzSearch [nzSuffix]="suffixIconButton">
+        <input
+          type="text"
+          nz-input
+          placeholder="Buscar por unidad educativa o SIE"
+          [(ngModel)]="searchValue"
+        />
+      </nz-input-group>
+      <ng-template #suffixIconButton>
+        <button nz-button nzType="primary" nzSearch><i nz-icon nzType="search"></i></button>
+      </ng-template>
+
+      <nz-space>
+        <nz-select
+          *nzSpaceItem
+          nzPlaceHolder="Filtrar por estado"
+          [(ngModel)]="filterEstado"
+          nzAllowClear
+        >
+          <nz-option nzValue="Pendiente" nzLabel="Pendiente"></nz-option>
+          <nz-option nzValue="Aprobado" nzLabel="Aprobado"></nz-option>
+          <nz-option nzValue="Observado" nzLabel="Observado"></nz-option>
+          <nz-option nzValue="Rechazado" nzLabel="Rechazado"></nz-option>
+        </nz-select>
+
+        <nz-date-picker
+          *nzSpaceItem
+          nzPlaceHolder="Filtrar por fecha"
+          [(ngModel)]="filterFecha"
+          nzStyle="width: 200px"
+        ></nz-date-picker>
+      </nz-space>
+    </div>
+  </div>
+
+  <nz-tabset>
+    <nz-tab nzTitle="Todas las solicitudes">
+      <nz-table
+        #seguimientoTable
+        [nzData]="registration()"
+        [nzLoading]="loading"
+        [nzTotal]="total"
+        [nzPageSize]="pageSize"
+        [nzPageIndex]="pageIndex"
+        (nzQueryParams)="onQueryParamsChange($event)"
+        nzOuterBordered
+        [nzSize]="'small'"
+        nzBordered
+        nzShowSizeChanger
+        class="custom-table"
+      >
+        <thead>
+          <tr class="header-row">
+            <th class="header-cell" nzWidth="150">Unidad Educativa</th>
+            <th class="header-cell" >SIE</th>
+            <th class="header-cell" >Fecha Solicitud</th>
+            <th class="header-cell" >Estado</th>
+            <th class="header-cell" >Última Actualización</th>
+            <th class="header-cell" >Responsable</th>
+            <th class="header-cell" nzWidth="150px">Observacion</th>
+            <th class="header-cell" nzWidth="100px">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for(solicitud of seguimientoTable.data; track solicitud.id) {
+          <tr>
+            <td>{{ solicitud.educationalInstitutionName }}</td>
+            <td>{{ solicitud.educationalInstitutionId }}</td>
+            <td>{{ solicitud.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>
+              <nz-tag 
+                [nzColor]="solicitud.registrationStatus === RegistrationStatus.APPROVED ? 'success' :
+                          solicitud.registrationStatus === RegistrationStatus.REJECTED ? 'error' :
+                          solicitud.registrationStatus === RegistrationStatus.OBSERVED ? 'warning' : 'processing'">
+                {{ solicitud.registrationStatus }}
+              </nz-tag>
+            </td>
+            <td>{{ solicitud.updatedAt | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ solicitud.userName }}</td>
+            <td>{{ solicitud.observation }}</td>
+            <td>
+              <nz-space nzSize="small">
+                <button
+                  *nzSpaceItem
+                  nz-button
+                  nzType="link"
+                  nzSize="small"
+                  (click)="verDetalle(solicitud)"
+                  nz-tooltip="Ver detalle"
+                >
+                  <i nz-icon nzType="file-search"></i> Detalle
+                </button>
+                <button
+                  *nzSpaceItem
+                  nz-button
+                  nzType="link"
+                  nzSize="small"
+                  (click)="descargarDocumentos(solicitud)"
+                  nz-tooltip="Descargar documentos"
+                >
+                  <i nz-icon nzType="download"></i>
+                </button>
+                @if(solicitud.registrationStatus === RegistrationStatus.PENDING) {
+                <button
+                  *nzSpaceItem
+                  nz-button
+                  nzType="link"
+                  nzSize="small"
+                  nzDanger
+                  (click)="cancelarSolicitud(solicitud)"
+                  nz-tooltip="Cancelar solicitud"
+                >
+                  <i nz-icon nzType="close-circle"></i>
+                </button>
+
+                }
+              </nz-space>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </nz-table>
+    </nz-tab>
+
+    <nz-tab nzTitle="Historial">
+      <nz-timeline>
+        <nz-timeline-item *ngFor="let evento of historial">
+          <p>{{ evento.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
+          <p>{{ evento.accion }} - {{ evento.responsable }}</p>
+          <p *ngIf="evento.comentario" class="comentario">
+            <i nz-icon nzType="message" nzTheme="fill"></i> {{ evento.comentario }}
+          </p>
+        </nz-timeline-item>
+      </nz-timeline>
+    </nz-tab>
+  </nz-tabset>
+
+  <!-- Modal de detalle -->
+  <nz-modal
+    [(nzVisible)]="isVisibleModal"
+    nzTitle="Detalle de Solicitud"
+    (nzOnCancel)="handleCancel()"
+    (nzOnOk)="handleOk()"
+    [nzFooter]="modalFooter"
+    nzWidth="700"
+  >
+    <ng-container *nzModalContent>
+      <nz-descriptions nzBordered [nzColumn]="2">
+        <nz-descriptions-item nzTitle="Unidad Educativa">{{ solicitudSeleccionada?.educationalInstitutionName }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="SIE">{{ solicitudSeleccionada?.educationalInstitutionId }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Fecha Solicitud">{{ solicitudSeleccionada?.createdAt | date:'dd/MM/yyyy' }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Estado">
+          <nz-tag [nzColor]="getColorEstado(solicitudSeleccionada?.registrationStatus)">{{ solicitudSeleccionada?.registrationStatus }}</nz-tag>
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Responsable">{{ solicitudSeleccionada?.userName }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Última Actualización">{{ solicitudSeleccionada?.updatedAt | date:'dd/MM/yyyy HH:mm' }}</nz-descriptions-item>
+      </nz-descriptions>
+
+      <nz-divider nzText="Documentos"></nz-divider>
+      <!-- <nz-list [nzDataSource]="solicitudSeleccionada?.documentos" nzBordered>
+        <nz-list-item *ngFor="let doc of solicitudSeleccionada?.documentos">
+          <nz-list-item-meta
+            [nzTitle]="doc.nombre"
+            [nzDescription]="doc.tipo"
+          >
+            <nz-avatar nz-list-item-meta-avatar nzIcon="file"></nz-avatar>
+          </nz-list-item-meta>
+          <button nz-button nzType="link" (click)="descargarDocumentos(doc)">
+            <i nz-icon nzType="download"></i>
+          </button>
+        </nz-list-item>
+      </nz-list> -->
+    </ng-container>
+
+    <ng-template #modalFooter>
+      <button nz-button nzType="default" (click)="handleCancel()">Cerrar</button>
+      <button nz-button nzType="primary" (click)="handleOk()">Aceptar</button>
+    </ng-template>
+  </nz-modal>
+</nz-card>

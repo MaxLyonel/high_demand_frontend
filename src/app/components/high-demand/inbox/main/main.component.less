@@ -1,0 +1,87 @@
+@screen-md-max: 991px;
+@primary-color: #0D9488;
+@primary-light: #14B8A6;
+@primary-dark: #045e56;
+@text-color: #1E293B;
+@text-secondary: #64748B;
+@border-color: #E2E8F0;
+@background-light: #e4eaf0;
+
+
+.custom-table {
+  border: 1px solid fade(@text-color, 25%);
+  .header-row {
+    background-color: @background-light;
+
+    .header-cell {
+      font-weight: 600;
+      text-align: center;
+      color: @text-color;
+      color: #062644;
+      background-color: @border-color;
+      border-bottom: 1px solid @border-color;
+    }
+  }
+}
+
+
+.bandeja-container {
+  margin: 18px;
+  border: 1px solid fade(@primary-color, 60%);
+
+  .bandeja-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+
+    h2 {
+      margin: 0;
+      font-weight: 500;
+    }
+  }
+
+  .bandeja-filters {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    nz-input-group {
+      width: 300px;
+    }
+  }
+
+  nz-table {
+    margin-top: 16px;
+  }
+}
+
+.section-title {
+  color: @primary-dark;
+  font-weight: 600;
+  margin-bottom: 16px !important;
+  border-left: 4px solid @primary-color;
+  padding-left: 8px;
+}
+
+// Estilos responsivos
+@media (max-width: @screen-md-max) {
+  .bandeja-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+
+    .bandeja-tabs {
+      margin-top: 16px;
+    }
+  }
+
+  .bandeja-filters {
+    flex-direction: column;
+    align-items: flex-start !important;
+
+    nz-space {
+      margin-top: 16px;
+    }
+  }
+}

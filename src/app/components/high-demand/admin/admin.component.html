@@ -1,0 +1,206 @@
+<nz-card nzTitle="CONFIGURACIÓN DE FECHAS OPERATIVAS" [nzBordered]="true" class="config-card">
+  <nz-alert *ngIf="canManageConfig" nzType="info" nzMessage="Modo edición activado" class="mb-4"></nz-alert>
+  <nz-alert *ngIf="!canManageConfig" nzType="warning" nzMessage="Solo lectura - No tienes permisos para editar" class="mb-4"></nz-alert>
+
+  <form nz-form [formGroup]="configForm" (ngSubmit)="submitForm()">
+    <nz-timeline>
+      <!-- Fase 1: Postulación UE -->
+      <nz-timeline-item nzColor="blue">
+        <nz-card nzTitle="FASE 1: POSTULACIÓN UNIDADES EDUCATIVAS" [nzBordered]="true">
+          <div nz-row [nzGutter]="16">
+            <div nz-col [nzSpan]="12">
+              <nz-form-item>
+                <nz-form-label nzFor="fec_pos_ue_ini">Fecha Inicio</nz-form-label>
+                <nz-form-control>
+                  <nz-date-picker 
+                    formControlName="fec_pos_ue_ini" 
+                    nzShowTime 
+                    nzFormat="yyyy-MM-dd HH:mm" 
+                    style="width: 100%"
+                  ></nz-date-picker>
+                    <!-- [nzDisabled]="!canManageConfig" -->
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="12">
+              <nz-form-item>
+                <nz-form-label nzFor="fec_pos_ue_fin">Fecha Fin</nz-form-label>
+                <nz-form-control>
+                  <nz-date-picker 
+                    formControlName="fec_pos_ue_fin" 
+                    nzShowTime 
+                    nzFormat="yyyy-MM-dd HH:mm" 
+                    style="width: 100%"
+                  ></nz-date-picker>
+                    <!-- [nzDisabled]="!canManageConfig" -->
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+        </nz-card>
+      </nz-timeline-item>
+
+      <!-- Fase 2: Revisión Distrital -->
+      <nz-timeline-item nzColor="blue">
+        <nz-card nzTitle="FASE 2: REVISIÓN DISTRITAL" [nzBordered]="true">
+          <div nz-row [nzGutter]="16">
+            <div nz-col [nzSpan]="12">
+              <nz-form-item>
+                <nz-form-label nzFor="fec_rev_dis_ini">Fecha Inicio</nz-form-label>
+                <nz-form-control>
+                  <nz-date-picker 
+                    formControlName="fec_rev_dis_ini" 
+                    nzShowTime 
+                    nzFormat="yyyy-MM-dd HH:mm" 
+                    style="width: 100%"
+                  ></nz-date-picker>
+                    <!-- [nzDisabled]="!canManageConfig" -->
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="12">
+              <nz-form-item>
+                <nz-form-label nzFor="fec_rev_dis_fin">Fecha Fin</nz-form-label>
+                <nz-form-control>
+                  <nz-date-picker 
+                    formControlName="fec_rev_dis_fin" 
+                    nzShowTime 
+                    nzFormat="yyyy-MM-dd HH:mm" 
+                    style="width: 100%"
+                  ></nz-date-picker>
+                </nz-form-control>
+                    <!-- [nzDisabled]="!canManageConfig" -->
+              </nz-form-item>
+            </div>
+          </div>
+        </nz-card>
+      </nz-timeline-item>
+
+      <!-- Fase 3: Revisión Departamental -->
+      <nz-timeline-item nzColor="blue">
+        <nz-card nzTitle="FASE 3: REVISIÓN DEPARTAMENTAL" [nzBordered]="true">
+          <div nz-row [nzGutter]="16">
+            <div nz-col [nzSpan]="12">
+              <nz-form-item>
+                <nz-form-label nzFor="fec_rev_dep_ini">Fecha Inicio</nz-form-label>
+                <nz-form-control>
+                  <nz-date-picker 
+                    formControlName="fec_rev_dep_ini" 
+                    nzShowTime 
+                    nzFormat="yyyy-MM-dd HH:mm" 
+                    style="width: 100%"
+                  ></nz-date-picker>
+                    <!-- [nzDisabled]="!canManageConfig" -->
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="12">
+              <nz-form-item>
+                <nz-form-label nzFor="fec_rev_dep_fin">Fecha Fin</nz-form-label>
+                <nz-form-control>
+                  <nz-date-picker 
+                    formControlName="fec_rev_dep_fin" 
+                    nzShowTime 
+                    nzFormat="yyyy-MM-dd HH:mm" 
+                    style="width: 100%"
+                  ></nz-date-picker>
+                    <!-- [nzDisabled]="!canManageConfig" -->
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+        </nz-card>
+      </nz-timeline-item>
+
+      <!-- Fase 4: Operativo -->
+      <nz-timeline-item nzColor="blue">
+        <nz-card nzTitle="FASE 4: OPERATIVO" [nzBordered]="true">
+          <div nz-row [nzGutter]="16">
+            <div nz-col [nzSpan]="12">
+              <nz-form-item>
+                <nz-form-label nzFor="fec_ope_ini">Fecha Inicio</nz-form-label>
+                <nz-form-control>
+                  <nz-date-picker 
+                    formControlName="fec_ope_ini" 
+                    nzShowTime 
+                    nzFormat="yyyy-MM-dd HH:mm" 
+                    style="width: 100%"
+                  ></nz-date-picker>
+                    <!-- [nzDisabled]="!canManageConfig" -->
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <nz-col [nzSpan]="12">
+              <nz-form-item>
+                <nz-form-label nzFor="fec_ope_fin">Fecha Fin</nz-form-label>
+                <nz-form-control>
+                  <nz-date-picker 
+                    formControlName="fec_ope_fin" 
+                    nzShowTime 
+                    nzFormat="yyyy-MM-dd HH:mm" 
+                    style="width: 100%"
+                  ></nz-date-picker>
+                    <!-- [nzDisabled]="!canManageConfig" -->
+                </nz-form-control>
+              </nz-form-item>
+            </nz-col>
+          </div>
+        </nz-card>
+      </nz-timeline-item>
+
+      <!-- Fecha de Sorteo -->
+      <nz-timeline-item nzColor="green">
+        <nz-card nzTitle="SORTEO" [nzBordered]="true">
+          <div nz-row [nzGutter]="16">
+            <nz-col [nzSpan]="24">
+              <nz-form-item>
+                <nz-form-label nzFor="fecha_sorteo">Fecha y Hora</nz-form-label>
+                <nz-form-control>
+                  <nz-date-picker 
+                    formControlName="fecha_sorteo" 
+                    nzShowTime 
+                    nzFormat="yyyy-MM-dd HH:mm" 
+                    style="width: 100%"
+                  ></nz-date-picker>
+                    <!-- [nzDisabled]="!canManageConfig" -->
+                </nz-form-control>
+              </nz-form-item>
+            </nz-col>
+          </div>
+        </nz-card>
+      </nz-timeline-item>
+    </nz-timeline>
+
+    <div class="form-actions">
+      <button 
+        nz-button 
+        nzType="primary" 
+        [nzLoading]="isLoading" 
+        [disabled]="!configForm.valid || !canManageConfig"
+      >
+        Guardar Configuración
+      </button>
+      <button 
+        nz-button 
+        nzType="default" 
+        class="ml-2" 
+        (click)="resetForm()"
+        [disabled]="!canManageConfig"
+      >
+        Restablecer
+      </button>
+    </div>
+  </form>
+</nz-card>
+
+<nz-modal
+  [(nzVisible)]="isVisibleModal"
+  nzTitle="Confirmación"
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="handleOk()"
+>
+  <ng-container *nzModalContent>
+    <p>¿Está seguro que desea guardar esta configuración de fechas?</p>
+    <nz-alert nzType="warning" nzMessage="Esta acción afectará el flujo del operativo" class="mt-2"></nz-alert>
+  </ng-container>
+</nz-modal>
