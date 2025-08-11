@@ -13,7 +13,7 @@ import { NzRadioModule } from "ng-zorro-antd/radio";
 import { NzSpaceModule } from "ng-zorro-antd/space";
 import { NzTabsModule } from "ng-zorro-antd/tabs";
 import { NzTypographyModule } from "ng-zorro-antd/typography";
-import { switchMap, tap } from "rxjs";
+import { switchMap, tap, catchError } from 'rxjs';
 import { CommonModule } from "@angular/common";
 import ICourseList from "../../../domain/ports/i-course-list";
 import { NzModalModule, NzModalRef, NzModalService } from "ng-zorro-antd/modal";
@@ -234,10 +234,27 @@ saveCourses() {
     this.confirmModal = this.modal.confirm({
       nzTitle: 'Registrar la Unidad Educativa como Alta Demanda',
       nzContent: 'Revise antes de confirmar',
-      nzOnOk: () =>
-        new Promise((resolve, reject) => {
-          setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
-        }).catch(() => console.log('Oops errors!'))
+      nzOnOk: () => {
+        const { userId } = this.localStorageService.getUser();
+        this._highDemand.getHighDemandByInstitution(this.institution.id).subscribe({
+          next: (highDemand) => {
+            const obj = {
+              highDemandRegistrationId: highDemand.id,
+              userId: userId,
+              workflowStateId: 2,
+              registrationStatus: highDemand.registrationStatus,
+              observation: ''
+            }
+            this._highDemand.updateWorkflowState(obj).subscribe({
+              next: () => console.log('todo salio bien'),
+            })
+          }
+        }
+        )
+      }
+        // new Promise((resolve, reject) => {
+        //   setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
+        // }).catch(() => console.log('Oops errors!'))
     })
   }
 }

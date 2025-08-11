@@ -27,4 +27,9 @@ export default class HighDemandManager implements IHighDemand {
     const result = this._highDemandAdapter.getCourse(highDemandId)
     return result
   }
+
+  updateWorkflowState(obj: any): Observable<any> {
+    const result = this._highDemandAdapter.updateWorkflowState(obj)
+    return result
+  }
 }

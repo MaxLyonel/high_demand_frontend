@@ -35,4 +35,14 @@ export class HighDemandAdapterService implements IManagerHighDemand {
       })
     )
   }
+
+  updateWorkflowState(obj: any): Observable<any> {
+    return this.http.post(`high-demand/udpate-state-worfkflow`, obj, {
+      context: new HttpContext().set(IS_USER_ACTION, true)
+    }).pipe(
+      tap(highDemand => {
+        console.log("Se ha actualizado el estado del flujo", highDemand)
+      })
+    )
+  }
 }
