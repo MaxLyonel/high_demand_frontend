@@ -108,40 +108,54 @@ export class PostulationComponent implements OnInit {
     this.selectedParallel = gradeSelected.parallels[this.selectedParallelIndex]
   }
 
-  ngOnInit(): void {
-    const user = this.localStorageService.getUser();
-    const { personId } = user;
+ngOnInit(): void {
+  const user = this.localStorageService.getUser();
+  const { personId } = user;
 
-    this._teacher.getInfoTeacher(personId).pipe(
-      // 1️⃣ Guardar datos de institución y pasar el ID al siguiente paso
-      switchMap(res => {
-        const { educationalInstitutionId: sie } = res;
-        return this._institution.getInfoInstitution(sie);
-      }),
-      tap(institution => this.institution = institution), // Guardar institución en variable
-      // 2️⃣ Usar el ID de la institución para obtener cursos
-      switchMap(institution =>
-        this._courses.showCourses(institution.id, 2025)
-      )
-    ).subscribe({
-      next: (courses) => {
-        this.levels = courses;
-        // Inicializar valores por defecto si hay datos
-        if (this.levels.length > 0) {
-          this.selectedLevel = this.levels[0];
-          if (this.selectedLevel.grades.length > 0) {
-            this.selectedGrade = this.selectedLevel.grades[0];
-            if (this.selectedGrade.parallels.length > 0) {
-              this.selectedParallel = this.selectedGrade.parallels[0];
+  this._teacher.getInfoTeacher(personId).pipe(
+    switchMap(res => {
+      const { educationalInstitutionId: sie } = res;
+      return this._institution.getInfoInstitution(sie);
+    }),
+    tap(institution => this.institution = institution),
+    switchMap(institution => 
+      this._courses.showCourses(institution.id, 2025).pipe(
+        tap(courses => {
+          this.levels = courses;
+          if (this.levels.length > 0) {
+            this.selectedLevel = this.levels[0];
+            if (this.selectedLevel.grades.length > 0) {
+              this.selectedGrade = this.selectedLevel.grades[0];
+              if (this.selectedGrade.parallels.length > 0) {
+                this.selectedParallel = this.selectedGrade.parallels[0];
+              }
             }
           }
-        }
-      },
-      error: (err) => {
-        console.error('Error cargando datos', err);
+        }),
+        switchMap(() => this._highDemand.getHighDemandByInstitution(institution.id))
+      )
+    ),
+    switchMap(highDemand => this._highDemand.getCoures(highDemand.id))
+  ).subscribe({
+    next: (courses) => {
+      this.listCourse = []; // limpia la lista antes de agregar
+      for (let course of courses) {
+        this.listCourse.push({
+          checked: true,
+          name: `${course.levelName} ${course.gradeName} ${course.parallelName} - cupo:${course.totalQuota}`,
+          quota: course.levelId!,
+          levelId: course.levelId,
+          gradeId: course.gradeId,
+          parallelId: course.parallelId
+        });
       }
-    });
-  }
+    },
+    error: (err) => {
+      console.error('Error cargando datos', err);
+    }
+  });
+}
+
 
   onCheckboxChange(item: any, isChecked: boolean) {
     item.checked = isChecked;

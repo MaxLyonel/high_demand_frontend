@@ -27,4 +27,12 @@ export class HighDemandAdapterService implements IManagerHighDemand {
       })
     )
   }
+
+  getCourse(highDemandId: number): Observable<any> {
+    return this.http.get(`high-demand-course/courses/${highDemandId}`).pipe(
+      tap(highDemand => {
+        console.log("Se ha obtenido cursos de la alta demanda", highDemand)
+      })
+    )
+  }
 }
