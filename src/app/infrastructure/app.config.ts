@@ -11,6 +11,9 @@ import { FormsModule } from '@angular/forms';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { apiBaseInterceptor } from './interceptors/api-base.interceptor';
+import { TeacherAdapterService } from '../adapters/teacher.service';
+import { InstitutionAdapterService } from '../adapters/institution-api.service';
+import InstitutionManager from '../domain/institution-manager';
 
 registerLocaleData(es);
 
@@ -24,5 +27,8 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     provideHttpClient(),
     provideHttpClient(withInterceptors([apiBaseInterceptor])),
+    { provide: 'IManagerTeacher', useClass: TeacherAdapterService },
+    { provide: 'IManagerInstitution', useClass: InstitutionAdapterService }, // ADAPTER
+    { provide: 'IInstituionDetail', useClass: InstitutionManager },
   ]
 };

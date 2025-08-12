@@ -6,14 +6,12 @@
 @text-secondary: #64748B;
 @border-color: #E2E8F0;
 @background-light: #e4eaf0;
-@card-shadow: 0 1px 2px -2px rgba(0, 0, 0, 0.16), 0 3px 6px 0 rgba(0, 0, 0, 0.12), 0 5px 12px 4px rgba(0, 0, 0, 0.09);
 
 // Estilos generales
 .info-card, .inscription-card {
   border: 1px solid fade(@primary-color, 60%);
-  // box-shadow: @card-shadow;
   border-radius: 8px;
-  
+
   .ant-card-head {
     border-bottom: 1px solid @border-color;
     background-color: fade(@primary-color, 10%);
@@ -38,19 +36,19 @@
     margin-right: 0 !important;
     border: 1px solid @border-color !important;
     background: @background-light !important;
-    
+
     &:hover {
       color: @primary-color;
     }
   }
-  
+
   .ant-tabs-tab-active {
     background: white !important;
     border-bottom: 1px solid white !important;
     color: @primary-color;
     font-weight: 500;
   }
-  
+
   .ant-tabs-ink-bar {
     background: @primary-color;
   }
@@ -61,22 +59,24 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
   padding: 16px;
-  
+  margin-right: 10px;
+  border-radius: 5px;
+  background-color: rgb(224, 225, 225);
+
   .form-label {
     color: @text-secondary;
     font-weight: 500;
   }
-  
+
   .quota-input {
     width: 120px;
-    
+
     input {
       text-align: center;
     }
   }
-  
+
   .register-btn {
     margin-top: 8px;
     width: 120px;
@@ -88,17 +88,18 @@
   border: 1px solid @border-color;
   border-radius: 8px;
   padding: 8px;
-  max-height: 500px;
+  max-height: 300px;
   overflow-y: auto;
-  
+  padding-right: 8px;
+
   .course-item {
     padding: 12px 8px;
     border-bottom: 1px solid @border-color;
-    
+
     &:last-child {
       border-bottom: none;
     }
-    
+
     .course-content {
       display: flex;
       justify-content: space-between;
@@ -106,12 +107,12 @@
       width: 100%;
     }
   }
-  
+
   .consolidate-btn {
     display: flex;
     justify-content: center;
     margin-top: 16px;
-    
+
     button {
       width: 100%;
     }
@@ -123,7 +124,7 @@
   &:hover .ant-checkbox-inner {
     border-color: @primary-color;
   }
-  
+
   .ant-checkbox-checked .ant-checkbox-inner {
     background-color: @primary-color;
     border-color: @primary-color;
@@ -133,12 +134,13 @@
 // Efecto hover para elementos interactivos
 button, .ant-tabs-tab, .ant-checkbox-wrapper {
   transition: all 0.3s ease;
-  
+
   &:hover {
     transform: translateY(-1px);
   }
 }
 .action-buttons {
+  position: sticky !important;
   display: flex;
   gap: 8px; /* Espacio entre botones */
   width: 100%;
@@ -161,4 +163,36 @@ button, .ant-tabs-tab, .ant-checkbox-wrapper {
     font-weight: 600 !important;
     color: @text-color;
   }
+}
+
+[nz-radio-button] {
+  height: 38px;
+  line-height: 38px;
+  display: flex;
+  margin-bottom: 3px;
+  flex-direction: column;
+}
+
+.full-width-radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.full-width-radio-group label {
+  flex: 1 1 auto;
+  text-align: center;
+}
+
+.course {
+  background-color: rgb(224, 226, 225);
+  padding: 10px;
+}
+.border-partial-init {
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+.border-partial-end {
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
 }

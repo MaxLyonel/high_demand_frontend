@@ -14,7 +14,7 @@
     </div>
     <ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
       <li nz-submenu nzOpen nzTitle="Dashboard" nzIcon="dashboard" (click)="router.navigate(['/alta-demanda/dashboard'])"></li>
-      <li nz-submenu nzOpen nzTitle="Postulacion" nzIcon="inbox">
+      <li nz-submenu nzOpen nzTitle="Postulacion UE" nzIcon="inbox">
         <ul>
           <li nz-menu-item nzMatchRouter>
             <a routerLink="/alta-demanda/postulacion" >Postular</a>
@@ -68,9 +68,7 @@
           <nz-dropdown-menu #menu="nzDropdownMenu">
             <ul nz-menu>
               <li nz-menu-item (click)="goToProfile()">Perfil</li>
-              <!-- <li nz-menu-item >Perfil</li> -->
               <li nz-menu-item (click)="logout()">Cerrar sesión</li>
-              <!-- <li nz-menu-item >Cerrar sesión</li> -->
             </ul>
           </nz-dropdown-menu>
         </div>

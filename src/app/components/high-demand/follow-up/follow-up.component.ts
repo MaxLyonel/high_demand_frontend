@@ -118,7 +118,7 @@ export class SeguimientoComponent implements OnInit {
     @Inject('IHistory') private readonly _history: IHistory,
     @Inject('IHighDemand') private readonly _highDemand: IHighDemand,
     @Inject('IInstituionDetail') private _institution: IInstituionDetail,
-    @Inject('IMangerTeacher') private _teacher: IManagerTeacher,
+    @Inject('IManagerTeacher') private _teacher: IManagerTeacher,
   ) {}
 
   ngOnInit(): void {

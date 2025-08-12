@@ -1,16 +1,16 @@
 export interface Parallel {
-  parallelId: number;
-  parallelName: string;
+  id: number;
+  name: string;
 }
 
 export interface Grade {
-  gradeId: number;
-  gradeName: string;
+  id: number;
+  name: string;
   parallels: Parallel[];
 }
 
 export interface Level {
-  levelId: number;
-  levelName: string;
+  id: number;
+  name: string;
   grades: Grade[];
 }

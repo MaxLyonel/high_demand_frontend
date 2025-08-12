@@ -3,14 +3,14 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzFormItemComponent, NzFormLabelComponent } from "ng-zorro-antd/form";
 import { NzColDirective, NzGridModule } from "ng-zorro-antd/grid";
 import { NzSelectModule } from "ng-zorro-antd/select";
-import { NzTableComponent, NzTableModule } from "ng-zorro-antd/table";
-import { NzTagComponent, NzTagModule } from "ng-zorro-antd/tag";
-import { NzModalComponent, NzModalModule, NzModalService } from "ng-zorro-antd/modal";
+import { NzTableModule } from "ng-zorro-antd/table";
+import { NzTagModule } from "ng-zorro-antd/tag";
+import { NzModalModule, NzModalService } from "ng-zorro-antd/modal";
 import { NzAlertComponent } from "ng-zorro-antd/alert";
 import { NzListModule } from "ng-zorro-antd/list";
 import { FormsModule } from '@angular/forms';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
-import { NzButtonComponent, NzButtonModule } from 'ng-zorro-antd/button';
+import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { CommonModule } from '@angular/common';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -62,7 +62,7 @@ export class SelectionInbox implements OnInit {
   filteredStudents: Student[] = [];
   selectedStudents: Student[] = [];
   selectedStudent: Student | null = null;
-  
+
   // Filtros
   filters = {
     rudeCode: '',
@@ -73,7 +73,7 @@ export class SelectionInbox implements OnInit {
     level: '',
     schoolYear: ''
   };
-  
+
   // Estados
   loading = false;
   isConfirmVisible = false;
@@ -160,7 +160,7 @@ export class SelectionInbox implements OnInit {
 
   handleOk(): void {
     if (!this.selectedStudent) return;
-    
+
     this.isConfirmLoading = true;
     // Simular procesamiento
     setTimeout(() => {

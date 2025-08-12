@@ -29,7 +29,7 @@ import { HistoryManager } from '../domain/history-manager';
     { provide: 'IManagerInstitutionCourse', useClass: InstitutionCourseAdapterService },
     { provide: 'ICourseList', useClass: CourseManager },
 
-    { provide: 'IMangerTeacher', useClass: TeacherAdapterService },
+    { provide: 'IManagerTeacher', useClass: TeacherAdapterService },
 
     { provide: 'IManagerHighDemand', useClass: HighDemandAdapterService },
     { provide: 'IHighDemand', useClass: HighDemandManager},

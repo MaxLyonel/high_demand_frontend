@@ -1,8 +1,14 @@
+// framework angular
+import { CommonModule } from "@angular/common";
+import { Router } from "@angular/router";
 import { Component, inject, Inject, OnInit, signal } from "@angular/core";
+// external dependencies
 import { FormsModule } from "@angular/forms";
+import { finalize, of, switchMap, tap } from 'rxjs';
+// libreries framework components
 import { NzButtonModule } from "ng-zorro-antd/button";
 import { NzCardComponent } from "ng-zorro-antd/card";
-import { NzCheckboxModule, NzCheckboxOption } from "ng-zorro-antd/checkbox";
+import { NzCheckboxModule } from "ng-zorro-antd/checkbox";
 import { NzDescriptionsModule } from "ng-zorro-antd/descriptions";
 import { NzGridModule } from "ng-zorro-antd/grid";
 import { NzIconModule } from "ng-zorro-antd/icon";
@@ -13,224 +19,239 @@ import { NzRadioModule } from "ng-zorro-antd/radio";
 import { NzSpaceModule } from "ng-zorro-antd/space";
 import { NzTabsModule } from "ng-zorro-antd/tabs";
 import { NzTypographyModule } from "ng-zorro-antd/typography";
-import { switchMap, tap, catchError } from 'rxjs';
-import { CommonModule } from "@angular/common";
-import ICourseList from "../../../domain/ports/i-course-list";
 import { NzModalModule, NzModalRef, NzModalService } from "ng-zorro-antd/modal";
 import { NzTagComponent } from "ng-zorro-antd/tag";
-import IManagerTeacher from "../../../domain/ports/i-manager-teacher";
+// own implementations
+import ICourseList from "../../../domain/ports/i-course-list";
 import { LocalStorageService } from "../../../infrastructure/services/local-storage.service";
-import IInstituionDetail from "../../../domain/ports/i-institution-detail";
 import IHighDemand from "../../../domain/ports/i-high-demand";
-import { Router } from "@angular/router";
+import { AppStore } from '../../../infrastructure/store/app.store';
 
 
-interface CourseRegister {
-  id: number;
-  level: number;
-  grade: number;
-  parallel: number;
+interface CourseList {
+  name: string;
+  checked?: boolean;
+  quota: number;
+  levelId: number;
+  gradeId: number;
+  parallelId: number;
 }
 
 @Component({
   standalone: true,
   imports: [
     CommonModule,
-    NzDescriptionsModule,
     FormsModule,
-    NzTabsModule,
-    NzInputNumberModule,
-    NzRadioModule,
-    NzTypographyModule,
-    NzCardComponent,
-    NzSpaceModule,
-    NzGridModule,
-    NzListModule,
     NzButtonModule,
-    NzInputModule,
-    NzIconModule,
+    NzCardComponent,
     NzCheckboxModule,
-    //modal
+    NzDescriptionsModule,
+    NzGridModule,
+    NzIconModule,
+    NzInputModule,
+    NzInputNumberModule,
+    NzListModule,
     NzModalModule,
-    NzTagComponent
-],
+    NzRadioModule,
+    NzSpaceModule,
+    NzTabsModule,
+    NzTagComponent,
+    NzTypographyModule
+  ],
   selector: 'app-postulation',
   templateUrl: './postulation.component.html',
   styleUrl: './postulation.component.less'
 })
 export class PostulationComponent implements OnInit {
-  selectedLevelIndex = 0;
-  selectedGradeIndex = 0;
-  selectedParallelIndex = 0;
 
-  initLoading = false;
+  // injects
+  modal               = inject(NzModalService)
+  localStorageService = inject(LocalStorageService)
+  router              = inject(Router)
+  appStore            = inject(AppStore)
 
+  // signals
+  selectedCourses = signal<Array<Omit<CourseList, 'name' | 'checked'>>>([])
+  listCourse: Array<CourseList> = [];
+
+  // --- variables receptoras ---
+  levels!: any
+  institution!: any
   inputValue: number | null = null;
 
-  allChecked = false;
-  selectedCourses = signal<Array<any>>([])
+  // --- indicadores de carga
+  initLoading = false;
 
-  // mis variables
-  institution!: any
-  levels!: any
-  // modal
-  modal = inject(NzModalService)
-  localStorageService = inject(LocalStorageService)
-  router = inject(Router)
+  // ----- variables para seleccionar curso ------
+  selectedLevelId: number | null = null;
+  selectedGradeId: number | null = null;
+  selectedParallelId: number | null = null;
+  gradesToShow: any[] = [];
+  parallelsToShow: any[] = [];
+
+  // --- control de flujo
+  savedCourses: boolean = false
   confirmModal?: NzModalRef;
 
-  registeredCourses: Array<CourseRegister[]> = []
-
-  selectedLevel: any;
-  selectedGrade: any;
-  selectedParallel: any;
-  listCourse: Array<{ name: string, checked?: boolean, quota: number, levelId: number, gradeId: number, parallelId: number }> = [];
-
   constructor(
-    @Inject('IInstituionDetail') private _institution: IInstituionDetail,
-    @Inject('ICourseList') private _courses: ICourseList,
-    @Inject('IMangerTeacher') private _teacher: IManagerTeacher,
-    @Inject('IHighDemand') private _highDemand: IHighDemand
+    @Inject('ICourseList')   private _courses    : ICourseList,
+    @Inject('IHighDemand')   private _highDemand : IHighDemand
   ) {}
 
-  onLevelChange(index: any[]): void {
-    this.selectedLevel = this.levels[this.selectedLevelIndex]
-  }
+  ngOnInit(): void {
+    this.initLoading = true;
+    const { institutionInfo } = this.appStore.snapshot
+    if (!institutionInfo) {
+      return;
+    }
 
-  onGradeChange(index: any[]): void {
-    const levelSelected = this.levels[this.selectedLevelIndex]
-    this.selectedGrade = levelSelected.grades[this.selectedGradeIndex];
-  }
+    const { id: institutionId } = institutionInfo
+    this.institution = institutionInfo
 
-  onParallelChange(obj: any[]): void {
-    const levelSelected = this.levels[this.selectedLevelIndex]
-    const gradeSelected = levelSelected.grades[this.selectedGradeIndex]
-    this.selectedParallel = gradeSelected.parallels[this.selectedParallelIndex]
-  }
-
-ngOnInit(): void {
-  const user = this.localStorageService.getUser();
-  const { personId } = user;
-
-  this._teacher.getInfoTeacher(personId).pipe(
-    switchMap(res => {
-      const { educationalInstitutionId: sie } = res;
-      return this._institution.getInfoInstitution(sie);
-    }),
-    tap(institution => this.institution = institution),
-    switchMap(institution => 
-      this._courses.showCourses(institution.id, 2025).pipe(
-        tap(courses => {
-          this.levels = courses;
-          if (this.levels.length > 0) {
-            this.selectedLevel = this.levels[0];
-            if (this.selectedLevel.grades.length > 0) {
-              this.selectedGrade = this.selectedLevel.grades[0];
-              if (this.selectedGrade.parallels.length > 0) {
-                this.selectedParallel = this.selectedGrade.parallels[0];
-              }
-            }
+    this._courses.showCourses(institutionId, 2025).pipe(
+      finalize(() => {
+        this.initLoading = false
+      }),
+      tap(courses => {
+        this.levels = courses;
+      }),
+      switchMap(() => this._highDemand.getHighDemandByInstitution(institutionId)),
+      switchMap((highDemand) => {
+        if(!highDemand) {
+          this.savedCourses = false
+          return of([])
+        }
+        return this._highDemand.getCoures(highDemand.id)
+      })
+    ).subscribe({
+        next: (courses) => {
+          this.listCourse = []
+          for(let course of courses) {
+            this.listCourse.push({
+              checked: true,
+              name: `${course.levelName} - ${course.gradeName} ${course.parallelName} - cupo:${course.totalQuota}`,
+              quota: course.levelId!,
+              levelId: course.levelId,
+              gradeId: course.gradeId,
+              parallelId: course.parallelId
+            })
           }
-        }),
-        switchMap(() => this._highDemand.getHighDemandByInstitution(institution.id))
-      )
-    ),
-    switchMap(highDemand => this._highDemand.getCoures(highDemand.id))
-  ).subscribe({
-    next: (courses) => {
-      this.listCourse = []; // limpia la lista antes de agregar
-      for (let course of courses) {
-        this.listCourse.push({
-          checked: true,
-          name: `${course.levelName} ${course.gradeName} ${course.parallelName} - cupo:${course.totalQuota}`,
-          quota: course.levelId!,
-          levelId: course.levelId,
-          gradeId: course.gradeId,
-          parallelId: course.parallelId
-        });
-      }
-    },
-    error: (err) => {
-      console.error('Error cargando datos', err);
-    }
-  });
-}
-
-
-  onCheckboxChange(item: any, isChecked: boolean) {
-    item.checked = isChecked;
-    this.updateSelectedCourses();
+          if(this.listCourse.length > 0) {
+            this.savedCourses = true
+          } else this.savedCourses = false
+        },
+        error: (err) => {
+          console.error('Error cargando datos', err);
+        }
+    })
   }
 
-  updateSelectedCourses() {
-    this.selectedCourses.set(this.listCourse.filter(c => c.checked))
-    console.log('Cursos seleccionados:', this.selectedCourses());
-  }
+  // ============= FUNCIONES PRINCIPALES ==========
+  saveCourses() { // Registrar institución con sus cursos como alta demanda
+    const { id: educationalInstitutionId } = this.institution;
+    const { user } = this.appStore.snapshot
+    const { id: userId } = user
 
+    const highDemand = {
+      educationalInstitutionId,
+      userId
+    };
 
-saveCourses() {
-  const { id: educationalInstitutionId } = this.institution;
-  const { userId } = this.localStorageService.getUser();
+    const courses = this.selectedCourses().map((item: any) => ({
+      levelId: item.levelId,
+      gradeId: item.gradeId,
+      parallelId: item.parallelId,
+      totalQuota: item.quota
+    }));
 
-  const highDemand = {
-    educationalInstitutionId,
-    userId
-  };
+    const requestData = {
+      highDemand,
+      courses
+    };
 
-  const courses = this.selectedCourses().map((item: any) => ({
-    levelId: item.levelId,
-    gradeId: item.gradeId,
-    parallelId: item.parallelId,
-    totalQuota: item.quota
-  }));
-
-  const requestData = {
-    highDemand,
-    courses
-  };
-
-  console.log('Datos a enviar:', requestData);
-
-  // Enviar al servicio
-  this._highDemand.registerHighDemand(requestData).subscribe({
-    next: (response) => {
-      console.log("id a ir 1", response.data)
-      console.log("id a ir 2", response.data.highDemandRegistration)
-      const newId = response.data.highDemandRegistration.id
-      console.log("id a ir 3", newId)
-      setTimeout(() => {
-        this.router.navigate(['/alta-demanda/follow-up'])
-      }, 1000)
-    },
-    error: (err) => {
-      console.error('Error al registrar:', err);
-    }
-  });
-}
-
-
-
-  // Modales
-  showConfirmRegistrationQuota(): void {
-    this.confirmModal = this.modal.confirm({
-      nzTitle: 'Registrar la cantidad de cupos',
-      nzContent: 'Asegurese de registrar la cantidad correcta de cupos',
-      nzOnOk: () => {
-        this.listCourse.push({
-          checked: true,
-          name: `${this.selectedLevel.levelName} ${this.selectedGrade.gradeName} ${this.selectedParallel.parallelName} - cupo:${this.inputValue}`,
-          quota: this.inputValue!,
-          levelId: this.selectedLevel.levelId,
-          gradeId: this.selectedGrade.gradeId,
-          parallelId: this.selectedParallel.parallelId
-        })
-        this.selectedCourses.set(this.listCourse)
-        this.inputValue = null
+    // Enviar al servicio
+    this._highDemand.registerHighDemand(requestData).subscribe({
+      next: () => {
+        this.savedCourses = true
+        // setTimeout(() => {
+        //   this.router.navigate(['/alta-demanda/follow-up'])
+        // }, 400)
+      },
+      error: (err) => {
+        this.savedCourses = false
+        console.error('Error al registrar:', err);
       }
     });
   }
 
-  showConfirmRegistrationHighDemand(): void {
+  saveHighDemand() { // Registrar oficialmente como alta demanda
+    const { user } = this.appStore.snapshot
+    const { id: userId } = user
+    // const obj = {
+    //   highDemandRegistrationId: highDemand.id,
+    //   userId: userId,
+    //   workflowStateId: 2,
+    //   registrationStatus: highDemand.registrationStatus,
+    //   observation: ''
+    // }
+  }
+
+  addCourseForRegister() { // Agregar cursos a la lista
+    const { level, grade, parallel } = this.getStructure(this.selectedLevelId!, this.selectedGradeId!, this.selectedParallelId!)
+    this.initLoading = true
+    this.listCourse.push({
+      checked: true,
+      name: `${level.name} ${grade.name} ${parallel.name} - cupo:${this.inputValue}`,
+      quota: this.inputValue!,
+      levelId: this.selectedLevelId!,
+      gradeId: this.selectedGradeId!,
+      parallelId: this.selectedParallelId!
+    })
+    this.inputValue = null
+    this.selectedCourses.set(this.listCourse)
+    setTimeout(() => {
+      this.initLoading = false
+    }, 300)
+  }
+
+  // ============= FUNCIONES DE INTERFAZ DE USUARIO ===============
+  onLevelSelected(levelId: number) { // Cuando se selecciona el nivel
+    const level = this.levels.find((l:any) => l.id === levelId)
+    this.gradesToShow = level ? level.grades : []
+  }
+
+  onGradeSelected(gradeId: number) { // Cuando se selecciona el grado
+    const grade = this.gradesToShow.find((g:any) => g.id === gradeId)
+    this.parallelsToShow = grade ? grade.parallels : []
+  }
+
+  onCheckboxChange(item: any, isChecked: boolean) { // Cuando se cambia el estadod el Checkbox
+    item.checked = isChecked;
+    this.selectedCourses.set(this.listCourse.filter(c => c.checked))
+  }
+
+  // ================== FUNCIONES AUXILIARES =======================
+  getStructure(levelId: number, gradeId: number, parallelId: number) {
+    const level = this.levels.find((e: any) => e.id == levelId)
+    const grade = level.grades.find((e: any) => e.id == gradeId)
+    const parallel = grade.parallels.find((e: any) => e.id == parallelId)
+    return {
+      level,
+      grade,
+      parallel
+    }
+  }
+
+  //  ========================= MODALES ============================
+  showConfirmRegistrationQuota(): void { // Modal cuando se registra el cursos y la cuota
+    this.confirmModal = this.modal.confirm({
+      nzTitle: 'Registrar la cantidad de cupos',
+      nzContent: 'Asegurese de registrar la cantidad correcta de cupos',
+      nzOnOk: () => this.addCourseForRegister()
+    });
+  }
+
+  showConfirmRegistrationHighDemand(): void { // Modal cuando se registra la institución como alta demanda
     this.confirmModal = this.modal.confirm({
       nzTitle: 'Registrar la Unidad Educativa como Alta Demanda',
       nzContent: 'Revise antes de confirmar',
@@ -252,9 +273,7 @@ saveCourses() {
         }
         )
       }
-        // new Promise((resolve, reject) => {
-        //   setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
-        // }).catch(() => console.log('Oops errors!'))
     })
   }
+  //  ====================== FIN MODALES ============================
 }

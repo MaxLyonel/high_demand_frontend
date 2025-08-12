@@ -3,7 +3,6 @@ import { PostulationComponent } from './postulation/postulation.component';
 import { RegisterInbox } from './inbox/register/register.component';
 import { SelectionInbox } from './inbox/selection/selection.component';
 import { BandejaComponent } from './inbox/main/main.component';
-import { FollowUpComponent } from '../layout/components/follow-up/follow-up.component';
 import { SeguimientoComponent } from './follow-up/follow-up.component';
 import { OperativoConfigComponent } from './admin/admin.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
@@ -14,13 +13,13 @@ export const HIGH_DEMAND: Routes = [
     path: '',
     loadComponent: () => import('./layout/layout.component'),
     children: [
-      // { path: 'dashboard', component: DashboardComponent },
+      { path: 'dashboard', component: DashboardComponent },
       { path: 'postulacion', component: PostulationComponent },
       { path: 'main-inbox', component: BandejaComponent },
       { path: 'register-inbox', component: RegisterInbox },
-      // { path: 'selection-inbox', component: SelectionInbox },
+      { path: 'selection-inbox', component: SelectionInbox },
       { path: 'follow-up', component: SeguimientoComponent },
-      // { path: 'admin', component: OperativoConfigComponent },
+      { path: 'admin', component: OperativoConfigComponent },
     ]
   },
   {

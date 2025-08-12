@@ -32,4 +32,8 @@ export class LocalStorageService {
     }
     return null
   }
+
+  clear() {
+    localStorage.clear()
+  }
 }

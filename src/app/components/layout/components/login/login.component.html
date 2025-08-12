@@ -2,23 +2,19 @@
     <div class="card-header">Inicio de sesión</div>
     <form nz-form [formGroup]="loginForm" (ngSubmit)="onSubmitLogin()">
       <nz-form-item>
-        <nz-form-control [nzErrorTip]="emailErrorTpl">
+        <nz-form-control [nzErrorTip]="userErrorTpl">
           <input
             nz-input
             formControlName="username"
             placeholder="Usuario"
             type="text"
           />
-          <ng-template #emailErrorTpl let-control>
+          <ng-template #userErrorTpl let-control>
             @if(control.hasError('required')) {
               <ng-container>
-                El email es requerido
+                El usuario es requerido
               </ng-container>
             }
-            <!-- <ng-container *ngIf="control.hasError('email')"> -->
-            <ng-container>
-              Email no válido
-            </ng-container>
           </ng-template>
         </nz-form-control>
       </nz-form-item>
@@ -47,8 +43,4 @@
         Iniciar sesión
       </button>
     </form>
-
-    <div class="login-footer">
-      <a routerLink="/forgot-password">¿Olvidaste tu contraseña?</a>
-    </div>
   </nz-card>
