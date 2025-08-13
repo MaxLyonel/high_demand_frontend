@@ -13,7 +13,17 @@
       </a>
     </div>
     <ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
-      <li nz-submenu nzOpen nzTitle="Dashboard" nzIcon="dashboard" (click)="router.navigate(['/alta-demanda/dashboard'])"></li>
+      <li nz-submenu nzOpen nzTitle="Dashboard" nzIcon="dashboard" >
+        <!-- (click)="router.navigate(['/alta-demanda/dashboard'])" -->
+        <ul>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="/alta-demanda/control-acceso">Admintrar Acceso</a>
+          </li>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="/alta-demanda/dashboard">Dashboard</a>
+          </li>
+        </ul>
+      </li>
       <li nz-submenu nzOpen nzTitle="Postulacion UE" nzIcon="inbox">
         <ul>
           <li nz-menu-item nzMatchRouter>

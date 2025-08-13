@@ -1,0 +1,92 @@
+// Variables
+@primary-color: #0D9488;
+@primary-light: #14B8A6;
+@primary-dark: #045e56;
+@text-color: #1E293B;
+@text-secondary: #64748B;
+@border-color: #E2E8F0;
+@background-light: #f8fafc;
+
+// Estilos generales del contenedor
+.permisos-container {
+  margin: 18px;
+  border: 1px solid fade(@primary-color, 60%);
+
+  .permisos-header {
+    margin-bottom: 24px;
+
+    .section-title {
+      color: @primary-dark;
+      font-weight: 600;
+      margin-bottom: 4px !important;
+      border-left: 4px solid @primary-color;
+      padding-left: 8px;
+    }
+  }
+
+  .permisos-filters {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    gap: 16px;
+    flex-wrap: wrap;
+
+    nz-input-group {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    nz-space {
+      margin-right: auto;
+    }
+  }
+}
+
+// Estilos de la tabla
+.custom-table {
+  border: 1px solid fade(@text-color, 25%);
+
+  .header-row {
+    background-color: @background-light;
+
+    .header-cell {
+      font-weight: 600;
+      text-align: center;
+      color: @text-color;
+      background-color: @border-color;
+      border-bottom: 1px solid @border-color;
+    }
+  }
+}
+
+// Estilos responsivos
+@media (max-width: 768px) {
+  .permisos-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+
+    .permisos-tabs {
+      margin-top: 16px;
+    }
+  }
+
+  .permisos-filters {
+    flex-direction: column;
+    align-items: flex-start !important;
+
+    nz-input-group {
+      width: 100% !important;
+    }
+
+    nz-space {
+      margin-top: 16px;
+      margin-right: 0 !important;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 16px;
+    }
+  }
+}

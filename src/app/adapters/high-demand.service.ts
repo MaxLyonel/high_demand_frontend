@@ -11,6 +11,7 @@ export class HighDemandAdapterService implements IManagerHighDemand {
   private http = inject(HttpClient);
 
   saveHighDemand(obj: any): Observable<any> {
+    console.log("Objeto obtenido: ", obj)
     return this.http.post(`high-demand-course/create`, obj, {
       context: new HttpContext().set(IS_USER_ACTION, true)
     }).pipe(

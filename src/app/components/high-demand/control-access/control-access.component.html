@@ -1,0 +1,92 @@
+  <nz-content class="access-control-content">
+    <div class="roles-cards">
+      <nz-card nzHoverable class="role-card">
+        <div class="role-content">
+          <div class="role-icon" style="background-color: #f0f7ff;">
+            <i nz-icon nzType="safety-certificate" nzTheme="fill" style="color: #52c41a;"></i>
+          </div>
+          <div class="role-info">
+            <p class="role-title">DIRECTOR UNIDAD EDUCATIVA</p>
+            <span nz-typography nzType="secondary">Rol que gestiona las postulaciones</span>
+            <button nz-button nzType="primary" (click)="adminRol()">ADMINISTRAR</button>
+          </div>
+        </div>
+      </nz-card>
+
+      <nz-card nzHoverable class="role-card">
+        <div class="role-content">
+          <div class="role-icon" style="background-color: #f6ffed;">
+            <i nz-icon nzType="safety-certificate" nzTheme="fill" style="color: #52c41a;"></i>
+          </div>
+          <div class="role-info">
+            <p class="role-title">DISTRITAL</p>
+            <span nz-typography nzType="secondary">Rol que aprueba o anula postulaciones</span>
+            <button nz-button nzType="primary" (click)="adminRol()">ADMINISTRAR</button>
+          </div>
+        </div>
+      </nz-card>
+
+      <nz-card nzHoverable class="role-card">
+        <div class="role-content">
+          <div class="role-icon" style="background-color: #fff7e6;">
+            <i nz-icon nzType="safety-certificate" nzTheme="fill" style="color: #52c41a;"></i>
+          </div>
+          <div class="role-info">
+            <p class="role-title">DEPARTAMENTAL</p>
+            <span nz-typography nzType="secondary">Rol que aprueba o anula postulaciones</span>
+            <button nz-button nzType="primary" (click)="adminRol()">ADMINISTRAR</button>
+          </div>
+        </div>
+      </nz-card>
+
+      <nz-card nzHoverable class="role-card">
+        <div class="role-content">
+          <div class="role-icon" style="background-color: #fff0f6;">
+            <i nz-icon nzType="safety-certificate" nzTheme="fill" style="color: #52c41a;"></i>
+          </div>
+          <div class="role-info">
+            <p class="role-title">ROL VER</p>
+            <span nz-typography nzType="secondary">Rol que determina el opeartivo</span>
+            <button nz-button nzType="primary" (click)="adminRol()">ADMINISTRAR</button>
+          </div>
+        </div>
+      </nz-card>
+    </div>
+
+    <nz-card class="permisos-container">
+      @if(showPermissions === true) {
+        <div>
+          <div class="permisos-filters">
+            <nz-input-group nzSearch [nzSuffix]="suffixIconButton">
+              <input type="text" nz-input placeholder="Buscar por descriptor" />
+            </nz-input-group>
+            <ng-template #suffixIconButton>
+              <button nz-button nzType="primary" nzSearch><i nz-icon nzType="search"></i></button>
+            </ng-template>
+            <nz-space>
+              <!-- <nz-tag *nzSpaceItem nzMode="checkable" [nzChecked]="filterActivo" (nzCheckedChange)="filterActivo = $event">
+                Solo activos
+              </nz-tag> -->
+            </nz-space>
+            <button nz-button nzType="primary" >
+              <i nz-icon nzType="plus"></i> Nuevo Permiso
+            </button>
+          </div>
+
+          <nz-table #permisosTable nzSize="small" nzBordered [nzLoading]="isLoadingTable">
+            <thead>
+              <tr class="header-row">
+                <th class="header-cell" nzWidth="80px">Nro</th>
+                <th class="header-cell">Descripción</th>
+                <th class="header-cell">Recurso</th>
+                <th class="header-cell">Estado</th>
+                <th class="header-cell">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </nz-table>
+        </div>
+      }
+    </nz-card>
+  </nz-content>

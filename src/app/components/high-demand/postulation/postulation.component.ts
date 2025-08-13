@@ -150,7 +150,8 @@ export class PostulationComponent implements OnInit {
   saveCourses() { // Registrar institución con sus cursos como alta demanda
     const { id: educationalInstitutionId } = this.institution;
     const { user } = this.appStore.snapshot
-    const { id: userId } = user
+    console.log("user", user)
+    const { userId } = user
 
     const highDemand = {
       educationalInstitutionId,
