@@ -1,8 +1,10 @@
 
-export interface User {
-  id: number,
-  username: string,
-  password: string,
-  isActive: boolean,
-  personId: number
+export class User {
+  constructor(
+  public userId: number,
+  public username: string,
+  public password: string,
+  public isActive: boolean,
+  public personId: number
+  ) {}
 }

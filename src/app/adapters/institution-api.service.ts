@@ -14,7 +14,7 @@ export class InstitutionAdapterService implements IManagerInstitution {
 
   getInfo(id: number): Observable<InstitutionInfo> {
     return this.http.get<InstitutionInfo>(`educational-institution/info/${id}`).pipe(
-      tap(res => console.log("backend datos: ", res )),
+      // tap(res => console.log("backend datos: ", res )),
       catchError(err => {
         return throwError(() => err); // relanza el error
       })

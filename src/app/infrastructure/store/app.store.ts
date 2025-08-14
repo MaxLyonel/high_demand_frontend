@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
+import { User } from "../../domain/models/user.model";
 
 
 interface AppState {
@@ -46,7 +47,7 @@ export class AppStore {
   }
 
   // Métodos de actualización
-  setUser(user: any) {
+  setUser(user: User) {
     this.setState({ user })
   }
 

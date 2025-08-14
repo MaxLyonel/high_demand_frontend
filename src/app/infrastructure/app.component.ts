@@ -14,6 +14,7 @@ import IManagerHistory from '../domain/ports/i-manager-history';
 import { HistoryAdapterService } from '../adapters/history.service';
 import IHistory from '../domain/ports/i-history';
 import { HistoryManager } from '../domain/history-manager';
+import { User } from '../domain/models/user.model';
 
 @Component({
   selector: 'app-root',
@@ -43,9 +44,34 @@ export class AppComponent implements OnInit {
 
     constructor(private abilityService: AbilityService) {}
 
-    ngOnInit() {
-      this.abilityService.loadAbilities().subscribe(() => {
-        console.log('Abilities cargadas');
+    // ngOnInit() {
+    //   this.abilityService.loadAbilities(92506063).subscribe(() => {
+    //     const ability = this.abilityService.getAbility()
+    //     const user = new User(92506063);
+    //     console.log('Puede actualizar?', ability.can('update', user));
+
+    //     // Pasa la misma clase a rulesFor usando detectSubjectType
+    //     ability.rulesFor('update', 'user').forEach((rule, i) => {
+    //       const matchesConditions = rule.conditions
+    //         ? Object.entries(rule.conditions).every(
+    //             ([key, value]) => (user as any)[key] === value
+    //           )
+    //         : true;
+
+    //       console.log(`Regla ${i + 1}:`, rule);
+    //       console.log('¿Coincide con las condiciones?', matchesConditions);
+    //     });
+    //   })
+    // }
+    ngOnInit(): void {
+      this.abilityService.loadAbilities(92506063).subscribe(() => {
+        // const user = new User(92506063, 'leonel', 'leonel', true, 1);
+      
+        // // Verificar permisos normal
+        // console.log('Puede actualizar?', this.abilityService.getAbility().can('update', user));
+      
+        // // Debug completo
+        // this.abilityService.debugCan('update', user);
       });
     }
 }

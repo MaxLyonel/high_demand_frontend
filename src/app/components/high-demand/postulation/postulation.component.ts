@@ -26,6 +26,8 @@ import ICourseList from "../../../domain/ports/i-course-list";
 import { LocalStorageService } from "../../../infrastructure/services/local-storage.service";
 import IHighDemand from "../../../domain/ports/i-high-demand";
 import { AppStore } from '../../../infrastructure/store/app.store';
+import { AbilityService } from "../../../infrastructure/services/ability.service";
+import { User } from "../../../domain/models/user.model";
 
 
 interface CourseList {
@@ -69,6 +71,7 @@ export class PostulationComponent implements OnInit {
   localStorageService = inject(LocalStorageService)
   router              = inject(Router)
   appStore            = inject(AppStore)
+  abilities           = inject(AbilityService)
 
   // signals
   selectedCourses = signal<Array<Omit<CourseList, 'name' | 'checked'>>>([])
@@ -92,6 +95,7 @@ export class PostulationComponent implements OnInit {
   // --- control de flujo
   savedCourses: boolean = false
   confirmModal?: NzModalRef;
+  user!: User
 
   constructor(
     @Inject('ICourseList')   private _courses    : ICourseList,
@@ -100,6 +104,7 @@ export class PostulationComponent implements OnInit {
 
   ngOnInit(): void {
     this.initLoading = true;
+    this.user = this.appStore.snapshot.user
     const { institutionInfo } = this.appStore.snapshot
     if (!institutionInfo) {
       return;
@@ -152,6 +157,7 @@ export class PostulationComponent implements OnInit {
     const { user } = this.appStore.snapshot
     console.log("user", user)
     const { userId } = user
+    // this.user = user
 
     const highDemand = {
       educationalInstitutionId,
@@ -277,4 +283,20 @@ export class PostulationComponent implements OnInit {
     })
   }
   //  ====================== FIN MODALES ============================
+
+  canUpdateUser = () => {
+    if (!this.user) {
+      console.log('Usuario aún no cargado');
+      return false;
+    }
+    const caslUser = {
+      id: this.user.userId, // CASL espera "id"
+      ...this.user
+    };
+    console.log("Usr", this.user.userId)
+
+    this.abilities.debugCan('update', caslUser);
+    return this.abilities.getAbility()?.can('update', this.user ) ?? false;
+  }
+
 }
