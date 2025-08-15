@@ -32,4 +32,14 @@ export default class HighDemandManager implements IHighDemand {
     const result = this._highDemandAdapter.updateWorkflowState(obj)
     return result
   }
+
+  getListHighDemandByRolState(rolId: number, stateId: number): Observable<any> {
+    const result = this._highDemandAdapter.getListHighDemand(rolId, stateId)
+    return result
+  }
+
+  receiveHighDemand(obj: any): Observable<any> {
+    const result = this._highDemandAdapter.receiveHighDemand(obj)
+    return result
+  }
 }

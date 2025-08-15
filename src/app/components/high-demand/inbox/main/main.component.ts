@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, Inject, OnInit } from '@angular/core';
 import { NzTableQueryParams, NzTableComponent, NzTableModule } from 'ng-zorro-antd/table';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalLegacyAPI, NzModalService } from 'ng-zorro-antd/modal';
@@ -11,14 +11,41 @@ import { FormsModule } from '@angular/forms';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzTypographyModule } from 'ng-zorro-antd/typography';
+import IHighDemand from '../../../../domain/ports/i-high-demand';
+import { AppStore } from '../../../../infrastructure/store/app.store';
 
-interface UnidadEducativa {
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+
+interface Institution {
   id: number;
-  nombre: string;
-  sie: string;
-  cursos: number;
-  estado: 'Activo' | 'Inactivo' | 'Pendiente';
-  estadoFlujo: 'En revisión' | 'Aprobado' | 'Rechazado' | 'Observado';
+  name: string;
+}
+
+interface User {
+  id: number;
+  username: number;
+}
+
+interface WorkflowState {
+  id: number;
+  name: string;
+}
+
+interface Rol {
+  id: number;
+  name: string
+}
+
+interface HighDemand {
+  id: number;
+  institution: Institution;
+  user: User;
+  workflowState: WorkflowState;
+  workflow: number;
+  registrationStatus: string;
+  inbox: boolean;
+  rol: Rol;
+  course: any
 }
 
 @Component({
@@ -36,54 +63,14 @@ interface UnidadEducativa {
     NzRadioComponent,
     NzInputModule,
     NzIconModule,
-    NzTypographyModule
+    NzTypographyModule,
+    NzToolTipModule
   ],
   providers: [NzModalService]
 })
 export class BandejaComponent implements OnInit {
   // Datos de ejemplo
-  unidadesEducativas: UnidadEducativa[] = [
-    {
-      id: 1,
-      nombre: 'Colegio Nacional Mixto "San Calixto"',
-      sie: '12345',
-      cursos: 12,
-      estado: 'Activo',
-      estadoFlujo: 'Aprobado'
-    },
-    {
-      id: 2,
-      nombre: 'Unidad Educativa "San Ignacio"',
-      sie: '54321',
-      cursos: 8,
-      estado: 'Pendiente',
-      estadoFlujo: 'En revisión'
-    },
-    {
-      id: 3,
-      nombre: 'Colegio Don Bosco',
-      sie: '98765',
-      cursos: 15,
-      estado: 'Activo',
-      estadoFlujo: 'Observado'
-    },
-    {
-      id: 4,
-      nombre: 'Liceo Militar "Tte. Edmundo Andrade"',
-      sie: '45678',
-      cursos: 10,
-      estado: 'Inactivo',
-      estadoFlujo: 'Rechazado'
-    },
-    {
-      id: 5,
-      nombre: 'Colegio La Salle',
-      sie: '34567',
-      cursos: 14,
-      estado: 'Activo',
-      estadoFlujo: 'Aprobado'
-    }
-  ];
+  highDemands: HighDemand[] = [];
 
   // Configuración de paginación
   pageSize = 10;
@@ -97,71 +84,101 @@ export class BandejaComponent implements OnInit {
   searchValue = '';
 
   // Tipo de bandeja activa
-  activeBandeja: 'entrada' | 'recepcion' | 'salida' = 'entrada';
+  activeTray: 'entrada' | 'recepcion' | 'salida' = 'entrada';
+
+  appStore = inject(AppStore)
 
   constructor(
     private message: NzMessageService,
-    private modal: NzModalService
+    private modal: NzModalService,
+    @Inject('IHighDemand') private _highDemand: IHighDemand
   ) {}
 
   ngOnInit(): void {
-    this.loadData();
+
+    this.loadData(this.activeTray);
   }
 
-  loadData(): void {
+  loadData(type: string): void {
     this.loading = true;
-    // Simular carga de datos
-    setTimeout(() => {
-      this.loading = false;
-    }, 1000);
+    const { user } = this.appStore.snapshot
+    const rolId = user.roles[0].id
+    this.highDemands = []
+    switch(type) {
+      case 'entrada':
+        setTimeout(() => {
+          this._highDemand.getListHighDemandByRolState(rolId, 1).subscribe((response) => {
+            this.highDemands = response.data
+          })
+          this.loading = false;
+        }, 300);
+        break;
+      case 'recepcion':
+        setTimeout(() => {
+          this.loading = false;
+        }, 1000)
+        break;
+      case 'salida':
+        setTimeout(() => {
+          this.loading = false;
+        }, 1000)
+        break;
+    }
   }
 
   onQueryParamsChange(params: NzTableQueryParams): void {
     const { pageSize, pageIndex } = params;
     this.pageSize = pageSize;
     this.pageIndex = pageIndex;
-    this.loadData();
+    this.loadData(this.activeTray);
   }
 
   // Métodos para acciones
-  enviar(unidad: UnidadEducativa): void {
-    this.message.success(`Se envió la unidad educativa ${unidad.nombre}`);
+  receive(highDemand: HighDemand): void {
+    const { id } = highDemand
+    this._highDemand.receiveHighDemand(id).subscribe((response) => {
+      console.log("se ejecuto exitosamente")
+    })
   }
 
-  observar(unidad: UnidadEducativa): void {
+  enviar(unidad: HighDemand): void {
+    this.message.success(`Se envió la unidad educativa ${unidad.institution.name}`);
+  }
+
+  observar(unidad: HighDemand): void {
     this.modal.confirm({
-      nzTitle: `¿Observar la unidad educativa ${unidad.nombre}?`,
+      nzTitle: `¿Observar la unidad educativa ${unidad.institution.name}?`,
       nzContent: 'Ingrese el motivo de la observación:',
       nzOkText: 'Confirmar',
       nzCancelText: 'Cancelar',
-      nzOnOk: () => this.message.success(`Observación enviada para ${unidad.nombre}`)
+      nzOnOk: () => this.message.success(`Observación enviada para ${unidad.institution.name}`)
     });
   }
 
-  anular(unidad: UnidadEducativa): void {
+  anular(unidad: HighDemand): void {
     this.modal.confirm({
-      nzTitle: `¿Anular la unidad educativa ${unidad.nombre}?`,
+      nzTitle: `¿Anular la unidad educativa ${unidad.institution.name}?`,
       nzContent: 'Esta acción no se puede deshacer',
       nzOkText: 'Sí, anular',
       nzOkType: 'primary',
       nzOkDanger: true,
       nzCancelText: 'Cancelar',
-      nzOnOk: () => this.message.success(`Unidad ${unidad.nombre} anulada`)
+      nzOnOk: () => this.message.success(`Unidad ${unidad.institution.name} anulada`)
     });
   }
 
-  verCursos(unidad: UnidadEducativa): void {
+  verCursos(unidad: HighDemand): void {
     this.modal.info({
-      nzTitle: `Cursos de ${unidad.nombre}`,
-      nzContent: `La unidad educativa tiene ${unidad.cursos} cursos registrados.`,
+      nzTitle: `Cursos de ${unidad.institution.name}`,
+      nzContent: `La unidad educativa tiene ${unidad.course} cursos registrados.`,
       nzOkText: 'Cerrar'
     });
   }
 
   // Métodos para cambiar entre bandejas
-  cambiarBandeja(tipo: 'entrada' | 'recepcion' | 'salida'): void {
-    this.activeBandeja = tipo;
-    this.loadData();
-    this.message.info(`Mostrando bandeja de ${tipo}`);
+  changeInbox(type: 'entrada' | 'recepcion' | 'salida'): void {
+    this.activeTray = type;
+    this.loadData(type);
+    this.message.info(`Mostrando bandeja de ${type}`);
   }
 }

@@ -156,12 +156,15 @@ export class PostulationComponent implements OnInit {
     const { id: educationalInstitutionId } = this.institution;
     const { user } = this.appStore.snapshot
     console.log("user", user)
-    const { userId } = user
+    const { userId, roles } = user
+    const rolAllowed = roles.find((e:any) => e.id == 9)
+
     // this.user = user
 
     const highDemand = {
       educationalInstitutionId,
-      userId
+      userId,
+      rolId: rolAllowed.id
     };
 
     const courses = this.selectedCourses().map((item: any) => ({
@@ -176,6 +179,7 @@ export class PostulationComponent implements OnInit {
       courses
     };
 
+    console.log("requestData", rolAllowed[0])
     // Enviar al servicio
     this._highDemand.registerHighDemand(requestData).subscribe({
       next: () => {

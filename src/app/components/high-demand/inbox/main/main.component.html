@@ -2,7 +2,7 @@
   <div class="bandeja-header">
     <h5 nz-typography class="section-title" >BANDEJAS ALTA DEMANDA</h5>
     <div class="bandeja-tabs">
-      <nz-radio-group [(ngModel)]="activeBandeja" (ngModelChange)="cambiarBandeja($event)">
+      <nz-radio-group [(ngModel)]="activeTray" (ngModelChange)="changeInbox($event)">
         <label nz-radio-button nzValue="entrada">Bandeja de Entrada</label>
         <label nz-radio-button nzValue="recepcion">Bandeja de Recepción</label>
         <label nz-radio-button nzValue="salida">Bandeja de Salida</label>
@@ -46,7 +46,7 @@
 
   <nz-table
     #filterTable
-    [nzData]="unidadesEducativas"
+    [nzData]="highDemands"
     [nzLoading]="loading"
     [nzTotal]="total"
     [nzPageSize]="pageSize"
@@ -62,6 +62,8 @@
       <tr class="header-row">
         <th class="header-cell" >Unidad Educativa</th>
         <th class="header-cell" nzWidth="150px">SIE</th>
+        <th class="header-cell" nzWidth="150px">Usuario</th>
+        <th class="header-cell" nzWidth="150px">Rol</th>
         <th class="header-cell" nzWidth="120px">Detalle</th>
         <th class="header-cell" nzWidth="100px">Estado inscripcion</th>
         <th class="header-cell" nzWidth="150px">Estado Flujo</th>
@@ -71,8 +73,10 @@
     <tbody>
       @for(data of filterTable.data; track data) {
       <tr >
-        <td>{{ data.nombre }}</td>
-        <td>{{ data.sie }}</td>
+        <td>{{ data.institution.name }}</td>
+        <td>{{ data.institution.id }}</td>
+        <td>{{ data.user.username }}</td>
+        <td>{{ data.rol.name }}</td>
         <td>
           <button
             nz-button
@@ -80,21 +84,21 @@
             nzSize="small"
             (click)="verCursos(data)"
           >
-            {{ data.cursos }} cursos
+            {{ data.course }} cursos
           </button>
         </td>
         <td>
-          <nz-tag 
-            [nzColor]="data.estado === 'Activo' ? 'success' : data.estado === 'Inactivo' ? 'error' : 'warning'">
-            {{ data.estado }}
+          <nz-tag
+            [nzColor]="data.workflowState.id === 1 ? 'warning' : data.workflowState.id === 2 ? 'error' : 'warning'">
+            {{ data.registrationStatus }}
           </nz-tag>
         </td>
         <td>
-          <nz-tag 
-            [nzColor]="data.estadoFlujo === 'Aprobado' ? 'success' : 
-                      data.estadoFlujo === 'Rechazado' ? 'error' : 
-                      data.estadoFlujo === 'Observado' ? 'warning' : 'processing'">
-            {{ data.estadoFlujo }}
+          <nz-tag
+            [nzColor]="data.registrationStatus === 'PENDIENTE' ? 'success' :
+                      data.workflowState.id === 1 ? 'error' :
+                      data.workflowState.id === 2 ? 'warning' : 'processing'">
+            {{ data.workflowState.name }}
           </nz-tag>
         </td>
         <td>
@@ -103,6 +107,17 @@
               *nzSpaceItem
               nz-button
               nzType="primary"
+              nzSize="small"
+              nzShape="circle"
+              (click)="receive(data)"
+              nz-tooltip="Recepcionar"
+            >
+              <i nz-icon nzType="inbox"></i>
+            </button>
+            <button
+              *nzSpaceItem
+              nz-button
+              nzType="default"
               nzSize="small"
               nzShape="circle"
               (click)="enviar(data)"

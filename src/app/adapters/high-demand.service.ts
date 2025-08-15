@@ -1,7 +1,7 @@
-import { HttpClient, HttpContext } from "@angular/common/http";
+import { HttpClient, HttpContext, HttpParams } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import IManagerHighDemand from "../domain/ports/i-manager-high-demand";
-import { Observable, tap } from "rxjs";
+import { catchError, Observable, tap, throwError } from "rxjs";
 import { IS_USER_ACTION } from "../infrastructure/constants/constants";
 
 
@@ -46,4 +46,29 @@ export class HighDemandAdapterService implements IManagerHighDemand {
       })
     )
   }
+
+  getListHighDemand(rolId: number, stateId: number): Observable<any> {
+    console.log("this--> ", rolId, stateId)
+    const params = new HttpParams()
+      .set('rolId', rolId.toString())
+      .set('stateId', stateId.toString())
+    return this.http.get(`high-demand/list-by-state-rol`, { params }).pipe(
+      catchError(err => {
+        console.error('Algo salió mal', err)
+        return throwError(() => err)
+      })
+    )
+  }
+
+  receiveHighDemand(id: number): Observable<any> {
+    return this.http.get(`high-demand/${id}/receive`, {
+      context: new HttpContext().set(IS_USER_ACTION, true)
+    }).pipe(
+      catchError(err => {
+        console.error('Salió mal en la recepción', err)
+        return throwError(() => err)
+      })
+    )
+  }
+
 }
