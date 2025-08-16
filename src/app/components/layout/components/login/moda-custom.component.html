@@ -1,0 +1,18 @@
+<div>
+  <h2>{{ title }}</h2>
+  <span nz-typography nzType="secondary">Por favor escoja un rol</span>
+  <nz-radio-group
+    [(ngModel)]="selectedRoleId"
+    nzButtonStyle="solid"
+    style="display: flex; flex-direction: column; flex-wrap: wrap; width: 100%;"
+  >
+    @for(rol of nzModalData.roles; track rol;) {
+      <label nz-radio-button  [nzValue]="rol.id" style="flex: 1 1 auto; text-align: center;">{{rol.name}}</label>
+    }
+  </nz-radio-group>
+  <div style="margin-top: 16px; text-align: right;">
+    <button nz-button nzType="primary" (click)="destroyModal()" [disabled]="!selectedRoleId">
+      Seleccionar
+    </button>
+  </div>
+</div>

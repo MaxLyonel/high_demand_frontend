@@ -13,6 +13,6 @@ export interface AuthenticatedUser {
 }
 
 export default interface IAuthorizeUser {
-  performLogin(credentials: AuthCredentials): Observable<AuthenticatedUser>;
+  performLogin(credentials: AuthCredentials): Observable<any>;
   performLogout(): Observable<void>;
 }

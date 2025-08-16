@@ -17,7 +17,7 @@ export class AuthAdapterService implements IManagerAuth {
   private appStore = inject(AppStore);
   private http     = inject(HttpClient);
   private localStorageService = inject(LocalStorageService);
-  private userDataService = inject(UserDataService)
+
 
   login(credentials: AuthCredentials): Observable<AuthenticatedUser> {
     return this.http.post<AuthenticatedUser>('auth/login', credentials, {
@@ -30,9 +30,6 @@ export class AuthAdapterService implements IManagerAuth {
         this.localStorageService.userStore(decodedUser); //TODO: eliminar
         this.appStore.setUser(decodedUser);
 
-        console.log("antes")
-        this.userDataService.loadUserSpecificData(decodedUser)
-        console.log("despues")
       })
     )
   }
