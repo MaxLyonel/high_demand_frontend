@@ -1,7 +1,7 @@
 import { HttpClient, HttpContext, HttpParams } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import IManagerHighDemand from "../domain/ports/i-manager-high-demand";
-import { catchError, Observable, tap, throwError } from "rxjs";
+import { catchError, Observable, of, tap, throwError } from "rxjs";
 import { IS_USER_ACTION } from "../infrastructure/constants/constants";
 
 
@@ -11,12 +11,22 @@ export class HighDemandAdapterService implements IManagerHighDemand {
   private http = inject(HttpClient);
 
   saveHighDemand(obj: any): Observable<any> {
-    // console.log("Objeto obtenido: ", obj)
-    return this.http.post(`high-demand-course/create`, obj, {
+    return this.http.post(`high-demand/create`, obj, {
       context: new HttpContext().set(IS_USER_ACTION, true)
     }).pipe(
       tap((newHighDemand: any) => {
         // console.log("Se ha creado una institucion como alta demanda", newHighDemand)
+      })
+    )
+  }
+
+  sendHighDemand(obj: any): Observable<any> {
+    return this.http.post(`high-demand/send`, obj, {
+      context: new HttpContext().set(IS_USER_ACTION, true)
+    }).pipe(
+      catchError(err => {
+        console.log("salio mal al enviar la alta demanda")
+        return throwError(() => err)
       })
     )
   }
@@ -48,7 +58,6 @@ export class HighDemandAdapterService implements IManagerHighDemand {
   }
 
   getListHighDemand(rolId: number, stateId: number): Observable<any> {
-    console.log("this--> ", rolId, stateId)
     const params = new HttpParams()
       .set('rolId', rolId.toString())
       .set('stateId', stateId.toString())

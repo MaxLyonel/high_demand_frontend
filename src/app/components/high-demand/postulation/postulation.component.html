@@ -29,7 +29,7 @@
   <nz-card *nzSpaceItem [nzBordered]="true" class="inscription-card">
     <div nz-row [nzGutter]="15">
       <!-- Sección de niveles, grados y paralelos -->
-      <div nz-col [nzSpan]="14">
+      <div nz-col [nzSpan]="15">
         <h5 nz-typography class="section-title">INSCRIPCIÓN DE LA UNIDAD EDUCATIVA</h5>
 
         <!-- Sección de cursos para seleccionar -->
@@ -116,7 +116,7 @@
         </div>
       </div>
       <!-- Sección de cursos seleccionados -->
-      <div nz-col [nzSpan]="10">
+      <div nz-col [nzSpan]="9">
         <h5 nz-typography class="section-title">CURSOS SELECCIONADOS</h5>
         <nz-list class="course-list" [nzLoading]="initLoading" nzItemLayout="horizontal">
           @for (item of listCourse; track $index) {
@@ -139,9 +139,8 @@
               class="mr-2"
               (click)="showConfirmRegistrationHighDemand()"
               class="flex-button"
-              [disabled]="saveCourses"
+              [disabled]="!hasSavedCourses || !(selectedCourses().length !== 0)"
             >
-              <!-- [disabled]="(savedCourses && (listCourse.length === 0 || selectedCourses().length === 0)) ? true : false" -->
               <i nz-icon nzType="check-circle"></i> CONSOLIDAR
             </button>
             <button

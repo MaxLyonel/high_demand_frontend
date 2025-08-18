@@ -58,25 +58,35 @@ export class LoginComponent {
       this.auth.performLogin({ username, password }).subscribe({
         next: () => {
           const { user } = this.appStore.snapshot
-          const modal = this.modal.create<NzModalCustomComponent, { roles: Rol[] }>({
-            nzTitle: 'Selecciona un rol',
-            nzContent: NzModalCustomComponent,
-            nzViewContainerRef: this.viewContainerRef,
-            nzData: {
-              roles: user.roles
-            },
-            nzFooter: null
-          });
-          modal.afterClose.subscribe((selectedRole: Rol | undefined) => {
-            if (selectedRole) {
-              const newUser = {
-                ...user,
-                selectedRole: selectedRole
+          if(user.roles.length > 1 ) {
+            const modal = this.modal.create<NzModalCustomComponent, { roles: Rol[] }>({
+              nzTitle: 'Selecciona un rol',
+              nzContent: NzModalCustomComponent,
+              nzViewContainerRef: this.viewContainerRef,
+              nzData: {
+                roles: user.roles
+              },
+              nzFooter: null
+            });
+            modal.afterClose.subscribe((selectedRole: Rol | undefined) => {
+              if (selectedRole) {
+                const newUser = {
+                  ...user,
+                  selectedRole: selectedRole
+                }
+                this.appStore.setUser(newUser)
+                this.userDataService.loadUserSpecificData(newUser)
               }
-              this.appStore.setUser(newUser)
-              this.userDataService.loadUserSpecificData(newUser)
+            });
+          } else { // aqui falta validacion de igual a 0
+            const selectedRole = user.roles[0]
+            const newUser = {
+              ...user,
+              selectedRole: selectedRole
             }
-          });
+            this.appStore.setUser(newUser)
+            this.userDataService.loadUserSpecificData(newUser)
+          }
         },
       });
       this.isLoginLoading = false;

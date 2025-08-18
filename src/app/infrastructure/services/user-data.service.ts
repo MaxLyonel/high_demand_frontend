@@ -21,16 +21,24 @@ export class UserDataService {
 
   loadUserSpecificData(user: any) {
     if(!user && !user.id && !user.selectedRole) return;
-      switch(user.selectedRole.id) {
-        case 9:
-          this._teacher.getInfoTeacher(user.personId).pipe(
-            tap(teacherInfo => this.appStore.setTeacherInfo(teacherInfo)),
-            switchMap(teacherInfo => this._institution.getInfoInstitution(teacherInfo.educationalInstitutionId)),
-            tap(instInfo => this.appStore.setInstitutionInfo(instInfo))
-          ).subscribe(()=> {
+    switch(user.selectedRole.id) {
+      case 9:
+        this._teacher.getInfoTeacher(user.personId).pipe(
+          tap((teacherInfo: any) => this.appStore.setTeacherInfo(teacherInfo.data)),
+          switchMap((teacherInfo:any) => {
+            const { data } = teacherInfo
+            return this._institution.getInfoInstitution(data.educationalInstitutionId)
+          }),
+          tap(instInfo => this.appStore.setInstitutionInfo(instInfo))
+        ).subscribe({
+          next: () => {
             this.router.navigate(['/alta-demanda/postulacion'])
-          });
-        break;
-      }
+          },
+          error: (err) => {
+              console.error('Error cargando datos del usuario:', err);
+          }
+        });
+      break;
+    }
   }
 }

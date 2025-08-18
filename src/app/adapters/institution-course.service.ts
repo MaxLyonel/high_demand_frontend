@@ -15,7 +15,6 @@ export class InstitutionCourseAdapterService implements IManagerInstitutionCours
       .set('gestionTypeId', gestionId.toString());
 
     return this.http.get<Level[]>(`educational-institution-course/course-structure`, { params }).pipe(
-      // tap(res => console.log("Backend datos cursos: ", res)),
       catchError(err => {
         console.error("Algo salió mal", err);
         return throwError(() => err);

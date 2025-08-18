@@ -93,9 +93,10 @@ export class PostulationComponent implements OnInit {
   parallelsToShow: any[] = [];
 
   // --- control de flujo
-  savedCourses: boolean = false
+  hasSavedCourses: boolean = false
   confirmModal?: NzModalRef;
   user!: User
+  highDemand: any
 
   constructor(
     @Inject('ICourseList')   private _courses    : ICourseList,
@@ -123,9 +124,9 @@ export class PostulationComponent implements OnInit {
       switchMap(() => this._highDemand.getHighDemandByInstitution(institutionId)),
       switchMap((highDemand) => {
         if(!highDemand) {
-          this.savedCourses = false
           return of([])
         }
+        this.highDemand = highDemand
         return this._highDemand.getCoures(highDemand.id)
       })
     ).subscribe({
@@ -141,9 +142,11 @@ export class PostulationComponent implements OnInit {
               parallelId: course.parallelId
             })
           }
+          console.log("tiene cursos?", this.listCourse.length)
+          this.selectedCourses.set(this.listCourse)
           if(this.listCourse.length > 0) {
-            this.savedCourses = true
-          } else this.savedCourses = false
+            this.hasSavedCourses = true
+          } else this.hasSavedCourses = false
         },
         error: (err) => {
           console.error('Error cargando datos', err);
@@ -155,16 +158,13 @@ export class PostulationComponent implements OnInit {
   saveCourses() { // Registrar institución con sus cursos como alta demanda
     const { id: educationalInstitutionId } = this.institution;
     const { user } = this.appStore.snapshot
-    console.log("user", user)
-    const { userId, roles } = user
-    const rolAllowed = roles.find((e:any) => e.id == 9)
-
-    // this.user = user
+    const { userId, selectedRole } = user
+    const rolAllowed = selectedRole.id
 
     const highDemand = {
       educationalInstitutionId,
       userId,
-      rolId: rolAllowed.id
+      rolId: rolAllowed
     };
 
     const courses = this.selectedCourses().map((item: any) => ({
@@ -179,32 +179,39 @@ export class PostulationComponent implements OnInit {
       courses
     };
 
-    console.log("requestData", rolAllowed[0])
+    console.log("esto se envia: ", requestData)
     // Enviar al servicio
     this._highDemand.registerHighDemand(requestData).subscribe({
-      next: () => {
-        this.savedCourses = true
+      next: (response: any) => {
+        console.log("ingres aca", response)
+        this.hasSavedCourses = true
+        this.highDemand = response.data
         // setTimeout(() => {
         //   this.router.navigate(['/alta-demanda/follow-up'])
         // }, 400)
       },
       error: (err) => {
-        this.savedCourses = false
+        console.log("no, ingresa aca")
+        this.hasSavedCourses = false
         console.error('Error al registrar:', err);
       }
     });
   }
 
-  saveHighDemand() { // Registrar oficialmente como alta demanda
+  sendHighDemand() {
     const { user } = this.appStore.snapshot
-    const { id: userId } = user
-    // const obj = {
-    //   highDemandRegistrationId: highDemand.id,
-    //   userId: userId,
-    //   workflowStateId: 2,
-    //   registrationStatus: highDemand.registrationStatus,
-    //   observation: ''
-    // }
+    const { selectedRole } = user
+    const rolId = selectedRole.id
+    const { workflowStateId } = this.highDemand
+    this._highDemand.sendHighDemand(this.highDemand).subscribe({
+      next: (response: any) => {
+        console.log("Alta demanda eviado exitosamente")
+        this.router.navigate(['/alta-demanda/follow-up'])
+      },
+      error: (err) => {
+        console.log("Error al enviar alta demanda")
+      }
+    })
   }
 
   addCourseForRegister() { // Agregar cursos a la lista
@@ -267,22 +274,7 @@ export class PostulationComponent implements OnInit {
       nzTitle: 'Registrar la Unidad Educativa como Alta Demanda',
       nzContent: 'Revise antes de confirmar',
       nzOnOk: () => {
-        const { userId } = this.localStorageService.getUser();
-        this._highDemand.getHighDemandByInstitution(this.institution.id).subscribe({
-          next: (highDemand) => {
-            const obj = {
-              highDemandRegistrationId: highDemand.id,
-              userId: userId,
-              workflowStateId: 2,
-              registrationStatus: highDemand.registrationStatus,
-              observation: ''
-            }
-            this._highDemand.updateWorkflowState(obj).subscribe({
-              next: () => console.log('todo salio bien'),
-            })
-          }
-        }
-        )
+        this.sendHighDemand()
       }
     })
   }

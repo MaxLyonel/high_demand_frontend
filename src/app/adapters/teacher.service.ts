@@ -16,7 +16,6 @@ export class TeacherAdapterService implements IManagerTeacher {
       .set('gestionId', 2025)
 
     return this.http.get<Teacher>(`auth/info-teacher`, { params }).pipe(
-      tap(res => console.log("Backend dato teacher: ", res)),
       catchError(err => {
         console.error("Error al obtener informacion de maestro", err)
         return throwError(() => err)

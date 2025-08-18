@@ -1,4 +1,4 @@
-import { Observable } from "rxjs";
+import { Observable, of } from "rxjs";
 import IHighDemand from "./ports/i-high-demand";
 import { Inject, Injectable } from "@angular/core";
 import IManagerHighDemand from "./ports/i-manager-high-demand";
@@ -40,6 +40,11 @@ export default class HighDemandManager implements IHighDemand {
 
   receiveHighDemand(obj: any): Observable<any> {
     const result = this._highDemandAdapter.receiveHighDemand(obj)
+    return result
+  }
+
+  sendHighDemand(obj: any): Observable<any> {
+    const result = this._highDemandAdapter.sendHighDemand(obj)
     return result
   }
 }
