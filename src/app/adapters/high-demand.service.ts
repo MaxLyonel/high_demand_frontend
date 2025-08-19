@@ -134,4 +134,14 @@ export class HighDemandAdapterService implements IManagerHighDemand {
     )
   }
 
+  getHighDemands(): Observable<any> {
+    return this.http.get(`high-demand/list-high-demands-approved`)
+      .pipe(
+        catchError(err => {
+          console.error('algo salio mal al obtener altas demandas aprobadas')
+          return throwError(() => err)
+        })
+      )
+  }
+
 }

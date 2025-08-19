@@ -72,4 +72,9 @@ export default class HighDemandManager implements IHighDemand {
     const result = this._highDemandAdapter.declineHighDemand(obj)
     return result
   }
+
+  getHighDemands(): Observable<any> {
+    const result = this._highDemandAdapter.getHighDemands()
+    return result
+  }
 }
