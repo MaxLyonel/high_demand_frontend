@@ -38,7 +38,13 @@ export class UserDataService {
               console.error('Error cargando datos del usuario:', err);
           }
         });
-      break;
+        break;
+      case 37:
+        this.router.navigate(['/alta-demanda/main-inbox'])
+        break;
+      case 38:
+        this.router.navigate(['/alta-demanda/main-inbox'])
+        break;
     }
   }
 }

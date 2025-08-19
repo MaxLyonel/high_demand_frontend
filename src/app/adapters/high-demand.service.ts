@@ -80,4 +80,36 @@ export class HighDemandAdapterService implements IManagerHighDemand {
     )
   }
 
+  deriveHighDemand(obj: any): Observable<any> {
+    console.log("objeto a enviar: ", obj)
+    return this.http.post(`high-demand/derive`, obj, {
+      context: new HttpContext().set(IS_USER_ACTION, true)
+    }).pipe(
+      catchError(err => {
+        console.error('algo salio mal en la derivacion')
+        return throwError(() => err)
+      })
+    )
+  }
+
+  getListReciveHighDemand(rolId: number): Observable<any> {
+    const params = new HttpParams()
+      .set('rolId', rolId.toString())
+    return this.http.get(`high-demand/list-receive`, { params }).pipe(
+      catchError(err => {
+        console.error('error en el listado de recibidos')
+        return throwError(() => err)
+      })
+    )
+  }
+
+  getActionFromRoles(rolId: number): Observable<any> {
+    return this.http.get(`high-demand/action-roles/${rolId}`).pipe(
+      catchError(err => {
+        console.error('error en el listado de acciones')
+        return throwError(() => err)
+      })
+    )
+  }
+
 }

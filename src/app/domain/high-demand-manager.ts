@@ -47,4 +47,19 @@ export default class HighDemandManager implements IHighDemand {
     const result = this._highDemandAdapter.sendHighDemand(obj)
     return result
   }
+
+  getListReceive(rolId: number): Observable<any> {
+    const result = this._highDemandAdapter.getListReciveHighDemand(rolId)
+    return result
+  }
+
+  getActionFromRoles(rolId: number): Observable<any> {
+    const result = this._highDemandAdapter.getActionFromRoles(rolId)
+    return result
+  }
+
+  deriveHighDemand(obj: any): Observable<any> {
+    const result = this._highDemandAdapter.deriveHighDemand(obj)
+    return result
+  }
 }

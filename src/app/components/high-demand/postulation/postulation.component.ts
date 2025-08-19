@@ -200,9 +200,6 @@ export class PostulationComponent implements OnInit {
 
   sendHighDemand() {
     const { user } = this.appStore.snapshot
-    const { selectedRole } = user
-    const rolId = selectedRole.id
-    const { workflowStateId } = this.highDemand
     this._highDemand.sendHighDemand(this.highDemand).subscribe({
       next: (response: any) => {
         console.log("Alta demanda eviado exitosamente")

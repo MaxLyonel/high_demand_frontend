@@ -26,6 +26,7 @@ import { LocalStorageService } from '../../../infrastructure/services/local-stor
 import IInstituionDetail from '../../../domain/ports/i-institution-detail';
 import IManagerTeacher from '../../../domain/ports/i-manager-teacher';
 import { switchMap, tap } from 'rxjs';
+import { AppStore } from '../../../infrastructure/store/app.store';
 
 interface Registration {
   id: number;
@@ -48,10 +49,10 @@ interface Documento {
 }
 
 interface EventoHistorial {
-  fecha: Date;
-  accion: string;
-  responsable: string;
-  comentario?: string;
+  updatedAt: Date;
+  workflowState: string;
+  userName: string;
+  observation?: string;
 }
 
 @Component({
@@ -95,22 +96,10 @@ export class SeguimientoComponent implements OnInit {
   RegistrationStatus = RegistrationStatus;
   registration = signal<Registration[]>([]);
 
-  historial: EventoHistorial[] = [
-    {
-      fecha: new Date(2023, 5, 15, 10, 30),
-      accion: 'Solicitud creada',
-      responsable: 'Sistema',
-      comentario: 'Solicitud ingresada al sistema'
-    },
-    {
-      fecha: new Date(2023, 5, 15, 10, 30),
-      accion: 'Solicitud creada',
-      responsable: 'Sistema',
-      comentario: 'Solicitud ingresada al sistema'
-    },
-  ];
+  historial: EventoHistorial[] = [ ];
 
   LocalStorageService = inject(LocalStorageService)
+  appStore = inject(AppStore)
 
   constructor(
     private message: NzMessageService,
@@ -127,12 +116,12 @@ export class SeguimientoComponent implements OnInit {
 
 loadData(): void {
   this.loading = true;
-  const user = this.LocalStorageService.getUser();
+  const { user } = this.appStore.snapshot
   const { personId } = user;
 
   this._teacher.getInfoTeacher(personId).pipe(
-    switchMap(res => {
-      const { educationalInstitutionId: sie } = res;
+    switchMap((response: any) => {
+      const { educationalInstitutionId: sie } = response.data;
       return this._institution.getInfoInstitution(sie);
     }),
     switchMap(institution => {
@@ -144,7 +133,9 @@ loadData(): void {
     })
   ).subscribe({
     next: (history: any) => {
+      console.log("history obtenido: ", history.data)
       this.registration.set(history.data); // asegurarme que history.data existe
+      this.historial = history.data
       this.loading = false;
     },
     error: (err) => {

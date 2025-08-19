@@ -67,6 +67,12 @@
           <nz-icon class="trigger" [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'" />
         </span>
         <div class="header-avatar-container">
+          <div>
+            <span nz-typography >Usuario: {{user.username}}</span>
+          </div>
+          <div >
+            <span nz-typography>Rol: {{ role.name }}</span>
+          </div>
           <div nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click" nzPlacement="bottomRight">
             <nz-avatar
               [nzSrc]="'https://i.pravatar.cc/150?img=32'"

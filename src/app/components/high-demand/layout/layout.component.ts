@@ -7,6 +7,8 @@ import { NzIconModule } from "ng-zorro-antd/icon";
 import { NzLayoutModule } from "ng-zorro-antd/layout";
 import { NzMenuModule } from "ng-zorro-antd/menu";
 import { AuthAdapterService } from "../../../adapters/auth-api.service";
+import { AppStore } from "../../../infrastructure/store/app.store";
+import { NzTypographyModule } from "ng-zorro-antd/typography";
 
 
 @Component({
@@ -19,16 +21,27 @@ import { AuthAdapterService } from "../../../adapters/auth-api.service";
     NzMenuModule,
     FormsModule,
     NzDropDownModule,
-    NzAvatarModule
-  ],
+    NzAvatarModule,
+    NzTypographyModule
+],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.less'
 })
-export default class LayoutComponent {
+export default class LayoutComponent implements OnInit{
   isCollapsed = false;
+  user!: any
+  role!: any
+
 
   public router = inject(Router)
   private authService = inject(AuthAdapterService)
+  private appStore = inject(AppStore)
+
+  ngOnInit(): void {
+    const { user } = this.appStore.snapshot
+    this.user = user
+    this.role = user.selectedRole
+  }
 
   goToProfile() {
     this.router.navigate(['/perfil']);

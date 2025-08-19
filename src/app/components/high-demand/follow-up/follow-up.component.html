@@ -59,6 +59,7 @@
             <th class="header-cell" >SIE</th>
             <th class="header-cell" >Fecha Solicitud</th>
             <th class="header-cell" >Estado</th>
+            <th class="header-cell" >Estado Flujo</th>
             <th class="header-cell" >Última Actualización</th>
             <th class="header-cell" >Responsable</th>
             <th class="header-cell" nzWidth="150px">Observacion</th>
@@ -72,11 +73,17 @@
             <td>{{ solicitud.educationalInstitutionId }}</td>
             <td>{{ solicitud.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
             <td>
-              <nz-tag 
-                [nzColor]="solicitud.registrationStatus === RegistrationStatus.APPROVED ? 'success' :
+              <nz-tag [nzColor]="solicitud.registrationStatus === RegistrationStatus.APPROVED ? 'success' :
                           solicitud.registrationStatus === RegistrationStatus.REJECTED ? 'error' :
                           solicitud.registrationStatus === RegistrationStatus.OBSERVED ? 'warning' : 'processing'">
                 {{ solicitud.registrationStatus }}
+              </nz-tag>
+            </td>
+            <td>
+              <nz-tag
+                [nzColor]="solicitud.workflowState === 'BORRADOR' ? 'success' : 'warning'"
+              >
+                {{ solicitud.workflowState }}
               </nz-tag>
             </td>
             <td>{{ solicitud.updatedAt | date:'dd/MM/yyyy HH:mm' }}</td>
@@ -129,10 +136,10 @@
     <nz-tab nzTitle="Historial">
       <nz-timeline>
         <nz-timeline-item *ngFor="let evento of historial">
-          <p>{{ evento.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
-          <p>{{ evento.accion }} - {{ evento.responsable }}</p>
-          <p *ngIf="evento.comentario" class="comentario">
-            <i nz-icon nzType="message" nzTheme="fill"></i> {{ evento.comentario }}
+          <p>{{ evento.updatedAt | date:'dd/MM/yyyy HH:mm' }}</p>
+          <p>{{ evento.workflowState }} - {{ evento.userName }}</p>
+          <p *ngIf="evento.observation" class="comentario">
+            <i nz-icon nzType="message" nzTheme="fill"></i> {{ evento.observation }}
           </p>
         </nz-timeline-item>
       </nz-timeline>

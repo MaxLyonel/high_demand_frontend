@@ -1,12 +1,16 @@
-import { Component, inject, Inject, OnInit } from '@angular/core';
-import { NzTableQueryParams, NzTableComponent, NzTableModule } from 'ng-zorro-antd/table';
+import { Component, inject, Inject, OnInit, TemplateRef } from '@angular/core';
+import {
+  NzTableQueryParams,
+  NzTableComponent,
+  NzTableModule,
+} from 'ng-zorro-antd/table';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalLegacyAPI, NzModalService } from 'ng-zorro-antd/modal';
-import { NzCardComponent } from "ng-zorro-antd/card";
-import { NzRadioComponent, NzRadioGroupComponent } from "ng-zorro-antd/radio";
-import { NzButtonModule } from "ng-zorro-antd/button";
-import { NzSpaceModule } from "ng-zorro-antd/space";
-import { NzTagComponent } from "ng-zorro-antd/tag";
+import { NzCardComponent } from 'ng-zorro-antd/card';
+import { NzRadioComponent, NzRadioGroupComponent } from 'ng-zorro-antd/radio';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzSpaceModule } from 'ng-zorro-antd/space';
+import { NzTagComponent } from 'ng-zorro-antd/tag';
 import { FormsModule } from '@angular/forms';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -33,7 +37,7 @@ interface WorkflowState {
 
 interface Rol {
   id: number;
-  name: string
+  name: string;
 }
 
 interface HighDemand {
@@ -45,7 +49,7 @@ interface HighDemand {
   registrationStatus: string;
   inbox: boolean;
   rol: Rol;
-  course: any
+  course: any;
 }
 
 @Component({
@@ -64,13 +68,14 @@ interface HighDemand {
     NzInputModule,
     NzIconModule,
     NzTypographyModule,
-    NzToolTipModule
+    NzToolTipModule,
   ],
-  providers: [NzModalService]
+  providers: [NzModalService],
 })
 export class BandejaComponent implements OnInit {
   // Datos de ejemplo
   highDemands: HighDemand[] = [];
+  highDemandsReceive: HighDemand[] = [];
 
   // Configuración de paginación
   pageSize = 10;
@@ -85,8 +90,11 @@ export class BandejaComponent implements OnInit {
 
   // Tipo de bandeja activa
   activeTray: 'entrada' | 'recepcion' | 'salida' = 'entrada';
+  rolId: number | null = null;
 
-  appStore = inject(AppStore)
+  appStore = inject(AppStore);
+  actionRoles: Array<any> = [];
+  motivo: any
 
   constructor(
     private message: NzMessageService,
@@ -95,33 +103,37 @@ export class BandejaComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-
     this.loadData(this.activeTray);
   }
 
   loadData(type: string): void {
     this.loading = true;
-    const { user } = this.appStore.snapshot
-    const rolId = user.roles[0].id
-    this.highDemands = []
-    switch(type) {
+    const { user } = this.appStore.snapshot;
+    this.rolId = user.selectedRole.id;
+    this._highDemand.getActionFromRoles(this.rolId!).subscribe((response) => {
+      console.log('esto es response ', response);
+      this.actionRoles = response.data;
+    });
+    this.highDemands = [];
+    switch (type) {
       case 'entrada':
         setTimeout(() => {
-          this._highDemand.getListHighDemandByRolState(rolId, 1).subscribe((response) => {
-            this.highDemands = response.data
-          })
+          this._highDemand
+            .getListHighDemandByRolState(this.rolId!, 1)
+            .subscribe((response) => {
+              this.highDemands = response.data;
+            });
           this.loading = false;
         }, 300);
         break;
       case 'recepcion':
         setTimeout(() => {
+          this._highDemand.getListReceive(this.rolId!).subscribe((response) => {
+            console.log('response', response);
+            this.highDemands = response.data;
+          });
           this.loading = false;
-        }, 1000)
-        break;
-      case 'salida':
-        setTimeout(() => {
-          this.loading = false;
-        }, 1000)
+        }, 300);
         break;
     }
   }
@@ -135,35 +147,80 @@ export class BandejaComponent implements OnInit {
 
   // Métodos para acciones
   receive(highDemand: HighDemand): void {
-    const { id } = highDemand
-    this._highDemand.receiveHighDemand(id).subscribe((response) => {
-      console.log("se ejecuto exitosamente")
-    })
-  }
-
-  enviar(unidad: HighDemand): void {
-    this.message.success(`Se envió la unidad educativa ${unidad.institution.name}`);
-  }
-
-  observar(unidad: HighDemand): void {
+    const { id } = highDemand;
     this.modal.confirm({
-      nzTitle: `¿Observar la unidad educativa ${unidad.institution.name}?`,
-      nzContent: 'Ingrese el motivo de la observación:',
-      nzOkText: 'Confirmar',
+      nzTitle: `¿Esta seguro que quiere recepcionar la Alta Damanda?`,
+      nzContent: '',
+      nzOkText: 'Sí, recepcionar',
+      nzOkType: 'primary',
+      nzOkDanger: false,
       nzCancelText: 'Cancelar',
-      nzOnOk: () => this.message.success(`Observación enviada para ${unidad.institution.name}`)
+      nzOnOk: () => {
+        this._highDemand.receiveHighDemand(id).subscribe((response) => {
+          this.message.success(`Recepcionado exitosamente`);
+          this._highDemand
+            .getListHighDemandByRolState(this.rolId!, 1)
+            .subscribe((response) => {
+              this.highDemands = response.data;
+            });
+        });
+      },
     });
   }
 
-  anular(unidad: HighDemand): void {
+  derive(highDemand: HighDemand, rolId: number): void {
     this.modal.confirm({
-      nzTitle: `¿Anular la unidad educativa ${unidad.institution.name}?`,
-      nzContent: 'Esta acción no se puede deshacer',
-      nzOkText: 'Sí, anular',
-      nzOkType: 'primary',
+      nzTitle: `¿Derivar la Unidad Educativa de Alta Demanda ${highDemand.institution.name}?`,
+      nzContent: 'Por favor revise bien si corresponde',
+      nzOkText: 'Confirmar',
+      nzCancelText: 'Cancelar',
+      nzOnOk: () => {
+        const obj = {
+          highDemand: highDemand,
+          rolId: rolId,
+        };
+        this._highDemand.deriveHighDemand(obj).subscribe((response) => {
+          this.message.success(
+            `Se ha derivado la Alta demanda de ${highDemand.institution.name}`
+          );
+          this._highDemand.getListReceive(this.rolId!).subscribe((response) => {
+            this.highDemands = response.data;
+          });
+        });
+      },
+    });
+  }
+
+  back(highDemand: HighDemand, rolId: number, tpl: TemplateRef<{}>): void {
+    let motivo = ''; // variable para guardar lo que escriba el usuario
+
+    this.modal.confirm({
+      nzTitle: `¿Devolver la alta demanda de ${highDemand.institution.name} a ${rolId}?`,
+      nzContent: tpl,
+      nzOkText: 'Confirmar',
       nzOkDanger: true,
       nzCancelText: 'Cancelar',
-      nzOnOk: () => this.message.success(`Unidad ${unidad.institution.name} anulada`)
+      nzOnOk: () => {
+        const inputEl = document.getElementById(
+          'motivoInput'
+        ) as HTMLInputElement;
+        motivo = inputEl?.value || '';
+        const obj = {
+          highDemand: highDemand,
+          rolId: rolId,
+          observation: motivo
+        };
+
+        this._highDemand.deriveHighDemand(obj).subscribe(() => {
+          this.motivo = ''
+          this.message.success(
+            `Se ha devuelto la Alta demanda de ${highDemand.institution.name}`
+          );
+          this._highDemand.getListReceive(this.rolId!).subscribe((response) => {
+            this.highDemands = response.data;
+          });
+        });
+      },
     });
   }
 
@@ -171,7 +228,7 @@ export class BandejaComponent implements OnInit {
     this.modal.info({
       nzTitle: `Cursos de ${unidad.institution.name}`,
       nzContent: `La unidad educativa tiene ${unidad.course} cursos registrados.`,
-      nzOkText: 'Cerrar'
+      nzOkText: 'Cerrar',
     });
   }
 

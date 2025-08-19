@@ -5,7 +5,7 @@
       <nz-radio-group [(ngModel)]="activeTray" (ngModelChange)="changeInbox($event)">
         <label nz-radio-button nzValue="entrada">Bandeja de Entrada</label>
         <label nz-radio-button nzValue="recepcion">Bandeja de Recepción</label>
-        <label nz-radio-button nzValue="salida">Bandeja de Salida</label>
+        <!-- <label nz-radio-button nzValue="salida">Bandeja de Salida</label> -->
       </nz-radio-group>
     </div>
   </div>
@@ -61,13 +61,13 @@
     <thead>
       <tr class="header-row">
         <th class="header-cell" >Unidad Educativa</th>
-        <th class="header-cell" nzWidth="150px">SIE</th>
-        <th class="header-cell" nzWidth="150px">Usuario</th>
-        <th class="header-cell" nzWidth="150px">Rol</th>
-        <th class="header-cell" nzWidth="120px">Detalle</th>
-        <th class="header-cell" nzWidth="100px">Estado inscripcion</th>
-        <th class="header-cell" nzWidth="150px">Estado Flujo</th>
-        <th class="header-cell" nzWidth="180px">Acciones</th>
+        <th class="header-cell" >SIE</th>
+        <th class="header-cell" >Usuario</th>
+        <th class="header-cell" >Rol</th>
+        <th class="header-cell" >Detalle</th>
+        <th class="header-cell" >Estado inscripcion</th>
+        <th class="header-cell" >Estado Flujo</th>
+        <th class="header-cell" >Acciones</th>
       </tr>
     </thead>
     <tbody>
@@ -103,51 +103,39 @@
         </td>
         <td>
           <nz-space nzSize="small">
-            <button
-              *nzSpaceItem
-              nz-button
-              nzType="primary"
-              nzSize="small"
-              nzShape="circle"
-              (click)="receive(data)"
-              nz-tooltip="Recepcionar"
-            >
-              <i nz-icon nzType="inbox"></i>
-            </button>
-            <button
-              *nzSpaceItem
-              nz-button
-              nzType="default"
-              nzSize="small"
-              nzShape="circle"
-              (click)="enviar(data)"
-              nz-tooltip="Enviar"
-            >
-              <i nz-icon nzType="send"></i>
-            </button>
-            <button
-              *nzSpaceItem
-              nz-button
-              nzType="default"
-              nzSize="small"
-              nzShape="circle"
-              (click)="observar(data)"
-              nz-tooltip="Observar"
-            >
-              <i nz-icon nzType="eye"></i>
-            </button>
-            <button
-              *nzSpaceItem
-              nz-button
-              nzType="default"
-              nzSize="small"
-              nzShape="circle"
-              nzDanger
-              (click)="anular(data)"
-              nz-tooltip="Anular"
-            >
-              <i nz-icon nzType="delete"></i>
-            </button>
+            @if(data.inbox === false) {
+              <button
+                *nzSpaceItem
+                nz-button
+                nzType="primary"
+                nzSize="small"
+                nzShape="circle"
+                (click)="receive(data)"
+                nz-tooltip="Recepcionar"
+              >
+                <i nz-icon nzType="inbox"></i>
+              </button>
+            } @else {
+              @for(actionRole of actionRoles; track actionRole.id) {
+                <button
+                  *nzSpaceItem
+                  nz-button
+                  nzType="default"
+                  nzSize="small"
+                  nzShape="circle"
+                  (click)="actionRole.action === 'DERIVAR' ? derive(data, actionRole.nextState) : back(data, actionRole.nextState, motivoTpl)"
+                  [nz-tooltip]="actionRole.action"
+                >
+                  <i nz-icon [nzType]="actionRole.action === 'DERIVAR' ? 'send' : 'reload'"></i>
+                </button>
+              }
+            }
+            <ng-template #motivoTpl>
+              <div>
+                <label>Ingrese el motivo de la observación:</label>
+                <input id="motivoInput" nz-input [(ngModel)]="motivo" />
+              </div>
+            </ng-template>
           </nz-space>
         </td>
       </tr>
