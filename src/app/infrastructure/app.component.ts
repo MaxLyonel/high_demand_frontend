@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { ParticlesGroups } from './../../../node_modules/tsparticles-engine/types/Types/ParticlesGroups.d';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AuthAdapterService } from '../adapters/auth-api.service';
 import UserAuthManager from '../domain/user-auth-manager';
@@ -15,6 +16,7 @@ import { HistoryAdapterService } from '../adapters/history.service';
 import IHistory from '../domain/ports/i-history';
 import { HistoryManager } from '../domain/history-manager';
 import { User } from '../domain/models/user.model';
+import { AppStore } from './store/app.store';
 
 @Component({
   selector: 'app-root',
@@ -42,6 +44,9 @@ import { User } from '../domain/models/user.model';
 export class AppComponent implements OnInit {
     title = 'Alta Demanda'
 
+    private appStore = inject(AppStore)
+    private cdr = inject(ChangeDetectorRef)
+
     constructor(private abilityService: AbilityService) {}
 
     // ngOnInit() {
@@ -64,7 +69,15 @@ export class AppComponent implements OnInit {
     //   })
     // }
     ngOnInit(): void {
-      this.abilityService.loadAbilities(92506063).subscribe(() => {
+      const { user } = this.appStore.snapshot
+      console.log("usuario: ", user)
+      if(user) {
+        this.abilityService.loadAbilities(user.userId).subscribe(() => {
+          const ability = this.abilityService.getAbility()
+          this.cdr.detectChanges();
+          console.log("habilidades: ", ability)
+        });
+      }
         // const user = new User(92506063, 'leonel', 'leonel', true, 1);
       
         // // Verificar permisos normal
@@ -72,6 +85,5 @@ export class AppComponent implements OnInit {
       
         // // Debug completo
         // this.abilityService.debugCan('update', user);
-      });
     }
 }

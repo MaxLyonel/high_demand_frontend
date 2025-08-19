@@ -1,0 +1,429 @@
+<nz-layout class="app-layout">
+  <nz-content>
+    <div class="inner-content">
+      <nz-card nzTitle="FORMULARIO DE PRE INSCRIPCIÓN PARA EL SORTEO DE PLAZAS" [nzBordered]="false" class="body">
+        <div class="form-header">
+          <p>LA INFORMACIÓN RECABADA SERÁ UTILIZADA PARA EL REGISTRO DE PRE INSCRIPCIÓN (POSTULACIÓN) DE LA O EL ESTUDIANTE PARA LA GESTIÓN 2025</p>
+          <div class="form-number">N° 0331821</div>
+        </div>
+
+        <form nz-form [formGroup]="form" (ngSubmit)="onSubmit()">
+          <!-- Sección I: Datos de la Unidad Educativa -->
+          <nz-card nzTitle="I. DATOS DE LA UNIDAD EDUCATIVA A LA QUE POSTULA" [nzBordered]="false" class="section-card">
+            <div nz-row nzGutter="16">
+              <div nz-col nzSpan="24">
+                <nz-form-item>
+                  <nz-form-label nzRequired>NOMBRE DE LA UNIDAD EDUCATIVA</nz-form-label>
+                  <nz-form-control>
+                    <nz-select formControlName="nombreUnidadEducativa" [nzDisabled]="false" nzShowSearch nzPlaceHolder="Seleccione unidad educativa">
+                      @for(unidad of unidadesEducativas; track unidad) {
+                        <nz-option [nzValue]="unidad.value" [nzLabel]="unidad.label"></nz-option>
+                      }
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+
+            <div nz-row nzGutter="16">
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired>TURNO DE LA UNIDAD EDUCATIVA</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input formControlName="turnoUnidadEducativa" readonly>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired>DEPENDENCIA DE LA UNIDAD EDUCATIVA</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input formControlName="dependenciaUnidadEducativa" readonly>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+
+            <div nz-row nzGutter="16">
+              <div nz-col nzSpan="8">
+                <nz-form-item>
+                  <nz-form-label nzRequired>DEPARTAMENTO</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input formControlName="departamento" readonly>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="8">
+                <nz-form-item>
+                  <nz-form-label nzRequired>MUNICIPIO</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input formControlName="municipio" readonly>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="8">
+                <nz-form-item>
+                  <nz-form-label nzRequired>ZONA/BARRIO/VILLA</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input formControlName="zonaBarrio" readonly>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+          </nz-card>
+
+          <!-- Sección II: Datos del Padre/Madre/Tutor -->
+          <nz-card nzTitle="II. DATOS DEL PADRE, MADRE O TUTOR(a) DE LA O EL ESTUDIANTE" [nzBordered]="false" class="section-card">
+            <div nz-row nzGutter="16">
+              <div nz-col nzSpan="8">
+                <nz-form-item>
+                  <nz-form-label nzRequired>Apellido Paterno</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input formControlName="apellidoPaternoTutor">
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="8">
+                <nz-form-item>
+                  <nz-form-label nzRequired>Apellido Materno</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input formControlName="apellidoMaternoTutor">
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="8">
+                <nz-form-item>
+                  <nz-form-label nzRequired>Nombre(s)</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input formControlName="nombresTutor">
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+
+            <div nz-row nzGutter="16">
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired>Cédula de Identidad</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input formControlName="ciTutor">
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label>En caso de tutor(s) ¿Cuál es el parentesco?</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input formControlName="parentescoTutor">
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+
+            <div nz-row nzGutter="16">
+              <div nz-col nzSpan="24">
+                <nz-form-item>
+                  <nz-form-label nzRequired>Dirección de su residencia (zona / avenida / calle / N° / teléfono)</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input formControlName="direccionTutor">
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+
+            <nz-divider nzText="DIRECCIÓN ACTUAL DEL TRABAJO DEL PADRE, MADRE Y/O TUTOR" nzOrientation="left"></nz-divider>
+
+            <div nz-row nzGutter="16">
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label>Nombre del lugar de trabajo</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input formControlName="lugarTrabajoTutor">
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label>Municipio</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input formControlName="municipioTrabajoTutor">
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+
+            <div nz-row nzGutter="16">
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label>Zona / Villa</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input formControlName="zonaTrabajoTutor">
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label>Avenida / Calle / N°</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input formControlName="direccionTrabajoTutor">
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+
+            <div nz-row nzGutter="16">
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label>Teléfono / Celular</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input formControlName="telefonoTrabajoTutor">
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+
+            <!-- <div nz-row>
+              <div nz-col nzSpan="24">
+                <nz-form-item>
+                  <nz-form-label>DIBUJE EL CROQUIS DE UBICACIÓN DEL TRABAJO ACTUAL DEL PADRE, MADRE Y/O TUTOR EN EL REVERSO DE LA HOJA</nz-form-label>
+                </nz-form-item>
+              </div>
+            </div> -->
+          </nz-card>
+
+          <!-- Sección III: Datos del Estudiante -->
+          <nz-card nzTitle="III. DATOS DE LA O EL ESTUDIANTE" [nzBordered]="false" class="section-card">
+            <div nz-row nzGutter="16">
+              <div nz-col nzSpan="8">
+                <nz-form-item>
+                  <nz-form-label nzRequired>Apellido Paterno</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input formControlName="apellidoPaternoEstudiante">
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="8">
+                <nz-form-item>
+                  <nz-form-label nzRequired>Apellido Materno</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input formControlName="apellidoMaternoEstudiante">
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="8">
+                <nz-form-item>
+                  <nz-form-label nzRequired>Nombre(s)</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input formControlName="nombresEstudiante">
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+
+            <div nz-row nzGutter="16">
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label>N° de la cédula de identidad si tiene</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input formControlName="ciEstudiante">
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired>Género</nz-form-label>
+                  <nz-form-control>
+                    <nz-radio-group formControlName="generoEstudiante">
+                      <label nz-radio nzValue="Femenino">Femenino</label>
+                      <label nz-radio nzValue="Masculino">Masculino</label>
+                    </nz-radio-group>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+
+            <div nz-row nzGutter="16">
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired>Fecha de nacimiento (Día / Mes / Año)</nz-form-label>
+                  <nz-form-control>
+                    <!-- <nz-date-picker formControlName="fechaNacimientoEstudiante" style="width: 100%;"></nz-date-picker> -->
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired>Lugar de nacimiento</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input formControlName="lugarNacimientoEstudiante">
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+
+            <div nz-row nzGutter="16">
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired>Edad</nz-form-label>
+                  <nz-form-control>
+                    <div nz-row nzGutter="8">
+                      <div nz-col nzSpan="12">
+                        <nz-input-number formControlName="edadEstudianteAnios" [nzMin]="0" [nzMax]="20" [nzStep]="1" nzPlaceHolder="Años"></nz-input-number>
+                      </div>
+                      <div nz-col nzSpan="12">
+                        <nz-input-number formControlName="edadEstudianteMeses" [nzMin]="0" [nzMax]="11" [nzStep]="1" nzPlaceHolder="Meses"></nz-input-number>
+                      </div>
+                    </div>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+          </nz-card>
+
+          <!-- Sección IV: Dirección del Estudiante -->
+          <nz-card nzTitle="IV. DIRECCIÓN ACTUAL DE RESIDENCIA DE LA O EL ESTUDIANTE" [nzBordered]="false" class="section-card">
+            <div nz-row nzGutter="16">
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired>Municipio</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input formControlName="municipioResidencia" value="POTOSI" readonly>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired>Zona / Villa</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input formControlName="zonaResidencia" value="ZONA CENTRAL" readonly>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+
+            <div nz-row nzGutter="16">
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired>Avenida / Calle / N°</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input formControlName="direccionResidencia">
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label>Teléfono / Celular</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input formControlName="telefonoResidencia">
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+          </nz-card>
+
+          <!-- Sección V: Hermanos en la misma unidad -->
+          <nz-card nzTitle="V. HERMANA(S) O HERMANO(S) EN ETAPA DE ESCOLARIDAD EN LA UNIDAD EDUCATIVA A LA QUE POSTULA EN LA PRESENTE GESTIÓN" [nzBordered]="false" class="section-card">
+            <div nz-row>
+              <div nz-col nzSpan="24">
+                <p>Solo llene en caso de tomar hermanas/os en la unidad educativa a la que postula</p>
+                <nz-table #hermanosTable [nzData]="[]" nzSize="small" [nzShowPagination]="false">
+                  <thead>
+                    <tr>
+                      <th>Código Rude</th>
+                      <th>Nombre</th>
+                      <th>Nivel de educación</th>
+                      <th>Año de escolaridad</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td colspan="4" class="text-center">No hay hermanos registrados</td>
+                    </tr>
+                  </tbody>
+                </nz-table>
+                <button nz-button nzType="dashed" nzSize="small" nzBlock (click)="addHermano()">
+                  <i nz-icon nzType="plus"></i> Agregar hermano
+                </button>
+              </div>
+            </div>
+          </nz-card>
+
+          <!-- Sección VI: Datos de Pre-Inscripción -->
+          <nz-card nzTitle="VI. DATOS DE PRE INSCRIPCIÓN (POSTULANTES) EN LA GESTIÓN 2025 (NO VÁLIDO PARA OTROS AÑOS DE ESCOLARIDAD)" [nzBordered]="false" class="section-card">
+            <div nz-row>
+              <div nz-col nzSpan="24">
+                <nz-form-item>
+                  <nz-form-label nzRequired>Marque con una X en nivel y año de escolaridad al que se postula</nz-form-label>
+                  <nz-form-control>
+                    <nz-radio-group formControlName="nivelEducativo">
+                      <div>
+                        <label nz-radio nzValue="Primer año">Educación Inicial en Familia Comunitaria: Primer año</label>
+                        <label nz-radio nzValue="Segundo año">Segundo año</label>
+                      </div>
+                      <div>
+                        <label nz-radio nzValue="Primer año de escolaridad">Educación Primaria Comunitaria Vocacional: Primer año de escolaridad</label>
+                      </div>
+                      <div>
+                        <label nz-radio nzValue="Primer año de escolaridad">Educación Secundaria Comunitaria Productiva: Primer año de escolaridad</label>
+                      </div>
+                    </nz-radio-group>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+
+            <div nz-row>
+              <div nz-col nzSpan="24">
+                <nz-form-item>
+                  <nz-form-label nzRequired>Justificativo</nz-form-label>
+                  <nz-form-control>
+                    <nz-radio-group formControlName="justificativo">
+                      <label nz-radio nzValue="Hermanos">Hermanos</label>
+                      <label nz-radio nzValue="Vivienda">Vivienda</label>
+                      <label nz-radio nzValue="Lugar de trabajo">Lugar de trabajo</label>
+                    </nz-radio-group>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+
+            <div nz-row nzGutter="16">
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired>Lugar y Fecha</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input formControlName="lugarFecha" readonly>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <!-- <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label>Firma del padre/madre o tutor(s)</nz-form-label>
+                  <nz-form-control>
+                    <div class="signature-placeholder"></div>
+                  </nz-form-control>
+                </nz-form-item>
+              </div> -->
+            </div>
+
+            <!-- <div nz-row>
+              <div nz-col nzSpan="24">
+                <nz-form-item>
+                  <nz-form-label>Sello y firma del Director(s) y/o Responsable de la Unidad Educativa</nz-form-label>
+                  <nz-form-control>
+                    <div class="signature-placeholder"></div>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div> -->
+          </nz-card>
+
+          <div nz-row nzJustify="center" class="form-actions">
+            <button nz-button nzType="primary" nzSize="large" [disabled]="form.valid">Pre Inscribir</button>
+          </div>
+        </form>
+      </nz-card>
+    </div>
+  </nz-content>
+</nz-layout>
+

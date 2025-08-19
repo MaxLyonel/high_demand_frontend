@@ -286,10 +286,9 @@ export class PostulationComponent implements OnInit {
       id: this.user.userId, // CASL espera "id"
       ...this.user
     };
-    console.log("Usr", this.user.userId)
 
-    this.abilities.debugCan('update', caslUser);
-    return this.abilities.getAbility()?.can('update', this.user ) ?? false;
+    this.abilities.debugCan('manage', 'postulation');
+    return this.abilities.getAbility()?.can('manage', 'postulation' ) ?? false;
   }
 
 }

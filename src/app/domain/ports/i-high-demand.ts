@@ -6,6 +6,8 @@ export default interface IHighDemand {
   sendHighDemand(obj: any): Observable<any>;
   deriveHighDemand(obj: any): Observable<any>;
   receiveHighDemand(obj: any): Observable<any>;
+  approveHighDemand(obj: any): Observable<any>;
+  declineHighDeamand(obj: any): Observable<any>;
   updateWorkflowState(obj: any): Observable<any>;
   getActionFromRoles(rolId: number): Observable<any>;
 

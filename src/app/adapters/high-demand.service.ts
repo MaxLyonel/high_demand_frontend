@@ -112,4 +112,26 @@ export class HighDemandAdapterService implements IManagerHighDemand {
     )
   }
 
+  approveHighDemand(obj: any): Observable<any> {
+    return this.http.post(`high-demand/approve`, obj, {
+      context: new HttpContext().set(IS_USER_ACTION, true)
+    }).pipe(
+      catchError(err => {
+        console.error('algo salio mal al aprobar')
+        return throwError(() => err)
+      })
+    )
+  }
+
+  declineHighDemand(obj: any): Observable<any> {
+    return this.http.post(`high-demand/decline`, obj, {
+      context: new HttpContext().set(IS_USER_ACTION, true)
+    }).pipe(
+      catchError(err => {
+        console.error('algo salio mal al aprobar')
+        return throwError(() => err)
+      })
+    )
+  }
+
 }

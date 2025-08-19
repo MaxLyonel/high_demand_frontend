@@ -62,4 +62,14 @@ export default class HighDemandManager implements IHighDemand {
     const result = this._highDemandAdapter.deriveHighDemand(obj)
     return result
   }
+
+  approveHighDemand(obj: any): Observable<any> {
+    const result = this._highDemandAdapter.approveHighDemand(obj)
+    return result
+  }
+
+  declineHighDeamand(obj: any): Observable<any> {
+    const result = this._highDemandAdapter.declineHighDemand(obj)
+    return result
+  }
 }

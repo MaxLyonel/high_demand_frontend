@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Ability } from '@casl/ability';
-import { tap } from 'rxjs';
+import { BehaviorSubject, tap } from 'rxjs';
 import { User } from '../../domain/models/user.model';
 
 export type Actions = 'manage' | 'create' | 'read' | 'update' | 'delete';
@@ -16,6 +16,9 @@ export type AppAbility = Ability<[Actions, Subjects]>;
 @Injectable({ providedIn: 'root' })
 export class AbilityService {
   private ability!: AppAbility;
+  private abilitySubject = new BehaviorSubject<AppAbility | null>(null);
+
+  ability$ = this.abilitySubject.asObservable();
 
   // Mapa de clases a nombres de subject según backend
   private subjectMap = new Map<any, string>([
@@ -50,6 +53,8 @@ export class AbilityService {
             return 'all';
           }
         }) as AppAbility;
+
+        this.abilitySubject.next(this.ability)
       })
     );
   }

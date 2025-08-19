@@ -89,15 +89,14 @@
         </td>
         <td>
           <nz-tag
-            [nzColor]="data.workflowState.id === 1 ? 'warning' : data.workflowState.id === 2 ? 'error' : 'warning'">
+            [nzColor]="data.registrationStatus === 'APROBADO' ? 'success' : data.registrationStatus === 'RECHAZADO' ? 'error' : 'warning'">
             {{ data.registrationStatus }}
           </nz-tag>
         </td>
         <td>
           <nz-tag
-            [nzColor]="data.registrationStatus === 'PENDIENTE' ? 'success' :
-                      data.workflowState.id === 1 ? 'error' :
-                      data.workflowState.id === 2 ? 'warning' : 'processing'">
+            [nzColor]="data.workflowState.id === 1 ? 'success' : 'warning'"
+          >
             {{ data.workflowState.name }}
           </nz-tag>
         </td>
@@ -116,6 +115,33 @@
                 <i nz-icon nzType="inbox"></i>
               </button>
             } @else {
+              @if(rolId === 48) {
+                <button
+                  *nzSpaceItem
+                  nz-button
+                  nzSize="small"
+                  nzType="primary"
+                  nzShape="circle"
+                  (click)="finalize(data)"
+                  nz-tooltip="Registrar"
+                  [disabled]="data.registrationStatus === 'RECHAZADO' || data.registrationStatus === 'APROBADO'"
+                >
+                  <i nz-icon nzType="check" ></i>
+                </button>
+                <button
+                  *nzSpaceItem
+                  nz-button
+                  nzSize="small"
+                  nzType="primary"
+                  [nzDanger]="true"
+                  nzShape="circle"
+                  (click)="rejected(data)"
+                  nz-tooltip="Rechazar"
+                  [disabled]="data.registrationStatus === 'RECHAZADO' || data.registrationStatus === 'APROBADO'"
+                >
+                  <i nz-icon nzType="close" ></i>
+                </button>
+              }
               @for(actionRole of actionRoles; track actionRole.id) {
                 <button
                   *nzSpaceItem
@@ -125,6 +151,7 @@
                   nzShape="circle"
                   (click)="actionRole.action === 'DERIVAR' ? derive(data, actionRole.nextState) : back(data, actionRole.nextState, motivoTpl)"
                   [nz-tooltip]="actionRole.action"
+                  [disabled]="data.registrationStatus === 'RECHAZADO' || data.registrationStatus === 'APROBADO'"
                 >
                   <i nz-icon [nzType]="actionRole.action === 'DERIVAR' ? 'send' : 'reload'"></i>
                 </button>

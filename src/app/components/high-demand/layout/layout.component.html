@@ -13,17 +13,19 @@
       </a>
     </div>
     <ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
+      @if(canManageAdmin$ | async){
       <li nz-submenu nzOpen nzTitle="Dashboard" nzIcon="dashboard" >
-        <!-- (click)="router.navigate(['/alta-demanda/dashboard'])" -->
-        <ul>
-          <li nz-menu-item nzMatchRouter>
-            <a routerLink="/alta-demanda/control-acceso">Admintrar Acceso</a>
-          </li>
-          <li nz-menu-item nzMatchRouter>
-            <a routerLink="/alta-demanda/dashboard">Dashboard</a>
-          </li>
-        </ul>
+          <ul>
+            <li nz-menu-item nzMatchRouter>
+              <a routerLink="/alta-demanda/control-acceso">Admintrar Acceso</a>
+            </li>
+            <li nz-menu-item nzMatchRouter>
+              <a routerLink="/alta-demanda/dashboard">Dashboard</a>
+            </li>
+          </ul>
       </li>
+      }
+      @if(canManagePostulation$ | async) {
       <li nz-submenu nzOpen nzTitle="Postulacion UE" nzIcon="inbox">
         <ul>
           <li nz-menu-item nzMatchRouter>
@@ -31,19 +33,25 @@
           </li>
         </ul>
       </li>
-      <li nz-submenu nzOpen nzTitle="Bandejas" nzIcon="dashboard">
+      }
+      <li nz-submenu nzOpen nzTitle="Bandejas" nzIcon="inbox">
         <ul>
+          @if(canManageInbox$ | async) {
           <li nz-menu-item nzMatchRouter>
             <a routerLink="/alta-demanda/main-inbox">Bandeja</a>
           </li>
+          }
+          @if(canManagePostulation$ | async) {
           <li nz-menu-item nzMatchRouter>
             <a routerLink="/alta-demanda/register-inbox">Bandeja de Registro</a>
           </li>
           <li nz-menu-item nzMatchRouter>
             <a routerLink="/alta-demanda/selection-inbox">Bandeja de seleccion</a>
           </li>
+          }
         </ul>
       </li>
+      @if(canManageFollow$ | async) {
       <li nz-submenu nzOpen nzTitle="Seguimiento" nzIcon="form">
         <ul>
           <li nz-menu-item nzMatchRouter>
@@ -51,6 +59,8 @@
           </li>
         </ul>
       </li>
+      }
+      @if(canManageAdmin$ | async) {
       <li nz-submenu nzOpen nzTitle="Administracion" nzIcon="setting">
         <ul>
           <li nz-menu-item nzMatchRouter>
@@ -58,6 +68,7 @@
           </li>
         </ul>
       </li>
+      }
     </ul>
   </nz-sider>
   <nz-layout>

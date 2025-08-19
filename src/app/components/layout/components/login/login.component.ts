@@ -15,6 +15,7 @@ import { NzModalCustomComponent } from './modal-custom.component';
 import { Rol } from '../../../../domain/models/rol.model';
 import { AppStore } from '../../../../infrastructure/store/app.store';
 import { UserDataService } from '../../../../infrastructure/services/user-data.service';
+import { AbilityService } from '../../../../infrastructure/services/ability.service';
 
 
 @Component({
@@ -40,6 +41,7 @@ export class LoginComponent {
   private viewContainerRef = inject(ViewContainerRef)
   private appStore         = inject(AppStore)
   private userDataService  = inject(UserDataService)
+  private abilityService   = inject(AbilityService)
 
   constructor(@Inject('IAuthorizeUser') private auth: IAuthorizeUser) {
     this.loginForm = this.fb.group({
@@ -57,7 +59,9 @@ export class LoginComponent {
     setTimeout(() => {
       this.auth.performLogin({ username, password }).subscribe({
         next: () => {
+          // En app.component.ts o login.component.ts
           const { user } = this.appStore.snapshot
+          this.abilityService.loadAbilities(user.userId).subscribe();
           if(user.roles.length > 1 ) {
             const modal = this.modal.create<NzModalCustomComponent, { roles: Rol[] }>({
               nzTitle: 'Selecciona un rol',

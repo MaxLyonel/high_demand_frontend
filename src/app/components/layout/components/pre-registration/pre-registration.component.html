@@ -2,7 +2,8 @@
   <nz-card class="pre-registration-card"  nzHoverable>
     <div class="card-header">Pre-inscripciones</div>
     <div class="card-content">{{description}}</div>
-    <button nz-button nzType="primary" nzBlock routerLink="/pre-inscripciones" >
+    <button nz-button nzType="primary" nzBlock  (click)="onClick()">
+    <!-- <button nz-button nzType="primary" nzBlock routerLink="/pre-inscripcion"> -->
       {{ buttonText }}
     </button>
   </nz-card>

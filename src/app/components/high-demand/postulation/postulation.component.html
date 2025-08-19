@@ -25,7 +25,7 @@
   </nz-card>
 
   <!-- Tarjeta de inscripción -->
-  <!-- @if(user && canUpdateUser()) { -->
+  @if(canUpdateUser()) {
   <nz-card *nzSpaceItem [nzBordered]="true" class="inscription-card">
     <div nz-row [nzGutter]="15">
       <!-- Sección de niveles, grados y paralelos -->
@@ -156,6 +156,5 @@
       </div>
     </div>
   </nz-card>
-
-  <!-- } -->
+  }
 </nz-space>

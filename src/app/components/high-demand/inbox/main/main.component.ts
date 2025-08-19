@@ -224,6 +224,50 @@ export class BandejaComponent implements OnInit {
     });
   }
 
+  finalize(highDemand: HighDemand): void {
+    this.modal.confirm({
+      nzTitle: `¿Esta seguro de inscribir a la Unidad Educativa${highDemand.institution.name} como alta demanda?`,
+      nzContent: 'Por favor revise bien si corresponde',
+      nzOkText: 'Confirmar',
+      nzCancelText: 'Cancelar',
+      nzOnOk: () => {
+        const obj = {
+          highDemand: highDemand,
+        };
+        this._highDemand.approveHighDemand(obj).subscribe((response) => {
+          this.message.success(
+            `Se ha registrado la Unidad Educativa ${highDemand.institution.name} como alta demanda`
+          );
+          this._highDemand.getListReceive(this.rolId!).subscribe((response) => {
+            this.highDemands = response.data;
+          });
+        });
+      },
+    });
+  }
+
+  rejected(highDemand: HighDemand): void {
+    this.modal.confirm({
+      nzTitle: `¿Esta seguro de rechazar a la Unidad Educativa${highDemand.institution.name} como alta demanda?`,
+      nzContent: 'Por favor revise bien si corresponde',
+      nzOkText: 'Confirmar',
+      nzCancelText: 'Cancelar',
+      nzOnOk: () => {
+        const obj = {
+          highDemand: highDemand,
+        };
+        this._highDemand.declineHighDeamand(obj).subscribe((response) => {
+          this.message.success(
+            `Se ha rechzado la Unidad Educativa ${highDemand.institution.name} como alta demanda`
+          );
+          this._highDemand.getListReceive(this.rolId!).subscribe((response) => {
+            this.highDemands = response.data;
+          });
+        });
+      },
+    });
+  }
+
   verCursos(unidad: HighDemand): void {
     this.modal.info({
       nzTitle: `Cursos de ${unidad.institution.name}`,
