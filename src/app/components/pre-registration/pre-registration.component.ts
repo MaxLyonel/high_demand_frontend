@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -15,6 +15,10 @@ import { NzLayoutModule } from "ng-zorro-antd/layout";
 import { NzTypographyModule } from 'ng-zorro-antd/typography';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import IHighDemand from '../../domain/ports/i-high-demand';
+import IPreRegistration from '../../domain/ports/i-pre-registration';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 
 @Component({
   selector: 'app-formulario-inscripcion',
@@ -22,6 +26,9 @@ import IHighDemand from '../../domain/ports/i-high-demand';
   styleUrls: ['./pre-registration.component.less'],
   imports: [
     ReactiveFormsModule,
+    NzDatePickerModule,
+    FormsModule,
+    NzAlertModule,
     NzLayoutModule,
     NzCardModule,
     NzFormModule,
@@ -35,29 +42,49 @@ import IHighDemand from '../../domain/ports/i-high-demand';
     NzButtonModule,
     NzIconModule,
     NzTypographyModule,
-    NzSelectModule
+    NzSelectModule,
+    NzModalModule
 ]
 })
 export default class FormularioInscripcionComponent implements OnInit{
   form: FormGroup;
   today = new Date();
 
-  institutions:any = [ ];
+  institutions:any = [];
+  originalInstitutions:any = [];
+  relationships:any = [];
+  municipies:any = [];
+  criterias: any = [];
+  courses:any = [];
+  highDemands:any = [];
+
+  educationalLevels: any = [];
+  grades: any = []
+  parallels: any = []
+
+  confirmModal?: NzModalRef
+  rude: any
+  studentBrother: any
 
   constructor(
     private fb: FormBuilder,
-    @Inject('IHighDemand') private _highDemand: IHighDemand
+    private modal: NzModalService,
+    @Inject('IHighDemand') private _highDemand: IHighDemand,
+    @Inject('IPreRegistration') private _preRgistration: IPreRegistration
   ) {
     this.form = this.fb.group({
       // Sección I: Datos de la Unidad Educativa
       institutionName: ['', Validators.required],
-      institutionType: ['', Validators.required],
-      institutionDependency: ['', Validators.required],
-      department: ['', Validators.required],
-      municipie: ['', Validators.required],
-      neighborhoodArea: ['', Validators.required],
+      institutionId: [''],
+      institutionType: [''],
+      institutionDependency: [''],
+      department: [''],
+      municipie: [''],
+      neighborhoodArea: [''],
 
       // Sección II: Datos del Padre/Madre/Tutor
+      nationalityGuardian: ['Nacional', Validators.required],
+      complementGuardian: [''],
       guardianPaternalSurname: ['', Validators.required],
       guardianMaternalSurname: ['', Validators.required],
       guardianName: ['', Validators.required],
@@ -69,12 +96,15 @@ export default class FormularioInscripcionComponent implements OnInit{
       areaWorkTutor: ['', Validators.required],
       addressJobTutor: ['', Validators.required],
       phoneJobTutor: ['', Validators.required],
+      dateBirthGuardian: ['', Validators.required],
 
       // Sección III: Datos del Estudiante
+      nationality: ['Nacional', Validators.required],
       surnamePaternalStudent: ['', Validators.required],
       surnameMaternalStudent: ['', Validators.required],
       namesStudent: ['', Validators.required],
       ciStudent: [''],
+      complementStudent: [''],
       genderStudent: ['Femenino', Validators.required],
       dateBirthStudent: ['', Validators.required],
       placeBirthStudent: ['', Validators.required],
@@ -82,7 +112,7 @@ export default class FormularioInscripcionComponent implements OnInit{
       ageStudentMonths: ['', Validators.required],
 
       // Sección IV: Dirección del Estudiante
-      municipalityResidence: ['POTOSI', Validators.required],
+      municipalityResidence: ['', Validators.required],
       areaResidence: ['ZONA CENTRAL', Validators.required],
       addressResidence: ['', Validators.required],
       telephoneResidence: [''],
@@ -91,26 +121,62 @@ export default class FormularioInscripcionComponent implements OnInit{
       siblings: this.fb.array([]),
 
       // Sección VI: Datos de Pre-Inscripción
-      educationalLevel: ['Primer año de escolaridad', Validators.required],
-      justification: ['Vivienda', Validators.required],
+      justification: [1, Validators.required],
+
+      educationalLevel: ['', Validators.required],
+      yearOfSchoolign: ['', Validators.required],
+      parallel: ['', Validators.required],
       placeDate: [`POTOSI, ${this.today.getDate()} DE ${this.getMonthName(this.today.getMonth())} DE ${this.today.getFullYear()}`, Validators.required]
     });
 
     this.form.get('institutionName')?.valueChanges.subscribe(selected => {
+      this.courses = selected.courses
+      this.educationalLevels = this.prepareData()
       if(selected) {
         this.form.patchValue({
-          institutionDependency: selected.dependencyType.dependency,
-          neighborhoodArea: selected.jurisdiction.direction,
-          institutionType: selected.educationalInstitutionType.description
+          institutionId: selected.educationalInstitution.id,
+          institutionDependency: selected.educationalInstitution.dependencyType.dependency,
+          neighborhoodArea: selected.educationalInstitution.jurisdiction.direction,
+          institutionType: selected.educationalInstitution.educationalInstitutionType.description,
+          department: selected.educationalInstitution.jurisdiction.localityPlaceType.parent.parent.parent.parent.place,
+          municipie: selected.educationalInstitution.jurisdiction.localityPlaceType.parent.parent.parent.place,
+          educationalLevel: '',
+          yearOfSchoolign: '',
+          parallel: '',
         })
       } else {
         this.form.patchValue({
           institutionDependency: '',
           neighborhoodArea: '',
-          institutionType: ''
+          institutionType: '',
+          department: '',
+          municipie: '',
+          educationalLevel: '',
+          yearOfSchoolign: '',
+          parallel: '',
         })
       }
     });
+
+    this.form.get('educationalLevel')?.valueChanges.subscribe(level => {
+      if (level) {
+        this.grades = level.grades;   // guardamos los grados de ese nivel
+        this.form.patchValue({ yearOfSchoolign: '', parallel: '' }); // reset
+      } else {
+        this.grades = [];
+        this.parallels = []
+      }
+    });
+
+    this.form.get('yearOfSchoolign')?.valueChanges.subscribe(grade => {
+      if(grade) {
+        console.log("ingresa aca")
+        this.parallels = grade.parallels;
+        this.form.patchValue({ parallel: ''})
+      } else {
+        this.parallels = []
+      }
+    })
   }
 
   ngOnInit(): void {
@@ -119,9 +185,55 @@ export default class FormularioInscripcionComponent implements OnInit{
 
   loadData() {
     this._highDemand.getHighDemands().subscribe((response) => {
+      this.highDemands = response.data
       this.institutions = response.data.map((e:any) => e.educationalInstitution)
-      console.log("Esto es obtenido: ", response)
     })
+    this._preRgistration.getRelationships().subscribe((response) => {
+      this.relationships = response.data
+    })
+    this._preRgistration.getMunicipies().subscribe((response) => {
+      this.municipies = response.data
+    })
+    this._preRgistration.getCriterias().subscribe((response) => {
+      this.criterias = response.data
+    })
+  }
+
+  prepareData() {
+    const grouped = Object.values(
+      this.courses.reduce((acc: any, item: any) => {
+        if(!acc[item.level.id]) {
+          acc[item.level.id] = {
+            id: item.level.id,
+            name: item.level.name,
+            grades: {}
+          }
+        }
+        const level = acc[item.level.id]
+        // Agrupar por grado dentro del nivel
+        if(!level.grades[item.grade.id]) {
+          level.grades[item.grade.id] = {
+            id: item.grade.id,
+            name: item.grade.name,
+            parallels: []
+          }
+        }
+        const grade = level.grades[item.grade.id];
+        // Agregar paralelo
+        grade.parallels.push({
+          id: item.parallel.id,
+          name: item.parallel.name,
+          totalQuota: item.totalQuota
+        });
+
+        return acc;
+      }, {} as any)
+    ).map((level:any) =>  ({
+      ...level,
+      grades: Object.values(level.grades)
+    }))
+    console.log(grouped)
+    return grouped
   }
 
   private getMonthName(month: number): string {
@@ -132,10 +244,32 @@ export default class FormularioInscripcionComponent implements OnInit{
     return months[month];
   }
 
-  addHermano() {
+  addBrother(tpl: TemplateRef<{}>): void {
+    let rude = '';
+    this.confirmModal = this.modal.confirm({
+      nzTitle: 'Busar al hermano(a)',
+      nzContent: tpl,
+      nzOkText: 'Buscar',
+      nzCancelText: 'Cancelar',
+      nzOnOk: () => {
+        const inputEl = document.getElementById(
+          'rudeInput'
+        ) as HTMLInputElement;
+        rude = inputEl?.value || '';
+        const selectedInstitution = this.form.get('institutionName')?.value
+        if(!selectedInstitution) return
+        const sie = selectedInstitution.educationalInstitutionId
+        this._preRgistration.searchStudent(sie, rude).subscribe((response) => {
+          this.rude = ''
+          console.log("Response ", response)
+          this.studentBrother = response.data
+        })
+      }
+    });
   }
 
   onSubmit(): void {
+    console.log('Formulario: ', this.form.value)
     if (this.form.valid) {
       console.log('Formulario enviado:', this.form.value);
       // Aquí iría la lógica para enviar el formulario
@@ -147,5 +281,10 @@ export default class FormularioInscripcionComponent implements OnInit{
         }
       });
     }
+  }
+
+  // getters y setters
+  get justification(): number {
+    return this.form.get('justification')?.value;
   }
 }

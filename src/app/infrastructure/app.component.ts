@@ -17,6 +17,8 @@ import IHistory from '../domain/ports/i-history';
 import { HistoryManager } from '../domain/history-manager';
 import { User } from '../domain/models/user.model';
 import { AppStore } from './store/app.store';
+import { PreRegistrationAdapterService } from '../adapters/pre-registration.service';
+import PreRegistrationManager from '../domain/pre-registration-manager';
 
 @Component({
   selector: 'app-root',
@@ -38,7 +40,10 @@ import { AppStore } from './store/app.store';
     { provide: 'IHighDemand', useClass: HighDemandManager},
 
     { provide: 'IManagerHistory', useClass: HistoryAdapterService },
-    { provide: 'IHistory', useClass: HistoryManager }
+    { provide: 'IHistory', useClass: HistoryManager },
+
+    { provide: 'IManagerPreRegistration', useClass: PreRegistrationAdapterService },
+    { provide: 'IPreRegistration', useClass: PreRegistrationManager }
   ]
 })
 export class AppComponent implements OnInit {
