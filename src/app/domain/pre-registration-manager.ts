@@ -30,4 +30,14 @@ export default class PreRegistrationManager implements IPreRegistration {
     return result
   }
 
+  savePreRegistration(obj: any): Observable<any> {
+    const result = this._preRegistrationAdapter.savePreRegistration(obj)
+    return result
+  }
+
+  getListPreRegistration(): Observable<any> {
+    const result = this._preRegistrationAdapter.getListPreRegistrations()
+    return result
+  }
+
 }

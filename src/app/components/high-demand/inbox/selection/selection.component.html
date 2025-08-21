@@ -3,8 +3,8 @@
   <div class="header-section">
     <h5 nz-typography class="section-title">BANDEJA DE SELECCIÓN DE ESTUDIANTES</h5>
     <div class="action-buttons">
-      <button nz-button nzType="primary" (click)="confirmSelection()" [disabled]="selectedStudents.length === 0">
-        <i nz-icon nzType="check-square"></i> Consolidar Selección ({{selectedStudents.length}})
+      <button nz-button nzType="primary" (click)="confirmSelection()" [disabled]="selectedPostulants.length === 0">
+        <i nz-icon nzType="check-square"></i> Consolidar Selección ({{selectedPostulants.length}})
       </button>
       <button nz-button nzType="default" (click)="clearFilters()">
         <i nz-icon nzType="redo"></i> Limpiar Filtros
@@ -92,8 +92,8 @@
 
   <!-- Tabla de estudiantes -->
   <nz-table
-    #studentTable
-    [nzData]="filteredStudents"
+    #postulantTable
+    [nzData]="filteredPreRegistrations"
     [nzLoading]="loading"
     [nzPageSize]="10"
     [nzShowPagination]="true"
@@ -103,7 +103,6 @@
     <thead>
       <tr class="header-row">
         <th nzWidth="60px">N°</th>
-        <th nzWidth="120px">Código RUDE</th>
         <th nzWidth="120px">Ap. Paterno</th>
         <th nzWidth="120px">Ap. Materno</th>
         <th nzWidth="150px">Nombres</th>
@@ -111,36 +110,39 @@
         <th nzWidth="120px">Criterio</th>
         <th nzWidth="100px">Nivel</th>
         <th nzWidth="140px">Año escolaridad</th>
+        <th nzWidth="140px">Paralelo</th>
         <th nzWidth="80px">Acción</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let student of studentTable.data; let i = index">
-        <td>{{ i + 1 }}</td>
-        <td>{{ student.rudeCode }}</td>
-        <td>{{ student.lastName1 }}</td>
-        <td>{{ student.lastName2 }}</td>
-        <td>{{ student.firstName }}</td>
-        <td>{{ student.idCard }}</td>
-        <td>
-          <nz-tag [nzColor]="getCriteriaColor(student.criteria)">
-            {{ student.criteria }}
-          </nz-tag>
-        </td>
-        <td>{{ student.level }}</td>
-        <td>{{ student.schoolYear }}</td>
-        <td>
-          <button 
-            nz-button 
-            nzType="primary" 
-            nzSize="small"
-            (click)="selectStudent(student)"
-            [nzLoading]="student.loading"
-          >
-            <i nz-icon nzType="check"></i>
-          </button>
-        </td>
-      </tr>
+      @for(postulant of postulantTable.data; track $index) {
+        <tr>
+          <td>{{ $index + 1 }}</td>
+          <td>{{ postulant.postulant.lastName }}</td>
+          <td>{{ postulant.postulant.mothersLastName }}</td>
+          <td>{{ postulant.postulant.name }}</td>
+          <td>{{ postulant.postulant.identityCard }}</td>
+          <td>
+            <nz-tag [nzColor]="getCriteriaColor(postulant.criteria.name)">
+              {{ postulant.criteria.name }}
+            </nz-tag>
+          </td>
+          <td>{{ postulant.highDemandCourse.level.name }}</td>
+          <td>{{ postulant.highDemandCourse.grade.name }}</td>
+          <td>{{ postulant.highDemandCourse.parallel.name }}</td>
+          <td>
+            <button
+              nz-button
+              nzType="primary"
+              nzSize="small"
+              (click)="selectStudent(postulant)"
+            >
+              <!-- [nzLoading]="student.loading" -->
+              <i nz-icon nzType="check"></i>
+            </button>
+          </td>
+        </tr>
+      }
     </tbody>
   </nz-table>
 
@@ -153,11 +155,11 @@
     [nzOkLoading]="isConfirmLoading"
   >
     <ng-container *nzModalContent>
-      <p>¿Está seguro que desea seleccionar al estudiante <strong>{{selectedStudent?.firstName}} {{selectedStudent?.lastName1}}</strong>?</p>
-      <nz-alert 
-        *ngIf="selectedStudent"
+      <p>¿Está seguro que desea seleccionar al estudiante <strong>{{selectedPostulant?.postulant?.name}} {{selectedPostulant?.postulant?.lastName}}</strong>?</p>
+      <nz-alert
+        *ngIf="selectedPostulant"
         nzType="info"
-        [nzMessage]="'Código RUDE: ' + selectedStudent?.rudeCode"
+        [nzMessage]="'Curso: ' + selectedPostulant.highDemandCourse.level.name + ' - ' + selectedPostulant.highDemandCourse.grade.name + ' - ' + selectedPostulant.highDemandCourse.parallel.name"
         class="mt-2"
       ></nz-alert>
     </ng-container>
@@ -170,19 +172,21 @@
     (nzOnCancel)="handleConsolidateCancel()"
     (nzOnOk)="handleConsolidateOk()"
     [nzOkLoading]="isConsolidateLoading"
-    [nzOkText]="'Confirmar (' + selectedStudents.length + ')'"
+    [nzOkText]="'Confirmar (' + selectedPostulants.length + ')'"
   >
     <ng-container *nzModalContent>
-      <p>¿Confirmar la selección de {{selectedStudents.length}} estudiantes?</p>
+      <p>¿Confirmar la selección de {{selectedPostulants.length}} estudiantes?</p>
       <nz-list
-        [nzDataSource]="selectedStudents"
+        [nzDataSource]="selectedPostulants"
         nzBordered
         nzSize="small"
         class="mt-3"
       >
-        <nz-list-item *ngFor="let student of selectedStudents">
-          {{student.firstName}} {{student.lastName1}} ({{student.rudeCode}})
-        </nz-list-item>
+        @for(postulant of selectedPostulants; track postulant.id) {
+          <nz-list-item>
+            {{postulant.postulant.name}} {{postulant.postulant.lastName}} ({{postulant.postulant.mothersLastName}})
+          </nz-list-item>
+        }
       </nz-list>
     </ng-container>
   </nz-modal>

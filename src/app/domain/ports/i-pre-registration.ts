@@ -9,4 +9,9 @@ export default interface IPreRegistration {
   getMunicipies(): Observable<any>;
   // ** exponer funcionalidad para buscar un estudiante por rude **
   searchStudent(sie: number, codeRude: string): Observable<any>;
+  // ** exponer funcionalidad para guardar una pre inscripción **
+  savePreRegistration(obj: any): Observable<any>;
+  // ** exponer funcionalidad para obtener la lista de pre inscripciones **
+  getListPreRegistration(): Observable<any>;
+
 }

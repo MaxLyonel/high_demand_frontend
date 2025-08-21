@@ -18,7 +18,6 @@ export default class UserAuthManager implements IAuthorizeUser {
   performLogin(credentials: AuthCredentials): Observable<AuthenticatedUser> {
     return this._userAuthManager.login(credentials).pipe(
       tap((user: AuthenticatedUser) => {
-        console.log("Inicio de sesión exitoso");
       }),
       map((user: AuthenticatedUser) => {
         this.user = user;

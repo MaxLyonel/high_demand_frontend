@@ -142,7 +142,6 @@ export class PostulationComponent implements OnInit {
               parallelId: course.parallelId
             })
           }
-          console.log("tiene cursos?", this.listCourse.length)
           this.selectedCourses.set(this.listCourse)
           if(this.listCourse.length > 0) {
             this.hasSavedCourses = true
@@ -179,11 +178,9 @@ export class PostulationComponent implements OnInit {
       courses
     };
 
-    console.log("esto se envia: ", requestData)
     // Enviar al servicio
     this._highDemand.registerHighDemand(requestData).subscribe({
       next: (response: any) => {
-        console.log("ingres aca", response)
         this.hasSavedCourses = true
         this.highDemand = response.data
         // setTimeout(() => {
@@ -191,7 +188,6 @@ export class PostulationComponent implements OnInit {
         // }, 400)
       },
       error: (err) => {
-        console.log("no, ingresa aca")
         this.hasSavedCourses = false
         console.error('Error al registrar:', err);
       }
@@ -202,7 +198,6 @@ export class PostulationComponent implements OnInit {
     const { user } = this.appStore.snapshot
     this._highDemand.sendHighDemand(this.highDemand).subscribe({
       next: (response: any) => {
-        console.log("Alta demanda eviado exitosamente")
         this.router.navigate(['/alta-demanda/follow-up'])
       },
       error: (err) => {
@@ -279,7 +274,6 @@ export class PostulationComponent implements OnInit {
 
   canUpdateUser = () => {
     if (!this.user) {
-      console.log('Usuario aún no cargado');
       return false;
     }
     const caslUser = {

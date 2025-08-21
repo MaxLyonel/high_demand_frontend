@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzFormItemComponent, NzFormLabelComponent } from "ng-zorro-antd/form";
 import { NzColDirective, NzGridModule } from "ng-zorro-antd/grid";
@@ -15,6 +15,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { CommonModule } from '@angular/common';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzTypographyModule } from 'ng-zorro-antd/typography';
+import IPreRegistration from '../../../../domain/ports/i-pre-registration';
 
 interface Student {
   id: string;
@@ -28,6 +29,72 @@ interface Student {
   schoolYear: string;
   selected?: boolean;
   loading?: boolean;
+}
+
+interface Level {
+  id: number;
+  name: string;
+}
+
+interface Grade {
+  id: number;
+  name: string;
+}
+
+interface Parallel {
+  id: number;
+  name: string;
+}
+
+interface HighDemandCourse {
+  id: number;
+  highDemandRegistrationId: number;
+  totalQuota: number;
+  createdAt: Date;
+  level: Level;
+  grade: Grade;
+  parallel: Parallel
+}
+
+interface Representative {
+  id: number;
+  identityCard: string;
+  complement: string;
+  lastName: string;
+  mothersLastName: string;
+  name: string;
+  dateBirth: Date;
+  nationality: boolean;
+  createdAt: Date;
+}
+
+interface Postulant {
+  id: number;
+  identityCard: string;
+  lastName: string;
+  mothersLastName: string;
+  name: string;
+  dateBirth: Date;
+  placeBirth: string;
+  gender: boolean;
+  codeRude: string | null;
+  createdAt: Date;
+}
+
+interface Criteria {
+  id: number;
+  name: string;
+  description: string;
+}
+
+interface PreRegistration {
+  id: number;
+  highDemandCourse: HighDemandCourse;
+  representative: Representative;
+  postulant: Postulant;
+  criteria: Criteria;
+  state: any;
+  createdAt: Date;
 }
 
 @Component({
@@ -58,6 +125,11 @@ interface Student {
 })
 export class SelectionInbox implements OnInit {
   // Datos
+  preRegistrations: PreRegistration[] = [];
+  filteredPreRegistrations: PreRegistration[] = [];
+  selectedPostulant: PreRegistration | null = null;
+  selectedPostulants: PreRegistration[] = [];
+
   students: Student[] = [];
   filteredStudents: Student[] = [];
   selectedStudents: Student[] = [];
@@ -81,7 +153,10 @@ export class SelectionInbox implements OnInit {
   isConsolidateVisible = false;
   isConsolidateLoading = false;
 
-  constructor(private message: NzMessageService) {}
+  constructor(
+    private message: NzMessageService,
+    @Inject('IPreRegistration') private _preRegistration: IPreRegistration
+  ) {}
 
   ngOnInit(): void {
     this.loadStudents();
@@ -89,6 +164,11 @@ export class SelectionInbox implements OnInit {
 
   loadStudents(): void {
     this.loading = true;
+    this._preRegistration.getListPreRegistration().subscribe((response) => {
+      this.preRegistrations = response.data
+      this.filteredPreRegistrations = [...this.preRegistrations]
+      // this.loading = false
+    })
     // Simular carga de datos (reemplazar con llamada API real)
     setTimeout(() => {
       this.students = [
@@ -103,7 +183,7 @@ export class SelectionInbox implements OnInit {
           level: 'SECUNDARIA',
           schoolYear: '2023'
         },
-                {
+        {
           id: '2',
           rudeCode: 'R002',
           lastName1: 'Vargas',
@@ -149,8 +229,9 @@ export class SelectionInbox implements OnInit {
     this.filteredStudents = [...this.students];
   }
 
-  selectStudent(student: Student): void {
-    this.selectedStudent = student;
+  selectStudent(postulant: PreRegistration): void {
+    // this.selectedStudent = student;
+    this.selectedPostulant = postulant
     this.isConfirmVisible = true;
   }
 
@@ -159,7 +240,8 @@ export class SelectionInbox implements OnInit {
   }
 
   handleOk(): void {
-    if (!this.selectedStudent) return;
+    // if (!this.selectedStudent) return;
+    if(!this.selectedPostulant) return;
 
     this.isConfirmLoading = true;
     // Simular procesamiento
@@ -194,9 +276,9 @@ export class SelectionInbox implements OnInit {
 
   getCriteriaColor(criteria: string): string {
     switch (criteria) {
-      case 'CRITERIO_A': return 'green';
-      case 'CRITERIO_B': return 'orange';
-      case 'CRITERIO_C': return 'red';
+      case 'HERMANOS': return 'green';
+      case 'VIVIENDA': return 'orange';
+      case 'LUGAR_TRABAJO': return 'red';
       default: return 'blue';
     }
   }

@@ -19,6 +19,7 @@ import IPreRegistration from '../../domain/ports/i-pre-registration';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NotificationService } from '../../infrastructure/services/notify.service';
 
 @Component({
   selector: 'app-formulario-inscripcion',
@@ -69,6 +70,7 @@ export default class FormularioInscripcionComponent implements OnInit{
   constructor(
     private fb: FormBuilder,
     private modal: NzModalService,
+    private notification: NotificationService,
     @Inject('IHighDemand') private _highDemand: IHighDemand,
     @Inject('IPreRegistration') private _preRgistration: IPreRegistration
   ) {
@@ -78,47 +80,46 @@ export default class FormularioInscripcionComponent implements OnInit{
       institutionId: [''],
       institutionType: [''],
       institutionDependency: [''],
-      department: [''],
-      municipie: [''],
+      institutionDepartment: [''],
+      institutionMunicipie: [''],
       neighborhoodArea: [''],
 
       // Sección II: Datos del Padre/Madre/Tutor
-      nationalityGuardian: ['Nacional', Validators.required],
-      complementGuardian: [''],
-      guardianPaternalSurname: ['', Validators.required],
-      guardianMaternalSurname: ['', Validators.required],
+      guardianNationality: ['Nacional', Validators.required],
+      guardianComplement: [''],
+      guardianLastName: ['', Validators.required],
+      guardianMothersLastName: ['', Validators.required],
       guardianName: ['', Validators.required],
-      ciTutor: ['', Validators.required],
+      guardianIdentityCard: ['', Validators.required],
+      guardianRelationship: ['', Validators.required],
+      guardianDateBirth: ['', Validators.required],
+
       guardianAddress: ['', Validators.required],
-      relationshipGuardian: ['', Validators.required],
-      placeWorkTutor: ['', Validators.required],
-      municipalityWorkTutor: ['', Validators.required],
-      areaWorkTutor: ['', Validators.required],
-      addressJobTutor: ['', Validators.required],
-      phoneJobTutor: ['', Validators.required],
-      dateBirthGuardian: ['', Validators.required],
+      guardianPlaceNameWork: ['', Validators.required],
+      guardianMunicipalityWork: ['', Validators.required],
+      guardianAreaWork: ['', Validators.required],
+      guardianAddressJob: ['', Validators.required],
+      guardianPhoneJob: ['', Validators.required],
 
       // Sección III: Datos del Estudiante
-      nationality: ['Nacional', Validators.required],
-      surnamePaternalStudent: ['', Validators.required],
-      surnameMaternalStudent: ['', Validators.required],
-      namesStudent: ['', Validators.required],
-      ciStudent: [''],
-      complementStudent: [''],
-      genderStudent: ['Femenino', Validators.required],
-      dateBirthStudent: ['', Validators.required],
-      placeBirthStudent: ['', Validators.required],
-      ageStudentYears: ['', Validators.required],
-      ageStudentMonths: ['', Validators.required],
+      postulantNationality: ['Nacional', Validators.required],
+      postulantLastName: ['', Validators.required],
+      postulantMothersLastName: ['', Validators.required],
+      postulantName: ['', Validators.required],
+      postulantIdentityCard: [''],
+      postulantComplement: [''],
+      postulantGender: ['Femenino', Validators.required],
+      postulantDateBirth: ['', Validators.required],
+      postulantPlaceBirth: ['', Validators.required],
 
       // Sección IV: Dirección del Estudiante
-      municipalityResidence: ['', Validators.required],
-      areaResidence: ['ZONA CENTRAL', Validators.required],
-      addressResidence: ['', Validators.required],
-      telephoneResidence: [''],
+      postulantMunicipalityResidence: ['', Validators.required],
+      postulantAreaResidence: ['ZONA CENTRAL', Validators.required],
+      postulantAddressResidence: ['', Validators.required],
+      postulantTelephoneResidence: [''],
 
       // Sección V: Hermanos en la misma unidad
-      siblings: this.fb.array([]),
+      postulantSiblings: this.fb.array([]),
 
       // Sección VI: Datos de Pre-Inscripción
       justification: [1, Validators.required],
@@ -138,8 +139,8 @@ export default class FormularioInscripcionComponent implements OnInit{
           institutionDependency: selected.educationalInstitution.dependencyType.dependency,
           neighborhoodArea: selected.educationalInstitution.jurisdiction.direction,
           institutionType: selected.educationalInstitution.educationalInstitutionType.description,
-          department: selected.educationalInstitution.jurisdiction.localityPlaceType.parent.parent.parent.parent.place,
-          municipie: selected.educationalInstitution.jurisdiction.localityPlaceType.parent.parent.parent.place,
+          institutionDepartment: selected.educationalInstitution.jurisdiction.localityPlaceType.parent.parent.parent.parent.place,
+          institutionMunicipie: selected.educationalInstitution.jurisdiction.localityPlaceType.parent.parent.parent.place,
           educationalLevel: '',
           yearOfSchoolign: '',
           parallel: '',
@@ -149,8 +150,8 @@ export default class FormularioInscripcionComponent implements OnInit{
           institutionDependency: '',
           neighborhoodArea: '',
           institutionType: '',
-          department: '',
-          municipie: '',
+          institutionDepartment: '',
+          institutionMunicipie: '',
           educationalLevel: '',
           yearOfSchoolign: '',
           parallel: '',
@@ -170,7 +171,6 @@ export default class FormularioInscripcionComponent implements OnInit{
 
     this.form.get('yearOfSchoolign')?.valueChanges.subscribe(grade => {
       if(grade) {
-        console.log("ingresa aca")
         this.parallels = grade.parallels;
         this.form.patchValue({ parallel: ''})
       } else {
@@ -178,6 +178,72 @@ export default class FormularioInscripcionComponent implements OnInit{
       }
     })
   }
+
+  onSubmit(): void {
+    if (this.form.valid) {
+      const formValue = this.form.value
+      const data = {
+        institution: {
+          institutionName: formValue.institutionName,
+          institutionId: formValue.institutionId,
+          institutionType: formValue.institutionType,
+          institutionDependency: formValue.institutionDependency,
+          institutionDepartment: formValue.institutionDepartment,
+          institutionMunicipie: formValue.institutionMunicipie,
+          neighborhoodArea: formValue.neighborhoodArea
+        },
+        postulant: {
+          identityCard: formValue.postulantIdentityCard,
+          complement: formValue.postulantComplement,
+          lastName: formValue.postulantLastName,
+          mothersLastName: formValue.postulantMothersLastName,
+          name: formValue.postulantName,
+          gender: formValue.postulantGender,
+          dateBirth: formValue.postulantDateBirth,
+          placeBirth: formValue.postulantPlaceBirth,
+          nationality: formValue.postulantNationality
+        },
+        postulantResidence: {
+          muncipality: formValue.postulantMunicipalityResidence,
+          area: formValue.postulantAreaResidence,
+          address: formValue.postulantAddressResidence,
+          telephone: formValue.postulantTelephoneResidence
+        },
+        guardian:  {
+          nationality: formValue.guardianNationality,
+          complement: formValue.guardianComplement,
+          lastName: formValue.guardianLastName,
+          mothersLastName: formValue.guardianMothersLastName,
+          name: formValue.guardianName,
+          identityCard: formValue.guardianIdentityCard,
+          relationship: formValue.guardianRelationship,
+          dateBirth: formValue.guardianDateBirth
+        },
+        guardianWork: {
+          address: formValue.guardianAddress,
+          placeName: formValue.guardianPlaceNameWork,
+          municipality: formValue.guardianMunicipalityWork,
+          area: formValue.guardianAreaWork,
+          addressJob: formValue.guardianAddressJob,
+          phoneJob: formValue.guardianPhoneJob
+        },
+        courseId: formValue.parallel.courseId,
+        justification: formValue.justification
+      }
+      this._preRgistration.savePreRegistration(data).subscribe((response) => {
+        console.log("Response create: ", response)
+      })
+    } else {
+      this.notification.showMessage('Por favor rellené los campos con border rojo para realizar la pre inscripción', 'Advertencia', 'warning')
+      Object.values(this.form.controls).forEach(control => {
+        if (control.invalid) {
+          control.markAsDirty();
+          control.updateValueAndValidity({ onlySelf: true });
+        }
+      });
+    }
+  }
+
 
   ngOnInit(): void {
     this.loadData()
@@ -223,7 +289,8 @@ export default class FormularioInscripcionComponent implements OnInit{
         grade.parallels.push({
           id: item.parallel.id,
           name: item.parallel.name,
-          totalQuota: item.totalQuota
+          totalQuota: item.totalQuota,
+          courseId: item.id
         });
 
         return acc;
@@ -232,7 +299,6 @@ export default class FormularioInscripcionComponent implements OnInit{
       ...level,
       grades: Object.values(level.grades)
     }))
-    console.log(grouped)
     return grouped
   }
 
@@ -261,27 +327,12 @@ export default class FormularioInscripcionComponent implements OnInit{
         const sie = selectedInstitution.educationalInstitutionId
         this._preRgistration.searchStudent(sie, rude).subscribe((response) => {
           this.rude = ''
-          console.log("Response ", response)
           this.studentBrother = response.data
         })
       }
     });
   }
 
-  onSubmit(): void {
-    console.log('Formulario: ', this.form.value)
-    if (this.form.valid) {
-      console.log('Formulario enviado:', this.form.value);
-      // Aquí iría la lógica para enviar el formulario
-    } else {
-      Object.values(this.form.controls).forEach(control => {
-        if (control.invalid) {
-          control.markAsDirty();
-          control.updateValueAndValidity({ onlySelf: true });
-        }
-      });
-    }
-  }
 
   // getters y setters
   get justification(): number {

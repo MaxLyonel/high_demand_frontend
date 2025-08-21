@@ -63,7 +63,7 @@
                 <nz-form-item>
                   <nz-form-label>DEPARTAMENTO</nz-form-label>
                   <nz-form-control>
-                    <input nz-input formControlName="department" readonly >
+                    <input nz-input formControlName="institutionDepartment" readonly >
                   </nz-form-control>
                 </nz-form-item>
               </div>
@@ -71,7 +71,7 @@
                 <nz-form-item>
                   <nz-form-label>MUNICIPIO</nz-form-label>
                   <nz-form-control>
-                    <input nz-input formControlName="municipie" readonly>
+                    <input nz-input formControlName="institutionMunicipie" readonly>
                   </nz-form-control>
                 </nz-form-item>
               </div>
@@ -245,7 +245,7 @@
                 <nz-form-item>
                   <nz-form-label nzRequired>NACIONALIDAD</nz-form-label>
                   <nz-form-control>
-                    <nz-radio-group formControlName="nationality">
+                    <nz-radio-group formControlName="postulantNationality">
                       <label nz-radio nzValue="Nacional">Nacional</label>
                       <label nz-radio nzValue="Extranjero">Extranjero</label>
                     </nz-radio-group>
@@ -258,7 +258,7 @@
                 <nz-form-item>
                   <nz-form-label nzRequired>APELLIDO PATERNO</nz-form-label>
                   <nz-form-control>
-                    <input nz-input formControlName="surnamePaternalStudent">
+                    <input nz-input formControlName="postulantLastName">
                   </nz-form-control>
                 </nz-form-item>
               </div>
@@ -266,7 +266,7 @@
                 <nz-form-item>
                   <nz-form-label nzRequired>APELLIDO MATERNO</nz-form-label>
                   <nz-form-control>
-                    <input nz-input formControlName="surnameMaternalStudent">
+                    <input nz-input formControlName="postulantMothersLastName">
                   </nz-form-control>
                 </nz-form-item>
               </div>
@@ -274,7 +274,7 @@
                 <nz-form-item>
                   <nz-form-label nzRequired>NOMBRE(S)</nz-form-label>
                   <nz-form-control>
-                    <input nz-input formControlName="namesStudent">
+                    <input nz-input formControlName="postulantName">
                   </nz-form-control>
                 </nz-form-item>
               </div>
@@ -285,7 +285,7 @@
                 <nz-form-item>
                   <nz-form-label nzRequired>CÉDULA DE IDENTIDAD</nz-form-label>
                   <nz-form-control>
-                    <input nz-input formControlName="ciStudent">
+                    <input nz-input formControlName="postulantIdentityCard">
                   </nz-form-control>
                 </nz-form-item>
               </div>
@@ -293,7 +293,7 @@
                 <nz-form-item>
                   <nz-form-label>COMPLEMENTO</nz-form-label>
                   <nz-form-control>
-                    <input nz-input formControlName="complementStudent">
+                    <input nz-input formControlName="postulantComplement">
                   </nz-form-control>
                 </nz-form-item>
               </div>
@@ -301,7 +301,7 @@
                 <nz-form-item>
                   <nz-form-label nzRequired>GÉNERO</nz-form-label>
                   <nz-form-control>
-                    <nz-radio-group formControlName="genderStudent">
+                    <nz-radio-group formControlName="postulantGender">
                       <label nz-radio nzValue="Femenino">Femenino</label>
                       <label nz-radio nzValue="Masculino">Masculino</label>
                     </nz-radio-group>
@@ -315,7 +315,7 @@
                 <nz-form-item>
                   <nz-form-label nzRequired>FECHA DE NACIMIENTO</nz-form-label>
                   <nz-form-control>
-                    <nz-date-picker formControlName="dateBirthStudent" style="width: 100%;"></nz-date-picker>
+                    <nz-date-picker formControlName="postulantDateBirth" style="width: 100%;"></nz-date-picker>
                   </nz-form-control>
                 </nz-form-item>
               </div>
@@ -323,7 +323,7 @@
                 <nz-form-item>
                   <nz-form-label nzRequired>LUGAR DE NACIMIENTO</nz-form-label>
                   <nz-form-control>
-                    <input nz-input formControlName="placeBirthStudent">
+                    <input nz-input formControlName="postulantPlaceBirth">
                   </nz-form-control>
                 </nz-form-item>
               </div>
@@ -356,7 +356,7 @@
                   <nz-form-label nzRequired>Municipio</nz-form-label>
                   <nz-form-control>
                     <nz-select
-                      formControlName="municipalityResidence"
+                      formControlName="postulantMunicipalityResidence"
                       [nzDisabled]="false"
                       nzAllowClear
                       nzShowSearch
@@ -373,7 +373,7 @@
                 <nz-form-item>
                   <nz-form-label nzRequired>Zona / Villa</nz-form-label>
                   <nz-form-control>
-                    <input nz-input formControlName="areaResidence" value="ZONA CENTRAL" readonly>
+                    <input nz-input formControlName="postulantAreaResidence" value="ZONA CENTRAL" readonly>
                   </nz-form-control>
                 </nz-form-item>
               </div>
@@ -384,7 +384,7 @@
                 <nz-form-item>
                   <nz-form-label nzRequired>Avenida / Calle / N°</nz-form-label>
                   <nz-form-control>
-                    <input nz-input formControlName="addressResidence">
+                    <input nz-input formControlName="postulantAddressResidence">
                   </nz-form-control>
                 </nz-form-item>
               </div>
@@ -392,7 +392,7 @@
                 <nz-form-item>
                   <nz-form-label>Teléfono / Celular</nz-form-label>
                   <nz-form-control>
-                    <input nz-input formControlName="telephoneResidence">
+                    <input nz-input formControlName="postulantTelephoneResidence">
                   </nz-form-control>
                 </nz-form-item>
               </div>
@@ -406,7 +406,7 @@
                 <nz-form-item>
                   <nz-form-label nzRequired>NACIONALIDAD</nz-form-label>
                   <nz-form-control>
-                    <nz-radio-group formControlName="nationalityGuardian">
+                    <nz-radio-group formControlName="guardianNationality">
                       <label nz-radio nzValue="Nacional">Nacional</label>
                       <label nz-radio nzValue="Extranjero">Extranjero</label>
                     </nz-radio-group>
@@ -419,7 +419,7 @@
                 <nz-form-item>
                   <nz-form-label nzRequired>APELLIDO PATERNO</nz-form-label>
                   <nz-form-control>
-                    <input nz-input formControlName="guardianPaternalSurname">
+                    <input nz-input formControlName="guardianLastName">
                   </nz-form-control>
                 </nz-form-item>
               </div>
@@ -427,7 +427,7 @@
                 <nz-form-item>
                   <nz-form-label nzRequired>APELLIDO MATERNO</nz-form-label>
                   <nz-form-control>
-                    <input nz-input formControlName="guardianMaternalSurname">
+                    <input nz-input formControlName="guardianMothersLastName">
                   </nz-form-control>
                 </nz-form-item>
               </div>
@@ -446,7 +446,7 @@
                 <nz-form-item>
                   <nz-form-label nzRequired>CÉDULA DE IDENTIDAD</nz-form-label>
                   <nz-form-control>
-                    <input nz-input formControlName="ciTutor">
+                    <input nz-input formControlName="guardianIdentityCard">
                   </nz-form-control>
                 </nz-form-item>
               </div>
@@ -454,7 +454,7 @@
                 <nz-form-item>
                   <nz-form-label>COMPLEMENTO</nz-form-label>
                   <nz-form-control>
-                    <input nz-input formControlName="complementGuardian">
+                    <input nz-input formControlName="guardianComplement">
                   </nz-form-control>
                 </nz-form-item>
               </div>
@@ -464,7 +464,7 @@
                 <nz-form-item>
                   <nz-form-label nzRequired>FECHA DE NACIMIENTO</nz-form-label>
                   <nz-form-control>
-                    <nz-date-picker formControlName="dateBirthGuardian" style="width: 100%;"></nz-date-picker>
+                    <nz-date-picker formControlName="guardianDateBirth" style="width: 100%;"></nz-date-picker>
                   </nz-form-control>
                 </nz-form-item>
               </div>
@@ -473,7 +473,7 @@
                   <nz-form-label nzRequired>PARENTESCO</nz-form-label>
                   <nz-form-control>
                     <nz-select
-                      formControlName="relationshipGuardian"
+                      formControlName="guardianRelationship"
                       [nzDisabled]="false"
                       nzAllowClear
                       nzShowSearch
@@ -508,7 +508,7 @@
                 <nz-form-item>
                   <nz-form-label nzRequired>NOMBRE DEL LUGAR DE TRABAJO</nz-form-label>
                   <nz-form-control>
-                    <input nz-input formControlName="placeWorkTutor">
+                    <input nz-input formControlName="guardianPlaceNameWork">
                   </nz-form-control>
                 </nz-form-item>
               </div>
@@ -517,7 +517,7 @@
                   <nz-form-label nzRequired>MUNICIPIO</nz-form-label>
                   <nz-form-control>
                     <nz-select
-                      formControlName="municipalityWorkTutor"
+                      formControlName="guardianMunicipalityWork"
                       [nzDisabled]="false"
                       nzAllowClear
                       nzShowSearch
@@ -537,7 +537,7 @@
                 <nz-form-item>
                   <nz-form-label nzRequired>ZONA / VILLA</nz-form-label>
                   <nz-form-control>
-                    <input nz-input formControlName="areaWorkTutor">
+                    <input nz-input formControlName="guardianAreaWork">
                   </nz-form-control>
                 </nz-form-item>
               </div>
@@ -545,7 +545,7 @@
                 <nz-form-item>
                   <nz-form-label nzRequired>AVENIDA / CALLE / N°</nz-form-label>
                   <nz-form-control>
-                    <input nz-input formControlName="addressJobTutor">
+                    <input nz-input formControlName="guardianAddressJob">
                   </nz-form-control>
                 </nz-form-item>
               </div>
@@ -556,7 +556,7 @@
                 <nz-form-item>
                   <nz-form-label>TELÉFONO / CELULAR</nz-form-label>
                   <nz-form-control>
-                    <input nz-input formControlName="phoneJobTutor">
+                    <input nz-input formControlName="guardianPhoneJob">
                   </nz-form-control>
                 </nz-form-item>
               </div>
@@ -572,7 +572,8 @@
           </nz-card>
 
           <div nz-row nzJustify="center" class="form-actions">
-            <button nz-button nzType="primary" nzSize="large" [disabled]="form.valid">Pre Inscribir</button>
+            <!-- [disabled]="form.invalid" -->
+            <button nz-button nzType="primary" nzSize="large" >Pre Inscribir</button>
           </div>
         </form>
       </nz-card>

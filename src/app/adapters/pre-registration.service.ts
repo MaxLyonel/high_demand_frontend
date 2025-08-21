@@ -14,7 +14,6 @@ export class PreRegistrationAdapterService implements IManagerPreRegistration {
   getCriterias(): Observable<any> {
     return this.http.get(`catalogs/list-criterias`).pipe(
       tap((catalogs:any) => {
-        console.log("Se ha obtenido el catálogo existosamente", catalogs.data)
       }),
       catchError(err => {
         console.log("Error al obtener el catálogo de criterio")
@@ -26,7 +25,6 @@ export class PreRegistrationAdapterService implements IManagerPreRegistration {
   getRelationships(): Observable<any> {
     return this.http.get(`catalogs/list-relationship`).pipe(
       tap((catalogs:any) => {
-        console.log("Se ha obtenido el catalogo exitosamente", catalogs.data)
       }),
       catchError(err => {
         console.log("Error al obtener el catalogo de parentescos")
@@ -38,7 +36,6 @@ export class PreRegistrationAdapterService implements IManagerPreRegistration {
   getMunicipies(): Observable<any> {
     return this.http.get(`catalogs/list-municipies`).pipe(
       tap((catalogs: any) => {
-        console.log("Se ha obtenido el catálogo exitosamente", catalogs.data)
       }),
       catchError(err => {
         console.log("Error al obtener el catálogo de municipios")
@@ -61,6 +58,26 @@ export class PreRegistrationAdapterService implements IManagerPreRegistration {
       })
     )
 
+  }
+
+  savePreRegistration(obj: any): Observable<any> {
+    return this.http.post(`pre-registration/create`, obj, {
+      context: new HttpContext().set(IS_USER_ACTION, true)
+    }).pipe(
+      catchError(err => {
+        console.log("Error al crear una pre inscripción")
+        return throwError(() => err)
+      })
+    )
+  }
+
+  getListPreRegistrations(): Observable<any> {
+    return this.http.get(`pre-registration/list`).pipe(
+      catchError(err => {
+        console.log("Error al obtener la lista de pre inscripciones")
+        return throwError(() => err)
+      })
+    )
   }
 
 }

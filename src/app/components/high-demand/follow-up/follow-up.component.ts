@@ -133,7 +133,6 @@ loadData(): void {
     })
   ).subscribe({
     next: (history: any) => {
-      console.log("history obtenido: ", history.data)
       this.registration.set(history.data); // asegurarme que history.data existe
       this.historial = history.data
       this.loading = false;

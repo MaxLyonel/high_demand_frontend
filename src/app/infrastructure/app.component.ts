@@ -75,12 +75,10 @@ export class AppComponent implements OnInit {
     // }
     ngOnInit(): void {
       const { user } = this.appStore.snapshot
-      console.log("usuario: ", user)
       if(user) {
         this.abilityService.loadAbilities(user.userId).subscribe(() => {
           const ability = this.abilityService.getAbility()
           this.cdr.detectChanges();
-          console.log("habilidades: ", ability)
         });
       }
         // const user = new User(92506063, 'leonel', 'leonel', true, 1);
