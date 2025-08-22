@@ -16,6 +16,7 @@ import { CommonModule } from '@angular/common';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzTypographyModule } from 'ng-zorro-antd/typography';
 import IPreRegistration from '../../../../domain/ports/i-pre-registration';
+import { NzCheckboxComponent } from "ng-zorro-antd/checkbox";
 
 interface Student {
   id: string;
@@ -95,6 +96,8 @@ interface PreRegistration {
   criteria: Criteria;
   state: any;
   createdAt: Date;
+  selected?: boolean;
+  loading?: boolean;
 }
 
 @Component({
@@ -118,8 +121,9 @@ interface PreRegistration {
     NzModalModule,
     NzAlertComponent,
     NzListModule,
-    NzTypographyModule
-  ]
+    NzTypographyModule,
+    NzCheckboxComponent
+]
   ,
   providers: [NzModalService]
 })
@@ -153,6 +157,9 @@ export class SelectionInbox implements OnInit {
   isConsolidateVisible = false;
   isConsolidateLoading = false;
 
+
+  tempChecked: boolean = false;
+
   constructor(
     private message: NzMessageService,
     @Inject('IPreRegistration') private _preRegistration: IPreRegistration
@@ -167,38 +174,38 @@ export class SelectionInbox implements OnInit {
     this._preRegistration.getListPreRegistration().subscribe((response) => {
       this.preRegistrations = response.data
       this.filteredPreRegistrations = [...this.preRegistrations]
-      // this.loading = false
+      this.loading = false
     })
     // Simular carga de datos (reemplazar con llamada API real)
-    setTimeout(() => {
-      this.students = [
-        {
-          id: '1',
-          rudeCode: 'R001',
-          lastName1: 'Pérez',
-          lastName2: 'Gómez',
-          firstName: 'Juan',
-          idCard: '1234567',
-          criteria: 'CRITERIO_A',
-          level: 'SECUNDARIA',
-          schoolYear: '2023'
-        },
-        {
-          id: '2',
-          rudeCode: 'R002',
-          lastName1: 'Vargas',
-          lastName2: 'Ramirez',
-          firstName: 'Leonel Maximo',
-          idCard: '1234567',
-          criteria: 'CRITERIO_A',
-          level: 'SECUNDARIA',
-          schoolYear: '2022'
-        },
-        // ... más datos de ejemplo
-      ];
-      this.filteredStudents = [...this.students];
-      this.loading = false;
-    }, 1000);
+    // setTimeout(() => {
+    //   this.students = [
+    //     {
+    //       id: '1',
+    //       rudeCode: 'R001',
+    //       lastName1: 'Pérez',
+    //       lastName2: 'Gómez',
+    //       firstName: 'Juan',
+    //       idCard: '1234567',
+    //       criteria: 'CRITERIO_A',
+    //       level: 'SECUNDARIA',
+    //       schoolYear: '2023'
+    //     },
+    //     {
+    //       id: '2',
+    //       rudeCode: 'R002',
+    //       lastName1: 'Vargas',
+    //       lastName2: 'Ramirez',
+    //       firstName: 'Leonel Maximo',
+    //       idCard: '1234567',
+    //       criteria: 'CRITERIO_A',
+    //       level: 'SECUNDARIA',
+    //       schoolYear: '2022'
+    //     },
+    //     // ... más datos de ejemplo
+    //   ];
+    //   this.filteredStudents = [...this.students];
+    //   this.loading = false;
+    // }, 1000);
   }
 
   applyFilters(): void {
@@ -236,26 +243,31 @@ export class SelectionInbox implements OnInit {
   }
 
   handleCancel(): void {
+    // if(this.selectedPostulant) {
+    //   this.selectedPostulant.selected = !this.tempChecked
+    // }
     this.isConfirmVisible = false;
   }
 
-  handleOk(): void {
-    // if (!this.selectedStudent) return;
-    if(!this.selectedPostulant) return;
+  // handleOk(): void {
+  //   // if (!this.selectedStudent) return;
+  //   if(!this.selectedPostulant) return;
 
-    this.isConfirmLoading = true;
-    // Simular procesamiento
-    setTimeout(() => {
-      this.selectedStudent!.selected = true;
-      this.selectedStudents.push(this.selectedStudent!);
-      this.isConfirmVisible = false;
-      this.isConfirmLoading = false;
-      this.message.success(`Estudiante ${this.selectedStudent?.firstName} seleccionado`);
-    }, 800);
-  }
+  //   this.isConfirmLoading = true;
+  //   // Simular procesamiento
+  //   setTimeout(() => {
+  //     this.selectedPostulant!.selected = true;
+  //     // this.selectedStudent!.selected = true;
+  //     // this.selectedStudents.push(this.selectedStudent!);
+  //     this.selectedPostulants.push(this.selectedPostulant!)
+  //     this.isConfirmVisible = false;
+  //     this.isConfirmLoading = false;
+  //     this.message.success(`Postulante ${this.selectedPostulant?.postulant.name} seleccionado`);
+  //   }, 800);
+  // }
 
   confirmSelection(): void {
-    if (this.selectedStudents.length === 0) return;
+    if (this.selectedPostulants.length === 0) return;
     this.isConsolidateVisible = true;
   }
 
@@ -267,8 +279,8 @@ export class SelectionInbox implements OnInit {
     this.isConsolidateLoading = true;
     // Simular consolidación
     setTimeout(() => {
-      this.message.success(`${this.selectedStudents.length} estudiantes consolidados`);
-      this.selectedStudents = [];
+      this.message.success(`${this.selectedPostulants.length} estudiantes consolidados`);
+      this.selectedPostulants = [];
       this.isConsolidateVisible = false;
       this.isConsolidateLoading = false;
     }, 1000);
@@ -281,5 +293,25 @@ export class SelectionInbox implements OnInit {
       case 'LUGAR_TRABAJO': return 'red';
       default: return 'blue';
     }
+  }
+
+  onToggleStudent(checked: boolean, postulant: any): void {
+    this.selectedPostulant = postulant
+    this.tempChecked = checked
+    postulant.selected = !checked;
+    this.isConfirmVisible = true;
+  }
+
+  handleOk(): void {
+    if(!this.selectedPostulant) return;
+
+    this.isConfirmLoading = true;
+    setTimeout(() => {
+      this.selectedPostulant!.selected = this.tempChecked;
+      this.selectedPostulants.push(this.selectedPostulant!)
+      this.isConfirmVisible = false;
+      this.isConfirmLoading = false;
+      this.message.success(`Postulante ${this.selectedPostulant?.postulant.name} seleccionado`);
+    }, 800);
   }
 }

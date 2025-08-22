@@ -131,16 +131,23 @@
           <td>{{ postulant.highDemandCourse.grade.name }}</td>
           <td>{{ postulant.highDemandCourse.parallel.name }}</td>
           <td>
+            <label
+              nz-checkbox
+              [ngModel]="postulant.selected"
+              (ngModelChange)="onToggleStudent($event, postulant)"
+            ></label>
+          </td>
+          <!-- <td>
             <button
               nz-button
               nzType="primary"
               nzSize="small"
               (click)="selectStudent(postulant)"
+              [nzLoading]="postulant.loading"
             >
-              <!-- [nzLoading]="student.loading" -->
               <i nz-icon nzType="check"></i>
             </button>
-          </td>
+          </td> -->
         </tr>
       }
     </tbody>
