@@ -105,26 +105,25 @@ interface PreRegistration {
   templateUrl: './selection.component.html',
   styleUrls: ['./selection.component.less'],
   imports: [
-    FormsModule,
     CommonModule,
-    NzCollapseModule,
-    NzGridModule,
+    FormsModule,
+    NzAlertComponent,
     NzButtonModule,
-    NzInputModule,
-    NzIconModule,
+    NzCheckboxComponent,
+    NzColDirective,
+    NzCollapseModule,
     NzFormItemComponent,
     NzFormLabelComponent,
-    NzColDirective,
+    NzGridModule,
+    NzIconModule,
+    NzInputModule,
+    NzListModule,
+    NzModalModule,
     NzSelectModule,
     NzTableModule,
     NzTagModule,
-    NzModalModule,
-    NzAlertComponent,
-    NzListModule,
     NzTypographyModule,
-    NzCheckboxComponent
-]
-  ,
+  ],
   providers: [NzModalService]
 })
 export class SelectionInbox implements OnInit {
@@ -249,23 +248,6 @@ export class SelectionInbox implements OnInit {
     this.isConfirmVisible = false;
   }
 
-  // handleOk(): void {
-  //   // if (!this.selectedStudent) return;
-  //   if(!this.selectedPostulant) return;
-
-  //   this.isConfirmLoading = true;
-  //   // Simular procesamiento
-  //   setTimeout(() => {
-  //     this.selectedPostulant!.selected = true;
-  //     // this.selectedStudent!.selected = true;
-  //     // this.selectedStudents.push(this.selectedStudent!);
-  //     this.selectedPostulants.push(this.selectedPostulant!)
-  //     this.isConfirmVisible = false;
-  //     this.isConfirmLoading = false;
-  //     this.message.success(`Postulante ${this.selectedPostulant?.postulant.name} seleccionado`);
-  //   }, 800);
-  // }
-
   confirmSelection(): void {
     if (this.selectedPostulants.length === 0) return;
     this.isConsolidateVisible = true;
@@ -306,12 +288,19 @@ export class SelectionInbox implements OnInit {
     if(!this.selectedPostulant) return;
 
     this.isConfirmLoading = true;
-    setTimeout(() => {
+    const { id: preRegistrationId } = this.selectedPostulant
+    this._preRegistration.updatedStatus(preRegistrationId).subscribe(response => {
       this.selectedPostulant!.selected = this.tempChecked;
       this.selectedPostulants.push(this.selectedPostulant!)
       this.isConfirmVisible = false;
       this.isConfirmLoading = false;
       this.message.success(`Postulante ${this.selectedPostulant?.postulant.name} seleccionado`);
-    }, 800);
+    })
+    // setTimeout(() => {
+    // }, 800);
+  }
+
+  updatedStatus():void {
+    
   }
 }

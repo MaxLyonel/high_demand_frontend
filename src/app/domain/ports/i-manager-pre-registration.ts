@@ -15,5 +15,9 @@ export default interface IManagerPreRegistration {
   savePreRegistration(obj: any): Observable<any>;
   // ** obtener lista de pre inscripciones **
   getListPreRegistrations(): Observable<any>
+  // ** Actualizar el estado de la pre inscripción **
+  updatedStatus(preRegistrationId: number): Observable<any>
+  // ** obtener lista de pre inscripciones aceptadas **
+  getListAccepted(): Observable<any>
 
 }

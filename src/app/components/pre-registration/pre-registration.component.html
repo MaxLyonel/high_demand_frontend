@@ -4,578 +4,597 @@
       <nz-card nzTitle="FORMULARIO DE PRE INSCRIPCIÓN PARA EL SORTEO DE PLAZAS" [nzBordered]="false" class="body">
         <div class="form-header">
           <p>LA INFORMACIÓN RECABADA SERÁ UTILIZADA PARA EL REGISTRO DE PRE INSCRIPCIÓN (POSTULACIÓN) DE LA O EL ESTUDIANTE PARA LA GESTIÓN 2025</p>
-          <div class="form-number">N° 0331821</div>
+          <!-- <div class="form-number">N° 0331821</div> -->
         </div>
 
-        <form nz-form [formGroup]="form" (ngSubmit)="onSubmit()">
-          <!-- Sección I: Datos de la Unidad Educativa -->
-          <nz-card nzTitle="I. DATOS DE LA UNIDAD EDUCATIVA A LA QUE POSTULA" [nzBordered]="false" class="section-card">
-            <div nz-row nzGutter="16">
-              <div nz-col nzSpan="12">
-                <nz-form-item>
-                  <nz-form-label nzRequired>UNIDAD EDUCATIVA</nz-form-label>
-                  <nz-form-control>
-                    <nz-select
-                      formControlName="institutionName"
-                      [nzDisabled]="false"
-                      nzAllowClear
-                      nzShowSearch
-                      nzPlaceHolder="Seleccione unidad educativa"
-                    >
-                      @for(highDemand of highDemands; track highDemand) {
-                        <nz-option [nzValue]="highDemand" [nzLabel]="highDemand.educationalInstitution.name"></nz-option>
-                      }
-                    </nz-select>
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-              <div nz-col nzSpan="12">
-                <nz-form-item>
-                  <nz-form-label>SIE</nz-form-label>
-                  <nz-form-control>
-                    <input nz-input formControlName="institutionId" readonly>
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-            </div>
-
-            <div nz-row nzGutter="16">
-              <div nz-col nzSpan="12">
-                <nz-form-item>
-                  <nz-form-label>ÁMBITO</nz-form-label>
-                  <nz-form-control>
-                    <input nz-input formControlName="institutionType" readonly>
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-              <div nz-col nzSpan="12">
-                <nz-form-item>
-                  <nz-form-label>DEPENDENCIA</nz-form-label>
-                  <nz-form-control>
-                    <input nz-input formControlName="institutionDependency" readonly>
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-            </div>
-
-            <div nz-row nzGutter="16">
-              <div nz-col nzSpan="6">
-                <nz-form-item>
-                  <nz-form-label>DEPARTAMENTO</nz-form-label>
-                  <nz-form-control>
-                    <input nz-input formControlName="institutionDepartment" readonly >
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-              <div nz-col nzSpan="7">
-                <nz-form-item>
-                  <nz-form-label>MUNICIPIO</nz-form-label>
-                  <nz-form-control>
-                    <input nz-input formControlName="institutionMunicipie" readonly>
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-              <div nz-col nzSpan="11">
-                <nz-form-item>
-                  <nz-form-label>DIRECCIÓN</nz-form-label>
-                  <nz-form-control>
-                    <input nz-input formControlName="neighborhoodArea" readonly>
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-            </div>
-          </nz-card>
-
-          <!-- Sección II: Datos de Pre-Inscripción -->
-          <nz-card nzTitle="II. DATOS DE PRE INSCRIPCIÓN" [nzBordered]="false" class="section-card">
-            <div nz-row nzGutter="16">
-              <div nz-col nzSpan="10">
-                <nz-form-item>
-                  <nz-form-label nzRequired>NIVEL DE EDUCACIÓN</nz-form-label>
-                  <nz-form-control>
-                    <nz-select
-                      formControlName="educationalLevel"
-                      [nzDisabled]="false"
-                      nzAllowClear
-                      nzShowSearch
-                      nzPlaceHolder="Seleccione un parentesco"
-                    >
-                      @for(level of educationalLevels; track level) {
-                        <nz-option [nzValue]="level" [nzLabel]="level.name"></nz-option>
-                      }
-                    </nz-select>
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-              <div nz-col nzSpan="8">
-                <nz-form-item>
-                  <nz-form-label nzRequired>AÑO DE ESCOLARIDAD</nz-form-label>
-                  <nz-form-control>
-                    <nz-select
-                      formControlName="yearOfSchoolign"
-                      [nzDisabled]="false"
-                      nzAllowClear
-                      nzShowSearch
-                      nzPlaceHolder="Seleccione un parentesco"
-                    >
-                      @for(grade of grades; track grade) {
-                        <nz-option [nzValue]="grade" [nzLabel]="grade.name"></nz-option>
-                      }
-                    </nz-select>
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-              <div nz-col nzSpan="6">
-                <nz-form-item>
-                  <nz-form-label nzRequired>PARALELO</nz-form-label>
-                  <nz-form-control>
-                    <nz-select
-                      formControlName="parallel"
-                      [nzDisabled]="false"
-                      nzAllowClear
-                      nzShowSearch
-                      nzPlaceHolder="Seleccione un parentesco"
-                    >
-                      @for(parallel of parallels; track parallel) {
-                        <nz-option [nzValue]="parallel" [nzLabel]="parallel.name"></nz-option>
-                      }
-                    </nz-select>
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-            </div>
-
-            <div nz-row>
-              <div nz-col nzSpan="24">
-                <nz-form-item>
-                  <nz-form-label nzRequired>JUSTIFICATIVO</nz-form-label>
-                  <nz-form-control>
-                    <nz-radio-group formControlName="justification">
-                    @for(criteria of criterias; track criteria) {
-                      <label nz-radio [nzValue]="criteria.id">{{criteria.name}}</label>
-                    }
-                    </nz-radio-group>
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-
-            </div>
-
-            <div nz-row nzGutter="16">
-              <!-- <div nz-col nzSpan="12">
-                <nz-form-item>
-                  <nz-form-label nzRequired>Lugar y Fecha</nz-form-label>
-                  <nz-form-control>
-                    <input nz-input formControlName="placeDate" readonly>
-                  </nz-form-control>
-                </nz-form-item>
-              </div> -->
-              <!-- <div nz-col nzSpan="12">
-                <nz-form-item>
-                  <nz-form-label>Firma del padre/madre o tutor(s)</nz-form-label>
-                  <nz-form-control>
-                    <div class="signature-placeholder"></div>
-                  </nz-form-control>
-                </nz-form-item>
-              </div> -->
-            </div>
-
-            <!-- <div nz-row>
-              <div nz-col nzSpan="24">
-                <nz-form-item>
-                  <nz-form-label>Sello y firma del Director(s) y/o Responsable de la Unidad Educativa</nz-form-label>
-                  <nz-form-control>
-                    <div class="signature-placeholder"></div>
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-            </div> -->
-          </nz-card>
-
-          <!-- Sección : Hermanos en la misma unidad -->
-          @if(justification === 1) {
-            <nz-card nzTitle="HERMANA(S) O HERMANO(S) EN ETAPA DE ESCOLARIDAD EN LA UNIDAD EDUCATIVA A LA QUE POSTULA EN LA PRESENTE GESTIÓN" [nzBordered]="false" class="section-card">
-              <div nz-row>
-                <div nz-col nzSpan="24">
-                  <nz-alert nzShowIcon nzType="warning" nzMessage="Solo llene en caso de tener hermanas/os en la Unidad Educativa que postula" ></nz-alert>
-                  <nz-table #hermanosTable [nzData]="[]" nzSize="small" [nzShowPagination]="false">
-                    <thead>
-                      <tr>
-                        <th>Código Rude</th>
-                        <th>Nombre</th>
-                        <th>Nivel de educación</th>
-                        <th>Año de escolaridad</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        @if(!studentBrother) {
-                          <td colspan="4" class="text-center">No hay hermanos registrados</td>
-                        } @else {
-                          <td class="text-center">{{ studentBrother.codigo_rude }}</td>
-                          <td class="text-center">{{ studentBrother.nombre }} {{ studentBrother.paterno }} {{ studentBrother.materno }} </td>
-                          <!-- <td colspan="2" class="text-center">Aún sin dato</td> -->
+        @if(!result()){
+          <form nz-form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <!-- Sección I: Datos de la Unidad Educativa -->
+            <nz-card nzTitle="I. DATOS DE LA UNIDAD EDUCATIVA A LA QUE POSTULA" [nzBordered]="false" class="section-card">
+              <div nz-row nzGutter="16">
+                <div nz-col nzSpan="12">
+                  <nz-form-item>
+                    <nz-form-label nzRequired>UNIDAD EDUCATIVA</nz-form-label>
+                    <nz-form-control>
+                      <nz-select
+                        formControlName="institutionName"
+                        [nzDisabled]="false"
+                        nzAllowClear
+                        nzShowSearch
+                        nzPlaceHolder="Seleccione unidad educativa"
+                      >
+                        @for(highDemand of highDemands; track highDemand) {
+                          <nz-option [nzValue]="highDemand" [nzLabel]="highDemand.educationalInstitution.name"></nz-option>
                         }
-                      </tr>
-                    </tbody>
-                  </nz-table>
-                  <button nz-button nzType="dashed" nzSize="small" nzBlock (click)="addBrother(rudeTpl)">
-                    <i nz-icon nzType="plus"></i> Agregar hermano
-                  </button>
+                      </nz-select>
+                    </nz-form-control>
+                  </nz-form-item>
                 </div>
-                <ng-template #rudeTpl>
-                  <div>
-                    <label>Ingrese el código RUDE del hermano(a)</label>
-                    <nz-input-group [nzSuffix]="suffixIconSearch">
-                      <input id="rudeInput" nz-input [(ngModel)]="rude" [ngModelOptions]="{standalone: true}" />
-                    </nz-input-group>
-                    <ng-template #suffixIconSearch>
-                      <nz-icon nzType="search" />
-                    </ng-template>
-                  </div>
-                </ng-template>
+                <div nz-col nzSpan="12">
+                  <nz-form-item>
+                    <nz-form-label>SIE</nz-form-label>
+                    <nz-form-control>
+                      <input nz-input formControlName="institutionId" readonly>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+  
+              <div nz-row nzGutter="16">
+                <div nz-col nzSpan="12">
+                  <nz-form-item>
+                    <nz-form-label>ÁMBITO</nz-form-label>
+                    <nz-form-control>
+                      <input nz-input formControlName="institutionType" readonly>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col nzSpan="12">
+                  <nz-form-item>
+                    <nz-form-label>DEPENDENCIA</nz-form-label>
+                    <nz-form-control>
+                      <input nz-input formControlName="institutionDependency" readonly>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+  
+              <div nz-row nzGutter="16">
+                <div nz-col nzSpan="6">
+                  <nz-form-item>
+                    <nz-form-label>DEPARTAMENTO</nz-form-label>
+                    <nz-form-control>
+                      <input nz-input formControlName="institutionDepartment" readonly >
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col nzSpan="7">
+                  <nz-form-item>
+                    <nz-form-label>MUNICIPIO</nz-form-label>
+                    <nz-form-control>
+                      <input nz-input formControlName="institutionMunicipie" readonly>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col nzSpan="11">
+                  <nz-form-item>
+                    <nz-form-label>DIRECCIÓN</nz-form-label>
+                    <nz-form-control>
+                      <input nz-input formControlName="neighborhoodArea" readonly>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
               </div>
             </nz-card>
-          }
-
-          <!-- Sección III: Datos del Estudiante -->
-          <nz-card nzTitle="III. DATOS DE LA O EL ESTUDIANTE" [nzBordered]="false" class="section-card">
-            <div nz-row nzGutter="16">
-              <div nz-col nzSpan="24">
-                <nz-form-item>
-                  <nz-form-label nzRequired>NACIONALIDAD</nz-form-label>
-                  <nz-form-control>
-                    <nz-radio-group formControlName="postulantNationality">
-                      <label nz-radio nzValue="Nacional">Nacional</label>
-                      <label nz-radio nzValue="Extranjero">Extranjero</label>
-                    </nz-radio-group>
-                  </nz-form-control>
-                </nz-form-item>
+  
+            <!-- Sección II: Datos de Pre-Inscripción -->
+            <nz-card nzTitle="II. DATOS DE PRE INSCRIPCIÓN" [nzBordered]="false" class="section-card">
+              <div nz-row nzGutter="16">
+                <div nz-col nzSpan="10">
+                  <nz-form-item>
+                    <nz-form-label nzRequired>NIVEL DE EDUCACIÓN</nz-form-label>
+                    <nz-form-control>
+                      <nz-select
+                        formControlName="educationalLevel"
+                        [nzDisabled]="false"
+                        nzAllowClear
+                        nzShowSearch
+                        nzPlaceHolder="Seleccione un parentesco"
+                      >
+                        @for(level of educationalLevels; track level) {
+                          <nz-option [nzValue]="level" [nzLabel]="level.name"></nz-option>
+                        }
+                      </nz-select>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col nzSpan="8">
+                  <nz-form-item>
+                    <nz-form-label nzRequired>AÑO DE ESCOLARIDAD</nz-form-label>
+                    <nz-form-control>
+                      <nz-select
+                        formControlName="yearOfSchoolign"
+                        [nzDisabled]="false"
+                        nzAllowClear
+                        nzShowSearch
+                        nzPlaceHolder="Seleccione un parentesco"
+                      >
+                        @for(grade of grades; track grade) {
+                          <nz-option [nzValue]="grade" [nzLabel]="grade.name"></nz-option>
+                        }
+                      </nz-select>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col nzSpan="6">
+                  <nz-form-item>
+                    <nz-form-label nzRequired>PARALELO</nz-form-label>
+                    <nz-form-control>
+                      <nz-select
+                        formControlName="parallel"
+                        [nzDisabled]="false"
+                        nzAllowClear
+                        nzShowSearch
+                        nzPlaceHolder="Seleccione un parentesco"
+                      >
+                        @for(parallel of parallels; track parallel) {
+                          <nz-option [nzValue]="parallel" [nzLabel]="parallel.name"></nz-option>
+                        }
+                      </nz-select>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
               </div>
-            </div>
-            <div nz-row nzGutter="16">
-              <div nz-col nzSpan="7">
-                <nz-form-item>
-                  <nz-form-label nzRequired>APELLIDO PATERNO</nz-form-label>
-                  <nz-form-control>
-                    <input nz-input formControlName="postulantLastName">
-                  </nz-form-control>
-                </nz-form-item>
+  
+              <div nz-row>
+                <div nz-col nzSpan="24">
+                  <nz-form-item>
+                    <nz-form-label nzRequired>JUSTIFICATIVO</nz-form-label>
+                    <nz-form-control>
+                      <nz-radio-group formControlName="justification">
+                      @for(criteria of criterias; track criteria) {
+                        <label nz-radio [nzValue]="criteria.id">{{criteria.name}}</label>
+                      }
+                      </nz-radio-group>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+  
               </div>
-              <div nz-col nzSpan="7">
-                <nz-form-item>
-                  <nz-form-label nzRequired>APELLIDO MATERNO</nz-form-label>
-                  <nz-form-control>
-                    <input nz-input formControlName="postulantMothersLastName">
-                  </nz-form-control>
-                </nz-form-item>
+  
+              <div nz-row nzGutter="16">
+                <!-- <div nz-col nzSpan="12">
+                  <nz-form-item>
+                    <nz-form-label nzRequired>Lugar y Fecha</nz-form-label>
+                    <nz-form-control>
+                      <input nz-input formControlName="placeDate" readonly>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div> -->
+                <!-- <div nz-col nzSpan="12">
+                  <nz-form-item>
+                    <nz-form-label>Firma del padre/madre o tutor(s)</nz-form-label>
+                    <nz-form-control>
+                      <div class="signature-placeholder"></div>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div> -->
               </div>
-              <div nz-col nzSpan="10">
-                <nz-form-item>
-                  <nz-form-label nzRequired>NOMBRE(S)</nz-form-label>
-                  <nz-form-control>
-                    <input nz-input formControlName="postulantName">
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-            </div>
-
-            <div nz-row nzGutter="16">
-              <div nz-col nzSpan="16">
-                <nz-form-item>
-                  <nz-form-label nzRequired>CÉDULA DE IDENTIDAD</nz-form-label>
-                  <nz-form-control>
-                    <input nz-input formControlName="postulantIdentityCard">
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-              <div nz-col nzSpan="8">
-                <nz-form-item>
-                  <nz-form-label>COMPLEMENTO</nz-form-label>
-                  <nz-form-control>
-                    <input nz-input formControlName="postulantComplement">
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-              <div nz-col nzSpan="12">
-                <nz-form-item>
-                  <nz-form-label nzRequired>GÉNERO</nz-form-label>
-                  <nz-form-control>
-                    <nz-radio-group formControlName="postulantGender">
-                      <label nz-radio nzValue="Femenino">Femenino</label>
-                      <label nz-radio nzValue="Masculino">Masculino</label>
-                    </nz-radio-group>
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-            </div>
-
-            <div nz-row nzGutter="16">
-              <div nz-col nzSpan="8">
-                <nz-form-item>
-                  <nz-form-label nzRequired>FECHA DE NACIMIENTO</nz-form-label>
-                  <nz-form-control>
-                    <nz-date-picker formControlName="postulantDateBirth" style="width: 100%;"></nz-date-picker>
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-              <div nz-col nzSpan="16">
-                <nz-form-item>
-                  <nz-form-label nzRequired>LUGAR DE NACIMIENTO</nz-form-label>
-                  <nz-form-control>
-                    <input nz-input formControlName="postulantPlaceBirth">
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-            </div>
-
-            <div nz-row nzGutter="16">
-              <!-- <div nz-col nzSpan="12">
-                <nz-form-item>
-                  <nz-form-label nzRequired>Edad</nz-form-label>
-                  <nz-form-control>
-                    <div nz-row nzGutter="8">
-                      <div nz-col nzSpan="12">
-                        <nz-input-number formControlName="ageStudentYears" [nzMin]="0" [nzMax]="20" [nzStep]="1" nzPlaceHolder="Años"></nz-input-number>
-                      </div>
-                      <div nz-col nzSpan="12">
-                        <nz-input-number formControlName="ageStudentMonths" [nzMin]="0" [nzMax]="11" [nzStep]="1" nzPlaceHolder="Meses"></nz-input-number>
-                      </div>
-                    </div>
-                  </nz-form-control>
-                </nz-form-item>
+  
+              <!-- <div nz-row>
+                <div nz-col nzSpan="24">
+                  <nz-form-item>
+                    <nz-form-label>Sello y firma del Director(s) y/o Responsable de la Unidad Educativa</nz-form-label>
+                    <nz-form-control>
+                      <div class="signature-placeholder"></div>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
               </div> -->
+            </nz-card>
+  
+            <!-- Sección : Hermanos en la misma unidad -->
+            @if(justification === 1) {
+              <nz-card nzTitle="HERMANA(S) O HERMANO(S) EN ETAPA DE ESCOLARIDAD EN LA UNIDAD EDUCATIVA A LA QUE POSTULA EN LA PRESENTE GESTIÓN" [nzBordered]="false" class="section-card">
+                <div nz-row>
+                  <div nz-col nzSpan="24">
+                    <nz-alert nzShowIcon nzType="warning" nzMessage="Solo llene en caso de tener hermanas/os en la Unidad Educativa que postula" ></nz-alert>
+                    <nz-table #hermanosTable [nzData]="[]" nzSize="small" [nzShowPagination]="false">
+                      <thead>
+                        <tr>
+                          <th>Código Rude</th>
+                          <th>Nombre</th>
+                          <th>Nivel de educación</th>
+                          <th>Año de escolaridad</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          @if(!studentBrother) {
+                            <td colspan="4" class="text-center">No hay hermanos registrados</td>
+                          } @else {
+                            <td class="text-center">{{ studentBrother.codigo_rude }}</td>
+                            <td class="text-center">{{ studentBrother.nombre }} {{ studentBrother.paterno }} {{ studentBrother.materno }} </td>
+                            <!-- <td colspan="2" class="text-center">Aún sin dato</td> -->
+                          }
+                        </tr>
+                      </tbody>
+                    </nz-table>
+                    <button nz-button nzType="dashed" nzSize="small" nzBlock (click)="addBrother(rudeTpl)">
+                      <i nz-icon nzType="plus"></i> Agregar hermano
+                    </button>
+                  </div>
+                  <ng-template #rudeTpl>
+                    <div>
+                      <label>Ingrese el código RUDE del hermano(a)</label>
+                      <nz-input-group [nzSuffix]="suffixIconSearch">
+                        <input id="rudeInput" nz-input [(ngModel)]="rude" [ngModelOptions]="{standalone: true}" />
+                      </nz-input-group>
+                      <ng-template #suffixIconSearch>
+                        <nz-icon nzType="search" />
+                      </ng-template>
+                    </div>
+                  </ng-template>
+                </div>
+              </nz-card>
+            }
+  
+            @if(justification === 2) {
+              <!-- Sección IV: Dirección del Estudiante -->
+              <nz-card nzTitle="DIRECCIÓN ACTUAL DE RESIDENCIA DE LA O EL ESTUDIANTE" [nzBordered]="false" class="section-card">
+                <div nz-row nzGutter="16">
+                  <div nz-col nzSpan="12">
+                    <nz-form-item>
+                      <nz-form-label nzRequired>Municipio</nz-form-label>
+                      <nz-form-control>
+                        <nz-select
+                          formControlName="postulantMunicipalityResidence"
+                          [nzDisabled]="false"
+                          nzAllowClear
+                          nzShowSearch
+                          nzPlaceHolder="Seleccione un municipio"
+                        >
+                          @for(municipie of municipies; track municipie) {
+                            <nz-option [nzValue]="municipie" [nzLabel]="municipie.place"></nz-option>
+                          }
+                        </nz-select>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                  <div nz-col nzSpan="12">
+                    <nz-form-item>
+                      <nz-form-label nzRequired>Zona / Villa</nz-form-label>
+                      <nz-form-control>
+                        <input nz-input formControlName="postulantAreaResidence" value="ZONA CENTRAL" readonly>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                </div>
+  
+                <div nz-row nzGutter="16">
+                  <div nz-col nzSpan="16">
+                    <nz-form-item>
+                      <nz-form-label nzRequired>Avenida / Calle / N°</nz-form-label>
+                      <nz-form-control>
+                        <input nz-input formControlName="postulantAddressResidence">
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                  <div nz-col nzSpan="8">
+                    <nz-form-item>
+                      <nz-form-label>Teléfono / Celular</nz-form-label>
+                      <nz-form-control>
+                        <input nz-input formControlName="postulantTelephoneResidence">
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                </div>
+              </nz-card>
+            }
+  
+            @if(justification === 3) {
+              <nz-card nzTitle="DIRECCIÓN ACTUAL DEL TRABAJO DEL PADRE, MADRE Y/O TUTOR" [nzBordered]="false" class="section-card">
+    
+                <!-- <nz-divider nzText="DIRECCIÓN ACTUAL DEL TRABAJO DEL PADRE, MADRE Y/O TUTOR" nzOrientation="center"></nz-divider> -->
+    
+                <div nz-row nzGutter="16">
+                  <div nz-col nzSpan="12">
+                    <nz-form-item>
+                      <nz-form-label nzRequired>NOMBRE DEL LUGAR DE TRABAJO</nz-form-label>
+                      <nz-form-control>
+                        <input nz-input formControlName="guardianPlaceNameWork">
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                  <div nz-col nzSpan="12">
+                    <nz-form-item>
+                      <nz-form-label nzRequired>MUNICIPIO</nz-form-label>
+                      <nz-form-control>
+                        <nz-select
+                          formControlName="guardianMunicipalityWork"
+                          [nzDisabled]="false"
+                          nzAllowClear
+                          nzShowSearch
+                          nzPlaceHolder="Seleccione un municipio"
+                        >
+                          @for(municipie of municipies; track municipie) {
+                            <nz-option [nzValue]="municipie" [nzLabel]="municipie.place"></nz-option>
+                          }
+                        </nz-select>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                </div>
+    
+                <div nz-row nzGutter="16">
+                  <div nz-col nzSpan="12">
+                    <nz-form-item>
+                      <nz-form-label nzRequired>ZONA / VILLA</nz-form-label>
+                      <nz-form-control>
+                        <input nz-input formControlName="guardianAreaWork">
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                  <div nz-col nzSpan="12">
+                    <nz-form-item>
+                      <nz-form-label nzRequired>AVENIDA / CALLE / N°</nz-form-label>
+                      <nz-form-control>
+                        <input nz-input formControlName="guardianAddressJob">
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                </div>
+    
+                <div nz-row nzGutter="16">
+                  <div nz-col nzSpan="12">
+                    <nz-form-item>
+                      <nz-form-label>TELÉFONO / CELULAR</nz-form-label>
+                      <nz-form-control>
+                        <input nz-input formControlName="guardianPhoneJob">
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                </div>
+    
+                <!-- <div nz-row>
+                  <div nz-col nzSpan="24">
+                    <nz-form-item>
+                      <nz-form-label>DIBUJE EL CROQUIS DE UBICACIÓN DEL TRABAJO ACTUAL DEL PADRE, MADRE Y/O TUTOR EN EL REVERSO DE LA HOJA</nz-form-label>
+                    </nz-form-item>
+                  </div>
+                </div> -->
+              </nz-card>
+            }
+  
+            <!-- Sección III: Datos del Estudiante -->
+            <nz-card nzTitle="III. DATOS DE LA O EL ESTUDIANTE" [nzBordered]="false" class="section-card">
+              <div nz-row nzGutter="16">
+                <div nz-col nzSpan="24">
+                  <nz-form-item>
+                    <nz-form-label nzRequired>NACIONALIDAD</nz-form-label>
+                    <nz-form-control>
+                      <nz-radio-group formControlName="postulantNationality">
+                        <label nz-radio nzValue="Nacional">Nacional</label>
+                        <label nz-radio nzValue="Extranjero">Extranjero</label>
+                      </nz-radio-group>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+              <div nz-row nzGutter="16">
+                <div nz-col nzSpan="7">
+                  <nz-form-item>
+                    <nz-form-label nzRequired>APELLIDO PATERNO</nz-form-label>
+                    <nz-form-control>
+                      <input nz-input formControlName="postulantLastName">
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col nzSpan="7">
+                  <nz-form-item>
+                    <nz-form-label nzRequired>APELLIDO MATERNO</nz-form-label>
+                    <nz-form-control>
+                      <input nz-input formControlName="postulantMothersLastName">
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col nzSpan="10">
+                  <nz-form-item>
+                    <nz-form-label nzRequired>NOMBRE(S)</nz-form-label>
+                    <nz-form-control>
+                      <input nz-input formControlName="postulantName">
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+  
+              <div nz-row nzGutter="16">
+                <div nz-col nzSpan="16">
+                  <nz-form-item>
+                    <nz-form-label nzRequired>CÉDULA DE IDENTIDAD</nz-form-label>
+                    <nz-form-control>
+                      <input nz-input formControlName="postulantIdentityCard">
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col nzSpan="8">
+                  <nz-form-item>
+                    <nz-form-label>COMPLEMENTO</nz-form-label>
+                    <nz-form-control>
+                      <input nz-input formControlName="postulantComplement">
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col nzSpan="12">
+                  <nz-form-item>
+                    <nz-form-label nzRequired>GÉNERO</nz-form-label>
+                    <nz-form-control>
+                      <nz-radio-group formControlName="postulantGender">
+                        <label nz-radio nzValue="F">Femenino</label>
+                        <label nz-radio nzValue="M">Masculino</label>
+                      </nz-radio-group>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+  
+              <div nz-row nzGutter="16">
+                <div nz-col nzSpan="8">
+                  <nz-form-item>
+                    <nz-form-label nzRequired>FECHA DE NACIMIENTO</nz-form-label>
+                    <nz-form-control>
+                      <nz-date-picker formControlName="postulantDateBirth" style="width: 100%;"></nz-date-picker>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col nzSpan="16">
+                  <nz-form-item>
+                    <nz-form-label nzRequired>LUGAR DE NACIMIENTO</nz-form-label>
+                    <nz-form-control>
+                      <input nz-input formControlName="postulantPlaceBirth">
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+  
+              <div nz-row nzGutter="16">
+                <!-- <div nz-col nzSpan="12">
+                  <nz-form-item>
+                    <nz-form-label nzRequired>Edad</nz-form-label>
+                    <nz-form-control>
+                      <div nz-row nzGutter="8">
+                        <div nz-col nzSpan="12">
+                          <nz-input-number formControlName="ageStudentYears" [nzMin]="0" [nzMax]="20" [nzStep]="1" nzPlaceHolder="Años"></nz-input-number>
+                        </div>
+                        <div nz-col nzSpan="12">
+                          <nz-input-number formControlName="ageStudentMonths" [nzMin]="0" [nzMax]="11" [nzStep]="1" nzPlaceHolder="Meses"></nz-input-number>
+                        </div>
+                      </div>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div> -->
+              </div>
+            </nz-card>
+  
+  
+            <!-- Sección II: Datos del Padre/Madre/Tutor -->
+            <nz-card nzTitle="IV. DATOS DEL PADRE, MADRE O TUTOR(a) DE LA O EL ESTUDIANTE" [nzBordered]="false" class="section-card">
+              <div nz-row nzGutter="16">
+                <div nz-col nzSpan="24">
+                  <nz-form-item>
+                    <nz-form-label nzRequired>NACIONALIDAD</nz-form-label>
+                    <nz-form-control>
+                      <nz-radio-group formControlName="guardianNationality">
+                        <label nz-radio [nzValue]="1">Nacional</label>
+                        <label nz-radio [nzValue]="2">Extranjero</label>
+                      </nz-radio-group>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+              <div nz-row nzGutter="16">
+                <div nz-col nzSpan="8">
+                  <nz-form-item>
+                    <nz-form-label nzRequired>APELLIDO PATERNO</nz-form-label>
+                    <nz-form-control>
+                      <input nz-input formControlName="guardianLastName">
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col nzSpan="8">
+                  <nz-form-item>
+                    <nz-form-label nzRequired>APELLIDO MATERNO</nz-form-label>
+                    <nz-form-control>
+                      <input nz-input formControlName="guardianMothersLastName">
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col nzSpan="8">
+                  <nz-form-item>
+                    <nz-form-label nzRequired>NOMBRE(S)</nz-form-label>
+                    <nz-form-control>
+                      <input nz-input formControlName="guardianName">
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+  
+              <div nz-row nzGutter="16">
+                <div nz-col nzSpan="16">
+                  <nz-form-item>
+                    <nz-form-label nzRequired>CÉDULA DE IDENTIDAD</nz-form-label>
+                    <nz-form-control>
+                      <input nz-input formControlName="guardianIdentityCard">
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col nzSpan="8">
+                  <nz-form-item>
+                    <nz-form-label>COMPLEMENTO</nz-form-label>
+                    <nz-form-control>
+                      <input nz-input formControlName="guardianComplement">
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+              <div nz-row nzGutter="16">
+                <div nz-col nzSpan="12">
+                  <nz-form-item>
+                    <nz-form-label nzRequired>FECHA DE NACIMIENTO</nz-form-label>
+                    <nz-form-control>
+                      <nz-date-picker formControlName="guardianDateBirth" style="width: 100%;"></nz-date-picker>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col nzSpan="12">
+                  <nz-form-item>
+                    <nz-form-label nzRequired>PARENTESCO</nz-form-label>
+                    <nz-form-control>
+                      <nz-select
+                        formControlName="guardianRelationship"
+                        [nzDisabled]="false"
+                        nzAllowClear
+                        nzShowSearch
+                        nzPlaceHolder="Seleccione un parentesco"
+                      >
+                        @for(rel of relationships; track rel) {
+                          <nz-option [nzValue]="rel" [nzLabel]="rel.name"></nz-option>
+                        }
+                      </nz-select>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+              <div nz-row nzGutter="16">
+                <div nz-col nzSpan="24">
+                  <nz-form-item>
+                    <nz-form-label nzRequired>DIRECCIÓN DE SU RESIDENCIA (zona / avenida / calle / N° / teléfono)</nz-form-label>
+                    <nz-form-control>
+                      <input nz-input formControlName="guardianAddress">
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+            </nz-card>
+  
+  
+            <div nz-row nzJustify="center" class="form-actions">
+              <!-- [disabled]="form.invalid" -->
+              <button nz-button nzType="primary" nzSize="large" >Pre Inscribir</button>
             </div>
-          </nz-card>
-
-          <!-- Sección IV: Dirección del Estudiante -->
-          <nz-card nzTitle="IV. DIRECCIÓN ACTUAL DE RESIDENCIA DE LA O EL ESTUDIANTE" [nzBordered]="false" class="section-card">
-            <div nz-row nzGutter="16">
-              <div nz-col nzSpan="12">
-                <nz-form-item>
-                  <nz-form-label nzRequired>Municipio</nz-form-label>
-                  <nz-form-control>
-                    <nz-select
-                      formControlName="postulantMunicipalityResidence"
-                      [nzDisabled]="false"
-                      nzAllowClear
-                      nzShowSearch
-                      nzPlaceHolder="Seleccione un municipio"
-                    >
-                      @for(municipie of municipies; track municipie) {
-                        <nz-option [nzValue]="municipie" [nzLabel]="municipie.place"></nz-option>
-                      }
-                    </nz-select>
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-              <div nz-col nzSpan="12">
-                <nz-form-item>
-                  <nz-form-label nzRequired>Zona / Villa</nz-form-label>
-                  <nz-form-control>
-                    <input nz-input formControlName="postulantAreaResidence" value="ZONA CENTRAL" readonly>
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
+          </form>
+        } @else {
+          <nz-result
+            nzStatus="success"
+            nzTitle="Se registro la pre inscripción exitosamente"
+            nzSubTitle="Esto es un subtitulo interesante"
+          >
+            <div nz-result-extra>
+              <button nz-button nzType="primary" (click)="back()">Volver al inicio</button>
             </div>
+          </nz-result>
+        }
 
-            <div nz-row nzGutter="16">
-              <div nz-col nzSpan="16">
-                <nz-form-item>
-                  <nz-form-label nzRequired>Avenida / Calle / N°</nz-form-label>
-                  <nz-form-control>
-                    <input nz-input formControlName="postulantAddressResidence">
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-              <div nz-col nzSpan="8">
-                <nz-form-item>
-                  <nz-form-label>Teléfono / Celular</nz-form-label>
-                  <nz-form-control>
-                    <input nz-input formControlName="postulantTelephoneResidence">
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-            </div>
-          </nz-card>
-
-          <!-- Sección II: Datos del Padre/Madre/Tutor -->
-          <nz-card nzTitle="V. DATOS DEL PADRE, MADRE O TUTOR(a) DE LA O EL ESTUDIANTE" [nzBordered]="false" class="section-card">
-            <div nz-row nzGutter="16">
-              <div nz-col nzSpan="24">
-                <nz-form-item>
-                  <nz-form-label nzRequired>NACIONALIDAD</nz-form-label>
-                  <nz-form-control>
-                    <nz-radio-group formControlName="guardianNationality">
-                      <label nz-radio nzValue="Nacional">Nacional</label>
-                      <label nz-radio nzValue="Extranjero">Extranjero</label>
-                    </nz-radio-group>
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-            </div>
-            <div nz-row nzGutter="16">
-              <div nz-col nzSpan="8">
-                <nz-form-item>
-                  <nz-form-label nzRequired>APELLIDO PATERNO</nz-form-label>
-                  <nz-form-control>
-                    <input nz-input formControlName="guardianLastName">
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-              <div nz-col nzSpan="8">
-                <nz-form-item>
-                  <nz-form-label nzRequired>APELLIDO MATERNO</nz-form-label>
-                  <nz-form-control>
-                    <input nz-input formControlName="guardianMothersLastName">
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-              <div nz-col nzSpan="8">
-                <nz-form-item>
-                  <nz-form-label nzRequired>NOMBRE(S)</nz-form-label>
-                  <nz-form-control>
-                    <input nz-input formControlName="guardianName">
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-            </div>
-
-            <div nz-row nzGutter="16">
-              <div nz-col nzSpan="16">
-                <nz-form-item>
-                  <nz-form-label nzRequired>CÉDULA DE IDENTIDAD</nz-form-label>
-                  <nz-form-control>
-                    <input nz-input formControlName="guardianIdentityCard">
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-              <div nz-col nzSpan="8">
-                <nz-form-item>
-                  <nz-form-label>COMPLEMENTO</nz-form-label>
-                  <nz-form-control>
-                    <input nz-input formControlName="guardianComplement">
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-            </div>
-            <div nz-row nzGutter="16">
-              <div nz-col nzSpan="12">
-                <nz-form-item>
-                  <nz-form-label nzRequired>FECHA DE NACIMIENTO</nz-form-label>
-                  <nz-form-control>
-                    <nz-date-picker formControlName="guardianDateBirth" style="width: 100%;"></nz-date-picker>
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-              <div nz-col nzSpan="12">
-                <nz-form-item>
-                  <nz-form-label nzRequired>PARENTESCO</nz-form-label>
-                  <nz-form-control>
-                    <nz-select
-                      formControlName="guardianRelationship"
-                      [nzDisabled]="false"
-                      nzAllowClear
-                      nzShowSearch
-                      nzPlaceHolder="Seleccione un parentesco"
-                    >
-                      @for(rel of relationships; track rel) {
-                        <nz-option [nzValue]="rel" [nzLabel]="rel.name"></nz-option>
-                      }
-                    </nz-select>
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-            </div>
-          </nz-card>
-
-          <nz-card nzTitle="VI. DIRECCIÓN ACTUAL DEL TRABAJO DEL PADRE, MADRE Y/O TUTOR" [nzBordered]="false" class="section-card">
-            <div nz-row nzGutter="16">
-              <div nz-col nzSpan="24">
-                <nz-form-item>
-                  <nz-form-label nzRequired>DIRECCIÓN DE SU RESIDENCIA (zona / avenida / calle / N° / teléfono)</nz-form-label>
-                  <nz-form-control>
-                    <input nz-input formControlName="guardianAddress">
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-            </div>
-
-            <!-- <nz-divider nzText="DIRECCIÓN ACTUAL DEL TRABAJO DEL PADRE, MADRE Y/O TUTOR" nzOrientation="center"></nz-divider> -->
-
-            <div nz-row nzGutter="16">
-              <div nz-col nzSpan="12">
-                <nz-form-item>
-                  <nz-form-label nzRequired>NOMBRE DEL LUGAR DE TRABAJO</nz-form-label>
-                  <nz-form-control>
-                    <input nz-input formControlName="guardianPlaceNameWork">
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-              <div nz-col nzSpan="12">
-                <nz-form-item>
-                  <nz-form-label nzRequired>MUNICIPIO</nz-form-label>
-                  <nz-form-control>
-                    <nz-select
-                      formControlName="guardianMunicipalityWork"
-                      [nzDisabled]="false"
-                      nzAllowClear
-                      nzShowSearch
-                      nzPlaceHolder="Seleccione un municipio"
-                    >
-                      @for(municipie of municipies; track municipie) {
-                        <nz-option [nzValue]="municipie" [nzLabel]="municipie.place"></nz-option>
-                      }
-                    </nz-select>
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-            </div>
-
-            <div nz-row nzGutter="16">
-              <div nz-col nzSpan="12">
-                <nz-form-item>
-                  <nz-form-label nzRequired>ZONA / VILLA</nz-form-label>
-                  <nz-form-control>
-                    <input nz-input formControlName="guardianAreaWork">
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-              <div nz-col nzSpan="12">
-                <nz-form-item>
-                  <nz-form-label nzRequired>AVENIDA / CALLE / N°</nz-form-label>
-                  <nz-form-control>
-                    <input nz-input formControlName="guardianAddressJob">
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-            </div>
-
-            <div nz-row nzGutter="16">
-              <div nz-col nzSpan="12">
-                <nz-form-item>
-                  <nz-form-label>TELÉFONO / CELULAR</nz-form-label>
-                  <nz-form-control>
-                    <input nz-input formControlName="guardianPhoneJob">
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-            </div>
-
-            <!-- <div nz-row>
-              <div nz-col nzSpan="24">
-                <nz-form-item>
-                  <nz-form-label>DIBUJE EL CROQUIS DE UBICACIÓN DEL TRABAJO ACTUAL DEL PADRE, MADRE Y/O TUTOR EN EL REVERSO DE LA HOJA</nz-form-label>
-                </nz-form-item>
-              </div>
-            </div> -->
-          </nz-card>
-
-          <div nz-row nzJustify="center" class="form-actions">
-            <!-- [disabled]="form.invalid" -->
-            <button nz-button nzType="primary" nzSize="large" >Pre Inscribir</button>
-          </div>
-        </form>
       </nz-card>
     </div>
   </nz-content>

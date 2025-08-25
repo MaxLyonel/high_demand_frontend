@@ -13,5 +13,8 @@ export default interface IPreRegistration {
   savePreRegistration(obj: any): Observable<any>;
   // ** exponer funcionalidad para obtener la lista de pre inscripciones **
   getListPreRegistration(): Observable<any>;
-
+  // ** exponer funcionalidad actualizar estado de la preinscripción **
+  updatedStatus(preRegistrationId: number): Observable<any>;
+  // ** exopner funcionalidad para obtener la lista de pre inscripciones aceptadas **
+  getListAccpeted(): Observable<any>;
 }

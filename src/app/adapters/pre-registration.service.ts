@@ -80,4 +80,22 @@ export class PreRegistrationAdapterService implements IManagerPreRegistration {
     )
   }
 
+  updatedStatus(preRegistrationId: number): Observable<any> {
+    return this.http.get(`pre-registration/update-status/${preRegistrationId}`).pipe(
+      catchError(err => {
+        console.log("Error al actualizar el estado de la preinscripción")
+        return throwError(() => err)
+      })
+    )
+  }
+
+  getListAccepted(): Observable<any> {
+    return this.http.get(`pre-registration/accepted-list`).pipe(
+      catchError(err => {
+        console.log("Error al obtener pre inscripciones aceptadas")
+        return throwError(() => err)
+      })
+    )
+  }
+
 }

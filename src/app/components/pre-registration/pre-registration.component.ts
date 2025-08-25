@@ -1,5 +1,5 @@
-import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, Inject, OnInit, signal, TemplateRef } from '@angular/core';
+import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
@@ -18,8 +18,10 @@ import IHighDemand from '../../domain/ports/i-high-demand';
 import IPreRegistration from '../../domain/ports/i-pre-registration';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { NzResultModule } from 'ng-zorro-antd/result'
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NotificationService } from '../../infrastructure/services/notify.service';
+import { startWith } from 'rxjs';
 
 @Component({
   selector: 'app-formulario-inscripcion',
@@ -44,7 +46,8 @@ import { NotificationService } from '../../infrastructure/services/notify.servic
     NzIconModule,
     NzTypographyModule,
     NzSelectModule,
-    NzModalModule
+    NzModalModule,
+    NzResultModule
 ]
 })
 export default class FormularioInscripcionComponent implements OnInit{
@@ -67,6 +70,8 @@ export default class FormularioInscripcionComponent implements OnInit{
   rude: any
   studentBrother: any
 
+  result = signal<boolean>(false)
+
   constructor(
     private fb: FormBuilder,
     private modal: NzModalService,
@@ -85,7 +90,7 @@ export default class FormularioInscripcionComponent implements OnInit{
       neighborhoodArea: [''],
 
       // Sección II: Datos del Padre/Madre/Tutor
-      guardianNationality: ['Nacional', Validators.required],
+      guardianNationality: [1, Validators.required],
       guardianComplement: [''],
       guardianLastName: ['', Validators.required],
       guardianMothersLastName: ['', Validators.required],
@@ -93,13 +98,13 @@ export default class FormularioInscripcionComponent implements OnInit{
       guardianIdentityCard: ['', Validators.required],
       guardianRelationship: ['', Validators.required],
       guardianDateBirth: ['', Validators.required],
-
       guardianAddress: ['', Validators.required],
-      guardianPlaceNameWork: ['', Validators.required],
-      guardianMunicipalityWork: ['', Validators.required],
-      guardianAreaWork: ['', Validators.required],
-      guardianAddressJob: ['', Validators.required],
-      guardianPhoneJob: ['', Validators.required],
+
+      guardianPlaceNameWork: [''],
+      guardianMunicipalityWork: [''],
+      guardianAreaWork: [''],
+      guardianAddressJob: [''],
+      guardianPhoneJob: [''],
 
       // Sección III: Datos del Estudiante
       postulantNationality: ['Nacional', Validators.required],
@@ -108,14 +113,14 @@ export default class FormularioInscripcionComponent implements OnInit{
       postulantName: ['', Validators.required],
       postulantIdentityCard: [''],
       postulantComplement: [''],
-      postulantGender: ['Femenino', Validators.required],
+      postulantGender: ['F', Validators.required],
       postulantDateBirth: ['', Validators.required],
       postulantPlaceBirth: ['', Validators.required],
 
       // Sección IV: Dirección del Estudiante
-      postulantMunicipalityResidence: ['', Validators.required],
-      postulantAreaResidence: ['ZONA CENTRAL', Validators.required],
-      postulantAddressResidence: ['', Validators.required],
+      postulantMunicipalityResidence: [''],
+      postulantAreaResidence: ['ZONA CENTRAL'],
+      postulantAddressResidence: [''],
       postulantTelephoneResidence: [''],
 
       // Sección V: Hermanos en la misma unidad
@@ -127,7 +132,7 @@ export default class FormularioInscripcionComponent implements OnInit{
       educationalLevel: ['', Validators.required],
       yearOfSchoolign: ['', Validators.required],
       parallel: ['', Validators.required],
-      placeDate: [`POTOSI, ${this.today.getDate()} DE ${this.getMonthName(this.today.getMonth())} DE ${this.today.getFullYear()}`, Validators.required]
+      placeDate: [`POTOSI, ${this.today.getDate()} DE ${this.getMonthName(this.today.getMonth())} DE ${this.today.getFullYear()}`]
     });
 
     this.form.get('institutionName')?.valueChanges.subscribe(selected => {
@@ -232,8 +237,10 @@ export default class FormularioInscripcionComponent implements OnInit{
       }
       this._preRgistration.savePreRegistration(data).subscribe((response) => {
         console.log("Response create: ", response)
+        this.result.set(true)
       })
     } else {
+      this.showInvalidFields(this.form)
       this.notification.showMessage('Por favor rellené los campos con border rojo para realizar la pre inscripción', 'Advertencia', 'warning')
       Object.values(this.form.controls).forEach(control => {
         if (control.invalid) {
@@ -241,12 +248,13 @@ export default class FormularioInscripcionComponent implements OnInit{
           control.updateValueAndValidity({ onlySelf: true });
         }
       });
+      this.result.set(false)
     }
   }
 
-
   ngOnInit(): void {
     this.loadData()
+    this.dynamicValidations()
   }
 
   loadData() {
@@ -302,6 +310,71 @@ export default class FormularioInscripcionComponent implements OnInit{
     return grouped
   }
 
+  dynamicValidations() {
+    this.form.get('justification')?.valueChanges.pipe(
+      startWith(this.form.get('justification')?.value)
+    ).subscribe((value) => {
+      // postulante
+      const postulantMunicipalityResidence = this.form.get('postulantMunicipalityResidence')
+      const postulantAreaResidence = this.form.get('postulantAreaResidence')
+      const postulantAddressResidence = this.form.get('postulantAddressResidence')
+      const postulantTelephoneResidence = this.form.get('postulantTelephoneResidence')
+      // apoderado
+      const guardianPlaceNameWork = this.form.get('guardianPlaceNameWork')
+      const guardianMunicipalityWork = this.form.get('guardianMunicipalityWork')
+      const guardianAreaWork = this.form.get('guardianAreaWork')
+      const guardianAddressJob = this.form.get('guardianAddressJob')
+      const guardianPhoneJob = this.form.get('guardianPhoneJob')
+      if(value === 2) {
+        postulantMunicipalityResidence?.setValidators([Validators.required])
+        postulantAreaResidence?.setValidators([Validators.required])
+        postulantAddressResidence?.setValidators([Validators.required])
+        postulantTelephoneResidence?.setValidators([Validators.required])
+      } else {
+        postulantMunicipalityResidence?.clearValidators()
+        postulantAreaResidence?.clearValidators()
+        postulantAddressResidence?.clearValidators()
+        postulantTelephoneResidence?.clearValidators()
+      }
+
+      if(value === 3) {
+        guardianPlaceNameWork?.setValidators([Validators.required])
+        guardianMunicipalityWork?.setValidators([Validators.required])
+        guardianAreaWork?.setValidators([Validators.required])
+        guardianAddressJob?.setValidators([Validators.required])
+        guardianPhoneJob?.setValidators([Validators.required])
+      } else {
+        guardianPlaceNameWork?.clearValidators()
+        guardianMunicipalityWork?.clearValidators()
+        guardianAreaWork?.clearValidators()
+        guardianAddressJob?.clearValidators()
+        guardianPhoneJob?.clearValidators()
+      }
+
+    })
+  }
+
+  showInvalidFields(formGroup: FormGroup) {
+    Object.keys(formGroup.controls).forEach((field) => {
+      const control = formGroup.get(field);
+      if (control instanceof FormControl) {
+        control.markAsTouched({ onlySelf: true });
+        if (control.invalid) {
+          console.log(`Campo inválido: ${field}`);
+        }
+      } else if (control instanceof FormGroup) {
+        this.showInvalidFields(control); // Si hay grupos anidados, recorrerlos también
+      } else if (control instanceof FormArray) {
+        control.controls.forEach((group) => {
+          if (group instanceof FormGroup) {
+            this.showInvalidFields(group);
+          }
+        });
+      }
+    });
+  }
+
+
   private getMonthName(month: number): string {
     const months = [
       'ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO',
@@ -337,5 +410,10 @@ export default class FormularioInscripcionComponent implements OnInit{
   // getters y setters
   get justification(): number {
     return this.form.get('justification')?.value;
+  }
+
+  back() {
+    this.form.reset()
+    window.location.reload();
   }
 }
