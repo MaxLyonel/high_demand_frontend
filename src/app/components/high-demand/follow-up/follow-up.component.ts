@@ -27,6 +27,8 @@ import IInstituionDetail from '../../../domain/ports/i-institution-detail';
 import IManagerTeacher from '../../../domain/ports/i-manager-teacher';
 import { switchMap, tap } from 'rxjs';
 import { AppStore } from '../../../infrastructure/store/app.store';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 
 interface Registration {
   id: number;
@@ -38,6 +40,7 @@ interface Registration {
   observation: string,
   updatedAt: Date;
   userName: string;
+  rol: string;
 }
   // documentos: Documento[];
 
@@ -50,8 +53,10 @@ interface Documento {
 
 interface EventoHistorial {
   updatedAt: Date;
+  registrationStatus: RegistrationStatus
   workflowState: string;
   userName: string;
+  rol: string;
   observation?: string;
 }
 
@@ -60,26 +65,28 @@ interface EventoHistorial {
   templateUrl: './follow-up.component.html',
   styleUrls: ['./follow-up.component.less'],
   imports: [
+    CommonModule,
     FormsModule,
-    NzCardModule,
-    NzSpaceModule,
-    NzTagModule,
-    NzTabsModule,
-    NzModalModule,
-    NzDescriptionsModule,
-    NzListModule,
     NzAvatarModule,
+    NzButtonComponent,
+    NzCardModule,
+    NzDescriptionsModule,
+    NzDividerModule,
+    NzIconModule,
+    NzInputModule,
+    NzListModule,
+    NzModalModule,
     NzSelectModule,
+    NzSpaceModule,
     NzTableModule,
     NzTabsModule,
-    NzInputModule,
-    NzTimePickerModule,
-    NzDividerModule,
-    CommonModule,
+    NzTabsModule,
+    NzTagModule,
     NzTimelineModule,
-    NzButtonComponent,
-    NzIconModule,
-    NzTypographyModule
+    NzTimePickerModule,
+    NzToolTipModule,
+    NzTypographyModule,
+    NzDatePickerModule
   ]
 })
 export class SeguimientoComponent implements OnInit {
@@ -99,7 +106,7 @@ export class SeguimientoComponent implements OnInit {
   historial: EventoHistorial[] = [ ];
 
   LocalStorageService = inject(LocalStorageService)
-  appStore = inject(AppStore)
+  appStore            = inject(AppStore)
 
   constructor(
     private message: NzMessageService,
@@ -114,35 +121,37 @@ export class SeguimientoComponent implements OnInit {
     this.loadData();
   }
 
-loadData(): void {
-  this.loading = true;
-  const { user } = this.appStore.snapshot
-  const { personId } = user;
+  loadData(): void {
+    this.loading = true;
+    const { user } = this.appStore.snapshot
+    const { personId } = user;
 
-  this._teacher.getInfoTeacher(personId).pipe(
-    switchMap((response: any) => {
-      const { educationalInstitutionId: sie } = response.data;
-      return this._institution.getInfoInstitution(sie);
-    }),
-    switchMap(institution => {
-      const { id } = institution;
-      return this._highDemand.getHighDemandByInstitution(id);
-    }),
-    switchMap(highDemand => {
-      return this._history.showList(highDemand.id);
-    })
-  ).subscribe({
-    next: (history: any) => {
-      this.registration.set(history.data); // asegurarme que history.data existe
-      this.historial = history.data
-      this.loading = false;
-    },
-    error: (err) => {
-      console.error('Error cargando datos', err);
-      this.loading = false;
-    }
-  });
-}
+    this._teacher.getInfoTeacher(personId).pipe(
+      switchMap((response: any) => {
+        const { educationalInstitutionId: sie } = response.data;
+        return this._institution.getInfoInstitution(sie);
+      }),
+      switchMap(institution => {
+        const { id } = institution;
+        const high = this._highDemand.getHighDemandByInstitution(id);
+        return high
+      }),
+      switchMap(highDemand => {
+        const { id } = highDemand
+        return this._history.showList(id);
+      })
+    ).subscribe({
+      next: (history: any) => {
+        this.registration.set(history.data); // asegurarme que history.data existe
+        this.historial = history.data
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error cargando datos', err);
+        this.loading = false;
+      }
+    });
+  }
 
   onQueryParamsChange(params: any): void {
     const { pageSize, pageIndex } = params;
@@ -169,26 +178,33 @@ loadData(): void {
     this.message.info(`Descargando documentos de ${solicitud.unidadEducativa}`);
   }
 
-  cancelarSolicitud(solicitud: Registration): void {
+  cancelRequest(request: any): void {
     this.modal.confirm({
-      nzTitle: `¿Cancelar solicitud de ${solicitud.educationalInstitutionName}?`,
+      nzTitle: `¿Cancelar solicitud de ${request.educationalInstitutionName}?`,
       nzContent: 'Esta acción no se puede deshacer',
       nzOkText: 'Sí, cancelar',
       nzOkType: 'primary',
       nzOkDanger: true,
       nzCancelText: 'No',
       nzOnOk: () => {
-        solicitud.registrationStatus = RegistrationStatus.REJECTED;
-        this.message.success('Solicitud cancelada');
+        this._highDemand.cancelHighDemand(request).subscribe(response => {
+          this.loading = true;
+          this._history.showList(request.highDemandRegistrationId).subscribe((history:any) => {
+            this.registration.set(history.data); // asegurarme que history.data existe
+            this.historial = history.data
+            this.loading = false;
+          })
+        })
       }
     });
   }
 
   getColorEstado(estado?: string): string {
     switch (estado) {
-      case 'Aprobado': return 'success';
-      case 'Rechazado': return 'error';
-      case 'Observado': return 'warning';
+      case 'APROBADO': return 'success';
+      case 'RECHAZADO': return 'error';
+      case 'ANULADA': return 'error';
+      case 'OBSERVADO': return 'warning';
       default: return 'processing';
     }
   }

@@ -97,21 +97,22 @@
     [nzLoading]="loading"
     [nzPageSize]="10"
     [nzShowPagination]="true"
-    [nzScroll]="{ x: '1200px' }"
     class="student-table"
+    [nzScroll]="{ y: '220px' }"
+    [nzSize]="'small'"
   >
     <thead>
       <tr class="header-row">
-        <th nzWidth="60px">N°</th>
-        <th nzWidth="120px">Ap. Paterno</th>
-        <th nzWidth="120px">Ap. Materno</th>
-        <th nzWidth="150px">Nombres</th>
-        <th nzWidth="130px">Carnet Identidad</th>
-        <th nzWidth="120px">Criterio</th>
-        <th nzWidth="100px">Nivel</th>
-        <th nzWidth="140px">Año escolaridad</th>
-        <th nzWidth="140px">Paralelo</th>
-        <th nzWidth="80px">Acción</th>
+        <th class="header-cell" nzWidth="60px">N°</th>
+        <th class="header-cell" nzWidth="120px">Ap. Paterno</th>
+        <th class="header-cell" nzWidth="120px">Ap. Materno</th>
+        <th class="header-cell" nzWidth="150px">Nombres</th>
+        <th class="header-cell" nzWidth="130px">Carnet Identidad</th>
+        <th class="header-cell" nzWidth="120px">Criterio</th>
+        <th class="header-cell" nzWidth="100px">Nivel</th>
+        <th class="header-cell" nzWidth="140px">Año escolaridad</th>
+        <th class="header-cell" nzWidth="140px">Paralelo</th>
+        <th class="header-cell" nzWidth="80px">Acción</th>
       </tr>
     </thead>
     <tbody>

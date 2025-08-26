@@ -92,8 +92,6 @@ export class PostulationComponent implements OnInit {
   gradesToShow: any[] = [];
   parallelsToShow: any[] = [];
 
-  // --- control de flujo
-  hasSavedCourses: boolean = false
   confirmModal?: NzModalRef;
   user!: User
   highDemand: any
@@ -102,6 +100,10 @@ export class PostulationComponent implements OnInit {
     @Inject('ICourseList')   private _courses    : ICourseList,
     @Inject('IHighDemand')   private _highDemand : IHighDemand
   ) {}
+
+  get hasSavedCourses() {
+    return this.appStore.getHighDemandCoursesSaved();
+  }
 
   ngOnInit(): void {
     this.initLoading = true;
@@ -126,6 +128,13 @@ export class PostulationComponent implements OnInit {
         if(!highDemand) {
           return of([])
         }
+        const { rolId, workflowStateId } = highDemand
+        // Si aún esta con el director, y su estado es EN REVISIÓN
+        if(rolId === 9 && workflowStateId === 2) {
+          this.appStore.setHighDemandCoursesSaved(false)
+        } else {
+          this.appStore.setHighDemandCoursesSaved(true)
+        }
         this.highDemand = highDemand
         return this._highDemand.getCoures(highDemand.id)
       })
@@ -143,9 +152,6 @@ export class PostulationComponent implements OnInit {
             })
           }
           this.selectedCourses.set(this.listCourse)
-          if(this.listCourse.length > 0) {
-            this.hasSavedCourses = true
-          } else this.hasSavedCourses = false
         },
         error: (err) => {
           console.error('Error cargando datos', err);
@@ -181,14 +187,9 @@ export class PostulationComponent implements OnInit {
     // Enviar al servicio
     this._highDemand.registerHighDemand(requestData).subscribe({
       next: (response: any) => {
-        this.hasSavedCourses = true
         this.highDemand = response.data
-        // setTimeout(() => {
-        //   this.router.navigate(['/alta-demanda/follow-up'])
-        // }, 400)
       },
       error: (err) => {
-        this.hasSavedCourses = false
         console.error('Error al registrar:', err);
       }
     });
@@ -281,7 +282,7 @@ export class PostulationComponent implements OnInit {
       ...this.user
     };
 
-    this.abilities.debugCan('manage', 'postulation');
+    // this.abilities.debugCan('manage', 'postulation');
     return this.abilities.getAbility()?.can('manage', 'postulation' ) ?? false;
   }
 

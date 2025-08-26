@@ -6,11 +6,12 @@
   <nz-table
     #groupingTable
     [nzData]="preRegistrations"
-    [nzScroll]="{ x: '1150px', y: '440px' }"
     nzSize="small"
     nzBordered
     class="custom-table hugging-table student-table"
+    [nzScroll]="{ y: '450px' }"
   >
+    <!-- [nzScroll]="{ x: '1150px', y: '440px' }" -->
     <thead>
       <tr class="header-row">
         <th rowspan="2" class="header-cell student-section">N°</th>

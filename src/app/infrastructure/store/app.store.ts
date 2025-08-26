@@ -7,6 +7,9 @@ interface AppState {
   user: any;
   teacherInfo?: any;
   institutionInfo?: any;
+  highDemand?: {
+    hasSavedCourses: boolean;
+  }
 }
 
 const STORAGE_KEY = 'app_state'
@@ -43,6 +46,9 @@ export class AppStore {
         user: null,
         teacherInfo: undefined,
         institutionInfo: undefined,
+        highDemand: {
+          hasSavedCourses: false
+        }
       }
   }
 
@@ -57,6 +63,22 @@ export class AppStore {
 
   setInstitutionInfo(info: any) {
     this.setState({ institutionInfo: info })
+  }
+
+  // Guardar el estado de los cursos
+  setHighDemandCoursesSaved(hasSaved: boolean) {
+    const currentHighDemand = this.snapshot.highDemand || {};
+    this.setState({
+      highDemand: {
+        ...currentHighDemand,
+        hasSavedCourses: hasSaved
+      }
+    });
+  }
+
+  // Leer estado
+  getHighDemandCoursesSaved(): boolean {
+    return this.snapshot.highDemand?.hasSavedCourses ?? false;
   }
 
   clear() {

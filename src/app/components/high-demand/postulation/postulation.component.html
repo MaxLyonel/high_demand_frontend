@@ -106,7 +106,7 @@
                 nz-button
                 nzType="primary"
                 class="register-btn"
-                [disabled]="(inputValue === 0 || inputValue === null) ? true : false"
+                [disabled]="(inputValue === 0 || inputValue === null || hasSavedCourses) ? true : false"
                 (click)="showConfirmRegistrationQuota()"
               >
                 REGISTRAR
@@ -139,7 +139,7 @@
               class="mr-2"
               (click)="showConfirmRegistrationHighDemand()"
               class="flex-button"
-              [disabled]="!hasSavedCourses || !(selectedCourses().length !== 0)"
+              [disabled]="hasSavedCourses || selectedCourses().length === 0"
             >
               <i nz-icon nzType="check-circle"></i> CONSOLIDAR
             </button>

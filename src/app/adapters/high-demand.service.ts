@@ -144,4 +144,15 @@ export class HighDemandAdapterService implements IManagerHighDemand {
       )
   }
 
+  cancelHighDemand(obj: any): Observable<any> {
+    return this.http.post(`high-demand/cancel`, obj, {
+      context: new HttpContext().set(IS_USER_ACTION, true)
+    }).pipe(
+      catchError(err => {
+        console.error('Error en cancelar alta demanda')
+        return throwError(() => err)
+      })
+    )
+  }
+
 }
