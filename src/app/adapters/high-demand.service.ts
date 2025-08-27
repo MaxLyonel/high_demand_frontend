@@ -13,10 +13,7 @@ export class HighDemandAdapterService implements IManagerHighDemand {
   saveHighDemand(obj: any): Observable<any> {
     return this.http.post(`high-demand/create`, obj, {
       context: new HttpContext().set(IS_USER_ACTION, true)
-    }).pipe(
-      tap((newHighDemand: any) => {
-        // console.log("Se ha creado una institucion como alta demanda", newHighDemand)
-      })
+    }).pipe( tap((newHighDemand: any) => { })
     )
   }
 
@@ -25,7 +22,7 @@ export class HighDemandAdapterService implements IManagerHighDemand {
       context: new HttpContext().set(IS_USER_ACTION, true)
     }).pipe(
       catchError(err => {
-        console.log("salio mal al enviar la alta demanda")
+        console.error("salio mal al enviar la alta demanda")
         return throwError(() => err)
       })
     )
@@ -33,16 +30,13 @@ export class HighDemandAdapterService implements IManagerHighDemand {
 
   getHighDemandByInstitution(educationalInstitutionId: number): Observable<any> {
     return this.http.get(`high-demand/${educationalInstitutionId}/by-institution`).pipe(
-      tap((highDemand:any) => {
-        // console.log("Se ha obtenido datos de la alta demanda", highDemand)
-      })
+      tap((highDemand:any) => { })
     )
   }
 
   getCourse(highDemandId: number): Observable<any> {
     return this.http.get(`high-demand-course/courses/${highDemandId}`).pipe(
       tap(highDemand => {
-        // console.log("Se ha obtenido cursos de la alta demanda", highDemand)
       })
     )
   }
@@ -52,7 +46,6 @@ export class HighDemandAdapterService implements IManagerHighDemand {
       context: new HttpContext().set(IS_USER_ACTION, true)
     }).pipe(
       tap(highDemand => {
-        // console.log("Se ha actualizado el estado del flujo", highDemand)
       })
     )
   }
@@ -81,7 +74,6 @@ export class HighDemandAdapterService implements IManagerHighDemand {
   }
 
   deriveHighDemand(obj: any): Observable<any> {
-    console.log("objeto a enviar: ", obj)
     return this.http.post(`high-demand/derive`, obj, {
       context: new HttpContext().set(IS_USER_ACTION, true)
     }).pipe(

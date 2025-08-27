@@ -202,7 +202,7 @@ export class PostulationComponent implements OnInit {
         this.router.navigate(['/alta-demanda/follow-up'])
       },
       error: (err) => {
-        console.log("Error al enviar alta demanda")
+        console.error("Error al enviar alta demanda")
       }
     })
   }

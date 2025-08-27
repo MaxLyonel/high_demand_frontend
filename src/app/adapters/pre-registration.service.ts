@@ -16,7 +16,7 @@ export class PreRegistrationAdapterService implements IManagerPreRegistration {
       tap((catalogs:any) => {
       }),
       catchError(err => {
-        console.log("Error al obtener el catálogo de criterio")
+        console.error("Error al obtener el catálogo de criterio")
         return throwError(() => err)
       })
     )
@@ -27,7 +27,7 @@ export class PreRegistrationAdapterService implements IManagerPreRegistration {
       tap((catalogs:any) => {
       }),
       catchError(err => {
-        console.log("Error al obtener el catalogo de parentescos")
+        console.error("Error al obtener el catalogo de parentescos")
         return throwError(() => err)
       })
     )
@@ -38,7 +38,7 @@ export class PreRegistrationAdapterService implements IManagerPreRegistration {
       tap((catalogs: any) => {
       }),
       catchError(err => {
-        console.log("Error al obtener el catálogo de municipios")
+        console.error("Error al obtener el catálogo de municipios")
         return throwError(() => err)
       })
     )
@@ -53,7 +53,7 @@ export class PreRegistrationAdapterService implements IManagerPreRegistration {
       context: new HttpContext().set(IS_USER_ACTION, true)
     }).pipe(
       catchError(err => {
-        console.error("Algo salió mal en buscar estudiante: ", err)
+        console.error("Algo salió mal en buscar estudiante")
         return throwError(() => err)
       })
     )
@@ -65,7 +65,7 @@ export class PreRegistrationAdapterService implements IManagerPreRegistration {
       context: new HttpContext().set(IS_USER_ACTION, true)
     }).pipe(
       catchError(err => {
-        console.log("Error al crear una pre inscripción")
+        console.error("Error al crear una pre inscripción")
         return throwError(() => err)
       })
     )
@@ -74,7 +74,7 @@ export class PreRegistrationAdapterService implements IManagerPreRegistration {
   getListPreRegistrations(): Observable<any> {
     return this.http.get(`pre-registration/list`).pipe(
       catchError(err => {
-        console.log("Error al obtener la lista de pre inscripciones")
+        console.error("Error al obtener la lista de pre inscripciones")
         return throwError(() => err)
       })
     )
@@ -83,7 +83,7 @@ export class PreRegistrationAdapterService implements IManagerPreRegistration {
   updatedStatus(preRegistrationId: number): Observable<any> {
     return this.http.get(`pre-registration/update-status/${preRegistrationId}`).pipe(
       catchError(err => {
-        console.log("Error al actualizar el estado de la preinscripción")
+        console.error("Error al actualizar el estado de la preinscripción")
         return throwError(() => err)
       })
     )
@@ -92,7 +92,7 @@ export class PreRegistrationAdapterService implements IManagerPreRegistration {
   getListAccepted(): Observable<any> {
     return this.http.get(`pre-registration/accepted-list`).pipe(
       catchError(err => {
-        console.log("Error al obtener pre inscripciones aceptadas")
+        console.error("Error al obtener pre inscripciones aceptadas")
         return throwError(() => err)
       })
     )

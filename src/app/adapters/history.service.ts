@@ -11,8 +11,6 @@ export class HistoryAdapterService implements IManagerHistory {
   private http = inject(HttpClient)
 
   getHistories(highDemandRegistationId: number): Observable<History[]> {
-    return this.http.get<any>(`history/list/${highDemandRegistationId}`).pipe(
-      tap(() => console.log('historial obtenido'))
-    )
+    return this.http.get<any>(`history/list/${highDemandRegistationId}`)
   }
 }

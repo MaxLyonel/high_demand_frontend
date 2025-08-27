@@ -236,7 +236,6 @@ export default class FormularioInscripcionComponent implements OnInit{
         justification: formValue.justification
       }
       this._preRgistration.savePreRegistration(data).subscribe((response) => {
-        console.log("Response create: ", response)
         this.result.set(true)
       })
     } else {

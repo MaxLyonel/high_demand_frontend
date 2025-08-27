@@ -111,7 +111,6 @@ export class BandejaComponent implements OnInit {
     const { user } = this.appStore.snapshot;
     this.rolId = user.selectedRole.id;
     this._highDemand.getActionFromRoles(this.rolId!).subscribe((response) => {
-      console.log('esto es response ', response);
       this.actionRoles = response.data;
     });
     this.highDemands = [];
@@ -129,7 +128,6 @@ export class BandejaComponent implements OnInit {
       case 'recepcion':
         setTimeout(() => {
           this._highDemand.getListReceive(this.rolId!).subscribe((response) => {
-            console.log('response', response);
             this.highDemands = response.data;
           });
           this.loading = false;

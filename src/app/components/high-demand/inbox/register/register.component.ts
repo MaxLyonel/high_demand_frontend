@@ -68,7 +68,6 @@ export class RegisterInbox implements OnInit {
 
   loadData() {
     this._preRegistration.getListAccpeted().subscribe(response => {
-      console.log("esto se obtiene", response)
       this.preRegistrations = response.data
     })
   }

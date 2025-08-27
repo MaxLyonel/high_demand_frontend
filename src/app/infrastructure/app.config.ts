@@ -25,7 +25,6 @@ export const appConfig: ApplicationConfig = {
     provideNzI18n(es_ES),
     importProvidersFrom(FormsModule),
     provideAnimationsAsync(),
-    provideHttpClient(),
     provideHttpClient(withInterceptors([apiBaseInterceptor])),
     { provide: 'IManagerTeacher', useClass: TeacherAdapterService },
     { provide: 'IManagerInstitution', useClass: InstitutionAdapterService }, // ADAPTER
