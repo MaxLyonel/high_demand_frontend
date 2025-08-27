@@ -17,6 +17,9 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzTypographyModule } from 'ng-zorro-antd/typography';
 import IPreRegistration from '../../../../domain/ports/i-pre-registration';
 import { NzCheckboxComponent } from "ng-zorro-antd/checkbox";
+import { AppStore } from '../../../../infrastructure/store/app.store';
+import IHighDemand from '../../../../domain/ports/i-high-demand';
+import { switchMap } from 'rxjs';
 
 interface Student {
   id: string;
@@ -133,19 +136,14 @@ export class SelectionInbox implements OnInit {
   selectedPostulant: PreRegistration | null = null;
   selectedPostulants: PreRegistration[] = [];
 
-  students: Student[] = [];
-  filteredStudents: Student[] = [];
-  selectedStudents: Student[] = [];
-  selectedStudent: Student | null = null;
-
   // Filtros
   filters = {
     rudeCode: '',
     lastName: '',
     firstName: '',
     idCard: '',
-    criteria: '',
-    level: '',
+    criteria: null,
+    level: null,
     schoolYear: ''
   };
 
@@ -159,65 +157,72 @@ export class SelectionInbox implements OnInit {
 
   tempChecked: boolean = false;
 
+  criterias: any[] = []
+  levels: any[] = []
+  highDemand: any
+
   constructor(
     private message: NzMessageService,
-    @Inject('IPreRegistration') private _preRegistration: IPreRegistration
+    private appStore: AppStore,
+    @Inject('IPreRegistration') private _preRegistration: IPreRegistration,
+    @Inject('IHighDemand') private _highDemand: IHighDemand
   ) {}
 
   ngOnInit(): void {
-    this.loadStudents();
+    const { institutionInfo } = this.appStore.snapshot
+    const { id: sie } = institutionInfo
+    this.loadCriterias();
+    this.loadLevels();
+    this.loadPostulants(sie);
   }
 
-  loadStudents(): void {
-    this.loading = true;
-    this._preRegistration.getListPreRegistration().subscribe((response) => {
-      this.preRegistrations = response.data
-      this.filteredPreRegistrations = [...this.preRegistrations]
-      this.loading = false
+  loadCriterias() {
+    this._preRegistration.getCriterias().subscribe((response) => {
+      this.criterias = response.data
     })
-    // Simular carga de datos (reemplazar con llamada API real)
-    // setTimeout(() => {
-    //   this.students = [
-    //     {
-    //       id: '1',
-    //       rudeCode: 'R001',
-    //       lastName1: 'Pérez',
-    //       lastName2: 'Gómez',
-    //       firstName: 'Juan',
-    //       idCard: '1234567',
-    //       criteria: 'CRITERIO_A',
-    //       level: 'SECUNDARIA',
-    //       schoolYear: '2023'
-    //     },
-    //     {
-    //       id: '2',
-    //       rudeCode: 'R002',
-    //       lastName1: 'Vargas',
-    //       lastName2: 'Ramirez',
-    //       firstName: 'Leonel Maximo',
-    //       idCard: '1234567',
-    //       criteria: 'CRITERIO_A',
-    //       level: 'SECUNDARIA',
-    //       schoolYear: '2022'
-    //     },
-    //     // ... más datos de ejemplo
-    //   ];
-    //   this.filteredStudents = [...this.students];
-    //   this.loading = false;
-    // }, 1000);
+  }
+
+  loadLevels() {
+    this._preRegistration.getLevels().subscribe((response) => {
+      this.levels = response.data
+    })
+  }
+
+  loadPostulants(sie: number) {
+    this._highDemand.getHighDemandByInstitution(sie).pipe(
+      switchMap(response => {
+        this.highDemand = response
+        return this._preRegistration.getListPreRegistration(this.highDemand.id);
+      })
+    ).subscribe({
+      next: preRegResponse => {
+        this.preRegistrations = preRegResponse.data;
+        this.filteredPreRegistrations = [...this.preRegistrations];
+        this.loading = false;
+      },
+      error: err => {
+        console.error('Error cargando datos', err)
+        this.loading = false
+      }
+    })
   }
 
   applyFilters(): void {
-    this.filteredStudents = this.students.filter(student => {
+    this.filteredPreRegistrations = this.preRegistrations.filter(pr => {
+      const p = pr.postulant;
+      const c = pr.criteria;
+      const hc = pr.highDemandCourse;
+
       return (
-        (!this.filters.rudeCode || student.rudeCode.includes(this.filters.rudeCode)) &&
-        (!this.filters.lastName || 
-          student.lastName1.toLowerCase().includes(this.filters.lastName.toLowerCase()) || 
-          student.lastName2.toLowerCase().includes(this.filters.lastName.toLowerCase())) &&
-        (!this.filters.firstName || student.firstName.toLowerCase().includes(this.filters.firstName.toLowerCase())) &&
-        (!this.filters.idCard || student.idCard.includes(this.filters.idCard)) &&
-        (!this.filters.criteria || student.criteria === this.filters.criteria) &&
-        (!this.filters.level || student.level === this.filters.level)
+        (!this.filters.rudeCode || (p.codeRude && p.codeRude.includes(this.filters.rudeCode))) &&
+        (!this.filters.lastName ||
+          p.lastName.toLowerCase().includes(this.filters.lastName.toLowerCase()) ||
+          p.mothersLastName.toLowerCase().includes(this.filters.lastName.toLowerCase())) &&
+        (!this.filters.firstName || p.name.toLowerCase().includes(this.filters.firstName.toLowerCase())) &&
+        (!this.filters.idCard || (p.identityCard && p.identityCard.includes(this.filters.idCard))) &&
+        (!this.filters.criteria || (c.id && c.id === this.filters.criteria)) &&
+        (!this.filters.level || (hc.level.id && hc.level.id === this.filters.level)) &&
+        (!this.filters.schoolYear || (hc.grade.name && hc.grade.name === this.filters.schoolYear))
       );
     });
   }
@@ -228,23 +233,14 @@ export class SelectionInbox implements OnInit {
       lastName: '',
       firstName: '',
       idCard: '',
-      criteria: '',
-      level: '',
+      criteria: null,
+      level: null,
       schoolYear: ''
     };
-    this.filteredStudents = [...this.students];
-  }
-
-  selectStudent(postulant: PreRegistration): void {
-    // this.selectedStudent = student;
-    this.selectedPostulant = postulant
-    this.isConfirmVisible = true;
+    this.filteredPreRegistrations = [...this.preRegistrations];
   }
 
   handleCancel(): void {
-    // if(this.selectedPostulant) {
-    //   this.selectedPostulant.selected = !this.tempChecked
-    // }
     this.isConfirmVisible = false;
   }
 
@@ -296,11 +292,5 @@ export class SelectionInbox implements OnInit {
       this.isConfirmLoading = false;
       this.message.success(`Postulante ${this.selectedPostulant?.postulant.name} seleccionado`);
     })
-    // setTimeout(() => {
-    // }, 800);
-  }
-
-  updatedStatus():void {
-    
   }
 }

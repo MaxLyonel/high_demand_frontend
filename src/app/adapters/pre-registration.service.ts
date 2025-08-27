@@ -71,8 +71,8 @@ export class PreRegistrationAdapterService implements IManagerPreRegistration {
     )
   }
 
-  getListPreRegistrations(): Observable<any> {
-    return this.http.get(`pre-registration/list`).pipe(
+  getListPreRegistrations(highDemandId: number): Observable<any> {
+    return this.http.get(`pre-registration/list/${highDemandId}`).pipe(
       catchError(err => {
         console.error("Error al obtener la lista de pre inscripciones")
         return throwError(() => err)
@@ -93,6 +93,15 @@ export class PreRegistrationAdapterService implements IManagerPreRegistration {
     return this.http.get(`pre-registration/accepted-list`).pipe(
       catchError(err => {
         console.error("Error al obtener pre inscripciones aceptadas")
+        return throwError(() => err)
+      })
+    )
+  }
+
+  getListLevels(): Observable<any> {
+    return this.http.get(`catalogs/list-levels`).pipe(
+      catchError(err => {
+        console.error("Error al obtener niveles")
         return throwError(() => err)
       })
     )

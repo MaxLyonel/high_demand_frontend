@@ -14,10 +14,12 @@ export default interface IManagerPreRegistration {
   // ** guardar una pre inscripción **
   savePreRegistration(obj: any): Observable<any>;
   // ** obtener lista de pre inscripciones **
-  getListPreRegistrations(): Observable<any>
+  getListPreRegistrations(highDemandId: number): Observable<any>
   // ** Actualizar el estado de la pre inscripción **
   updatedStatus(preRegistrationId: number): Observable<any>
   // ** obtener lista de pre inscripciones aceptadas **
   getListAccepted(): Observable<any>
+  // ** obtener lista de niveles **
+  getListLevels(): Observable<any>
 
 }

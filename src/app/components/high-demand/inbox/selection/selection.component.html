@@ -42,7 +42,7 @@
             </nz-form-item>
           </div>
         </div>
-        
+
         <div nz-row [nzGutter]="16" class="mt-2">
           <div nz-col [nzSpan]="8">
             <nz-form-item>
@@ -57,9 +57,9 @@
               <nz-form-label>Criterio</nz-form-label>
               <nz-form-control>
                 <nz-select [(ngModel)]="filters.criteria" nzPlaceHolder="Seleccionar criterio">
-                  <nz-option nzValue="CRITERIO_A" nzLabel="Criterio A"></nz-option>
-                  <nz-option nzValue="CRITERIO_B" nzLabel="Criterio B"></nz-option>
-                  <nz-option nzValue="CRITERIO_C" nzLabel="Criterio C"></nz-option>
+                  @for(criteria of criterias; track criteria.id) {
+                    <nz-option [nzValue]="criteria.id" [nzLabel]="criteria.name"></nz-option>
+                  }
                 </nz-select>
               </nz-form-control>
             </nz-form-item>
@@ -69,15 +69,15 @@
               <nz-form-label>Nivel</nz-form-label>
               <nz-form-control>
                 <nz-select [(ngModel)]="filters.level" nzPlaceHolder="Seleccionar nivel">
-                  <nz-option nzValue="INICIAL" nzLabel="Inicial"></nz-option>
-                  <nz-option nzValue="PRIMARIA" nzLabel="Primaria"></nz-option>
-                  <nz-option nzValue="SECUNDARIA" nzLabel="Secundaria"></nz-option>
+                  @for(level of levels; track level.id) {
+                    <nz-option [nzValue]="level.id" [nzLabel]="level.name"></nz-option>
+                  }
                 </nz-select>
               </nz-form-control>
             </nz-form-item>
           </div>
         </div>
-        
+
         <div class="filter-actions">
           <button nz-button nzType="primary" (click)="applyFilters()">
             <i nz-icon nzType="search"></i> Buscar
@@ -138,17 +138,6 @@
               (ngModelChange)="onToggleStudent($event, postulant)"
             ></label>
           </td>
-          <!-- <td>
-            <button
-              nz-button
-              nzType="primary"
-              nzSize="small"
-              (click)="selectStudent(postulant)"
-              [nzLoading]="postulant.loading"
-            >
-              <i nz-icon nzType="check"></i>
-            </button>
-          </td> -->
         </tr>
       }
     </tbody>
