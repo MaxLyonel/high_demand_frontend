@@ -51,7 +51,7 @@
           }
         </ul>
       </li>
-      @if(canManageFollow$ | async) {
+      @if((canManageFollowVer$ | async) || (canManageFollowDirector$ | async)) {
       <li nz-submenu nzOpen nzTitle="Seguimiento" nzIcon="form">
         <ul>
           <li nz-menu-item nzMatchRouter>

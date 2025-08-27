@@ -10,7 +10,7 @@ import { AuthAdapterService } from "../../../adapters/auth-api.service";
 import { AppStore } from "../../../infrastructure/store/app.store";
 import { NzTypographyModule } from "ng-zorro-antd/typography";
 import { AbilityService } from "../../../infrastructure/services/ability.service";
-import { map } from "rxjs";
+import { map, tap } from "rxjs";
 import { CommonModule } from "@angular/common";
 
 
@@ -56,15 +56,24 @@ export default class LayoutComponent implements OnInit{
     map(ability => ability?.can('manage', 'inbox') ?? false)
   );
 
-  canManageFollow$ = this.abilities.ability$.pipe(
-    map(ability => ability?.can('manage', 'follow') ?? false)
+  canManageFollowVer$ = this.abilities.ability$.pipe(
+    map(ability => ability?.can('manage', 'follow-ver') ?? false)
   );
+
+  canManageFollowDirector$ = this.abilities.ability$.pipe(
+    map(ability => ability?.can('manage', 'follow-director') ?? false)
+  )
 
   ngOnInit(): void {
     const { user } = this.appStore.snapshot
     this.user = user
     this.role = user.selectedRole
     this.cdr.detectChanges()
+
+    // this.abilities.loadAbilities(user.id).subscribe(() => {
+    //   const ability = this.abilities.getAbility();
+    //   console.log('Abilities cargadas:', ability?.rules);
+    // });
   }
 
   goToProfile() {

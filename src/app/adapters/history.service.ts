@@ -13,4 +13,8 @@ export class HistoryAdapterService implements IManagerHistory {
   getHistories(highDemandRegistationId: number): Observable<History[]> {
     return this.http.get<any>(`history/list/${highDemandRegistationId}`)
   }
+
+  getGeneralHistories(): Observable<History[]> {
+    return this.http.get<any>(`history/list-histories`)
+  }
 }

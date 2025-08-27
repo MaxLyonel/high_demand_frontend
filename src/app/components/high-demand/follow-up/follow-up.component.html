@@ -1,52 +1,66 @@
 <nz-card class="seguimiento-container">
   <div class="seguimiento-header">
     <h5 nz-typography class="section-title">SEGUIMIENTO DE SOLICITUDES</h5>
-    <div class="seguimiento-filters">
-      <nz-input-group nzSearch [nzSuffix]="suffixIconButton">
-        <input
-          type="text"
-          nz-input
-          placeholder="Buscar por unidad educativa o SIE"
-          [(ngModel)]="searchValue"
-        />
-      </nz-input-group>
-      <ng-template #suffixIconButton>
-        <button nz-button nzType="primary" nzSearch><i nz-icon nzType="search"></i></button>
-      </ng-template>
+    @if(can('VER')) {
+      <div class="seguimiento-filters">
+        <nz-space>
+          <nz-select
+            *nzSpaceItem
+            nzPlaceHolder="Filtrar por estado"
+            [ngModel]="filterStatusWorkflow()"
+            (ngModelChange)="onWorkflowStatusChange($event)"
+            nzAllowClear
+          >
+            <nz-option nzValue="enviado" nzLabel="Enviado"></nz-option>
+            <nz-option nzValue="en revision" nzLabel="En revisón"></nz-option>
+          </nz-select>
 
-      <nz-space>
-        <nz-select
-          *nzSpaceItem
-          nzPlaceHolder="Filtrar por estado"
-          [(ngModel)]="filterEstado"
-          nzAllowClear
-        >
-          <nz-option nzValue="Pendiente" nzLabel="Registrado"></nz-option>
-          <nz-option nzValue="Aprobado" nzLabel="Aprobado"></nz-option>
-          <nz-option nzValue="Observado" nzLabel="Observado"></nz-option>
-          <nz-option nzValue="Pendiente" nzLabel="Anulado"></nz-option>
-          <nz-option nzValue="Rechazado" nzLabel="Rechazado"></nz-option>
-        </nz-select>
+          <nz-select
+            *nzSpaceItem
+            nzPlaceHolder="Filtrar por estado"
+            [ngModel]="filterEstado()"
+            (ngModelChange)="onEstadoChange($event)"
+            nzAllowClear
+          >
+            <nz-option nzValue="REGISTRADO" nzLabel="Registrado"></nz-option>
+            <nz-option nzValue="APROBADO" nzLabel="Aprobado"></nz-option>
+            <nz-option nzValue="OBSERVADO" nzLabel="Observado"></nz-option>
+            <nz-option nzValue="ANULADO" nzLabel="Anulado"></nz-option>
+            <nz-option nzValue="RECHAZADO" nzLabel="Rechazado"></nz-option>
+          </nz-select>
 
-        <nz-date-picker
-          *nzSpaceItem
-          nzPlaceHolder="Filtrar por fecha"
-          [(ngModel)]="filterFecha"
-          nzStyle="width: 200px"
-        ></nz-date-picker>
-      </nz-space>
-    </div>
+          <nz-date-picker
+            *nzSpaceItem
+            nzPlaceHolder="Filtrar por fecha"
+            [ngModel]="filterFecha()"
+            (ngModelChange)="onFechaChange($event)"
+            nzStyle="width: 200px"
+          ></nz-date-picker>
+        </nz-space>
+        <nz-input-group nzSearch [nzSuffix]="suffixIconButton">
+          <input
+            type="text"
+            nz-input
+            placeholder="Buscar por unidad educativa o SIE"
+            [ngModel]="searchValue()"
+            (ngModelChange)="onSearchChange($event)"
+          />
+        </nz-input-group>
+        <ng-template #suffixIconButton>
+          <button nz-button nzType="primary" nzSearch><i nz-icon nzType="search"></i></button>
+        </ng-template>
+      </div>
+    }
   </div>
 
   <nz-tabset>
     <nz-tab nzTitle="Seguimiento Solicitud">
       <nz-table
-        #seguimientoTable
-        [nzData]="registration()"
+        #trackingTable
+        [nzData]="filteredRegistrations()"
         [nzLoading]="loading"
         [nzPageSize]="pageSize"
         [nzPageIndex]="pageIndex"
-        [nzFrontPagination]="true"
         nzOuterBordered
         [nzSize]="'small'"
         nzBordered
@@ -54,55 +68,53 @@
         class="custom-table"
         [nzScroll]="{ y: '350px' }"
       >
-        <!-- [nzTotal]="total" -->
-        <!-- (nzQueryParams)="onQueryParamsChange($event)" -->
         <thead>
           <tr class="header-row">
-            <th class="header-cell" nzWidth="200">Unidad Educativa</th>
+            <th class="header-cell" nzWidth="40px">N°</th>
+            <th class="header-cell" nzWidth="200px">Unidad Educativa</th>
             <th class="header-cell" >SIE</th>
             <th class="header-cell" >Responsable</th>
-            <th class="header-cell" >Estado Flujo</th>
+            <th class="header-cell" nzWidth="120px">Estado Flujo</th>
             <th class="header-cell" >Rol</th>
             <th class="header-cell" >Estado Solicitud</th>
-            <!-- <th class="header-cell" >Fecha Solicitud</th> -->
             <th class="header-cell" >Última Actualización</th>
             <th class="header-cell" >Observación</th>
-            <th class="header-cell" >Acciones</th>
+            <th class="header-cell" nzWidth="100px">Acciones</th>
           </tr>
         </thead>
         <tbody>
-          @for(solicitud of seguimientoTable.data; track solicitud.id; let last = $last) {
+          @for(request of trackingTable.data; track request.id; let i = $index; let last = $last) {
             <tr>
-              <td>{{ solicitud.educationalInstitutionName }}</td>
-              <td>{{ solicitud.educationalInstitutionId }}</td>
-              <td>{{ solicitud.userName }}</td>
+              <td>{{ i + 1}}</td>
+              <td>{{ request.educationalInstitutionName }}</td>
+              <td>{{ request.educationalInstitutionId }}</td>
+              <td>{{ request.userName }}</td>
               <td>
                 <nz-tag
-                  [nzColor]="solicitud.workflowState === 'ENVIADO' ? 'success' : 'warning'"
+                  [nzColor]="request.workflowState === 'ENVIADO' ? 'success' : 'warning'"
                 >
-                  {{ solicitud.workflowState }}
+                  {{ request.workflowState }}
                 </nz-tag>
               </td>
-              <td>{{ solicitud.rol }}</td>
+              <td>{{ request.rol }}</td>
               <td>
-                <nz-tag [nzColor]="solicitud.registrationStatus === RegistrationStatus.APPROVED ? 'success' :
-                  (solicitud.registrationStatus === RegistrationStatus.REJECTED || solicitud.registrationStatus === RegistrationStatus.CANCELED) ? 'error' :
-                  solicitud.registrationStatus === RegistrationStatus.OBSERVED ? 'warning' : 'processing'"
+                <nz-tag [nzColor]="request.registrationStatus === RegistrationStatus.APPROVED ? 'success' :
+                  (request.registrationStatus === RegistrationStatus.REJECTED || request.registrationStatus === RegistrationStatus.CANCELED) ? 'error' :
+                  request.registrationStatus === RegistrationStatus.OBSERVED ? 'warning' : 'processing'"
                 >
-                  {{ solicitud.registrationStatus }}
+                  {{ request.registrationStatus }}
                 </nz-tag>
               </td>
-              <!-- <td>{{ solicitud.createdAt | date:'dd/MM/yyyy HH:mm' }}</td> -->
-              <td>{{ solicitud.updatedAt | date:'dd/MM/yyyy HH:mm' }}</td>
-              <td>{{ solicitud.observation || 'Sin observación' }}</td>
+              <td>{{ request.updatedAt | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td>{{ request.observation || 'Sin observación' }}</td>
               <td>
                 <div class="acciones-cell">
-                  @if(last && solicitud.workflowState === 'ENVIADO' && solicitud.registrationStatus === 'REGISTRADO') {
+                  @if(last && request.workflowState === 'ENVIADO' && request.registrationStatus === 'REGISTRADO') {
                     <button
                       nz-button
                       nzType="link"
                       nzSize="small"
-                      (click)="verDetalle(solicitud)"
+                      (click)="seeDetail(request)"
                       nz-tooltip="Ver detalle"
                     >
                       <i nz-icon nzType="file-search"></i>
@@ -111,7 +123,7 @@
                       nz-button
                       nzType="link"
                       nzSize="small"
-                      (click)="descargarDocumentos(solicitud)"
+                      (click)="descargarDocumentos(request)"
                       nz-tooltip="Descargar solicitud"
                     >
                       <i nz-icon nzType="download"></i>
@@ -121,7 +133,7 @@
                       nzType="link"
                       nzSize="small"
                       nzDanger
-                      (click)="cancelRequest(solicitud)"
+                      (click)="cancelRequest(request)"
                       nz-tooltip="Cancelar solicitud"
                     >
                       <i nz-icon nzType="close-circle"></i>
@@ -135,20 +147,22 @@
       </nz-table>
     </nz-tab>
 
-    <nz-tab nzTitle="Historial">
-      <div class="historial-scroll">
-        <nz-timeline>
-          <nz-timeline-item *ngFor="let evento of historial">
-            <p>{{ evento.updatedAt | date:'dd/MM/yyyy HH:mm' }}</p>
-            <p>{{ evento.registrationStatus }}</p>
-            <p>{{ evento.workflowState }} - {{ evento.userName }}</p>
-            <p class="comentario">
-              <i nz-icon nzType="message" nzTheme="fill"></i> {{ evento.observation  || 'Sin observación'}}
-            </p>
-          </nz-timeline-item>
-        </nz-timeline>
-      </div>
-    </nz-tab>
+    @if(!can('VER')) {
+      <nz-tab nzTitle="Historial">
+        <div class="historial-scroll">
+          <nz-timeline>
+            <nz-timeline-item *ngFor="let evento of historial">
+              <p>{{ evento.updatedAt | date:'dd/MM/yyyy HH:mm' }}</p>
+              <p>{{ evento.registrationStatus }}</p>
+              <p>{{ evento.workflowState }} - {{ evento.userName }}</p>
+              <p class="comentario">
+                <i nz-icon nzType="message" nzTheme="fill"></i> {{ evento.observation  || 'Sin observación'}}
+              </p>
+            </nz-timeline-item>
+          </nz-timeline>
+        </div>
+      </nz-tab>
+    }
   </nz-tabset>
 
   <!-- Modal de detalle -->
@@ -172,9 +186,9 @@
         <nz-descriptions-item nzTitle="Última Actualización">{{ solicitudSeleccionada?.updatedAt | date:'dd/MM/yyyy HH:mm' }}</nz-descriptions-item>
       </nz-descriptions>
 
-      <nz-divider nzText="Documentos"></nz-divider>
-      <!-- <nz-list [nzDataSource]="solicitudSeleccionada?.documentos" nzBordered>
-        <nz-list-item *ngFor="let doc of solicitudSeleccionada?.documentos">
+      <!-- <nz-divider nzText="Documentos"></nz-divider>
+      <nz-list [nzDataSource]="[]" nzBordered>
+        <nz-list-item *ngFor="let doc of [{ nombre: 'algo', tipo: 'otro'}]">
           <nz-list-item-meta
             [nzTitle]="doc.nombre"
             [nzDescription]="doc.tipo"

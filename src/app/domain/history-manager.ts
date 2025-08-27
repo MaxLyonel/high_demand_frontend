@@ -1,4 +1,4 @@
-import { Observable } from "rxjs";
+import { Observable, take } from "rxjs";
 import IHistory from "./ports/i-history";
 import { Inject, Injectable } from "@angular/core";
 import IManagerHistory from "./ports/i-manager-history";
@@ -14,5 +14,10 @@ export class HistoryManager implements IHistory {
   showList(highDemandRegistrationId: number): Observable<History[]> {
     const entites = this._historyAdapter.getHistories(highDemandRegistrationId)
     return entites
+  }
+
+  showGeneralList(): Observable<History[]> {
+    const histories = this._historyAdapter.getGeneralHistories()
+    return histories
   }
 }

@@ -2,15 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Ability } from '@casl/ability';
 import { BehaviorSubject, tap } from 'rxjs';
-import { User } from '../../domain/models/user.model';
 
 export type Actions = 'manage' | 'create' | 'read' | 'update' | 'delete';
-
-// Ejemplo de entidades
-// export class User { constructor(public id: number) {} }
-export class Post { constructor(public authorId: number) {} }
-
 export type Subjects = any | 'all';
+
 export type AppAbility = Ability<[Actions, Subjects]>;
 
 @Injectable({ providedIn: 'root' })
@@ -20,19 +15,11 @@ export class AbilityService {
 
   ability$ = this.abilitySubject.asObservable();
 
-  // Mapa de clases a nombres de subject según backend
-  private subjectMap = new Map<any, string>([
-    [User, 'user'],
-    [Post, 'post'],
-    // agregar más entidades según sea necesario
-  ]);
-
   constructor(private http: HttpClient) {}
 
   loadAbilities(currentUserId: number) {
     return this.http.get<{ rules: any[] }>('user/abilities').pipe(
       tap(({ rules }) => {
-        // Reemplazar $currentUserId en las condiciones
         const mappedRules = rules.map(rule => {
           if (rule.conditions) {
             const conditionsObj: Record<string, any> = {};
@@ -44,12 +31,11 @@ export class AbilityService {
           return rule;
         });
 
-        // Crear Ability con detectSubjectType genérico
         this.ability = new Ability(mappedRules, {
           detectSubjectType: (object: any) => {
-            for (const [cls, name] of this.subjectMap.entries()) {
-              if (object instanceof cls) return name;
-            }
+            if(!object) return 'all';
+            if(typeof object === 'string') return object;
+            if('__typename' in object) return object.__typename;
             return 'all';
           }
         }) as AppAbility;
@@ -76,6 +62,7 @@ export class AbilityService {
     console.log('Acción:', action);
     console.log('Objeto:', subject);
     console.log('Resultado can():', this.ability.can(action, subject));
+    console.log("====================")
 
     // Usar detectSubjectType de la ability
     const subjectType = this.ability.detectSubjectType!(subject);
@@ -97,6 +84,4 @@ export class AbilityService {
       console.log('¿Condiciones coinciden?', matchesConditions);
     });
   }
-
-
 }

@@ -1,4 +1,4 @@
-import { Component, inject, Inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, Inject, OnInit, signal } from '@angular/core';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService, NzModalModule } from 'ng-zorro-antd/modal';
 import { NzCardModule } from "ng-zorro-antd/card";
@@ -22,13 +22,10 @@ import { NzTypographyModule } from 'ng-zorro-antd/typography';
 import IHistory from '../../../domain/ports/i-history';
 import { RegistrationStatus } from '../../../domain/models/enum/registration-status.enum';
 import IHighDemand from '../../../domain/ports/i-high-demand';
-import { LocalStorageService } from '../../../infrastructure/services/local-storage.service';
-import IInstituionDetail from '../../../domain/ports/i-institution-detail';
-import IManagerTeacher from '../../../domain/ports/i-manager-teacher';
-import { switchMap, tap } from 'rxjs';
 import { AppStore } from '../../../infrastructure/store/app.store';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { AbilityService } from '../../../infrastructure/services/ability.service';
 
 interface Registration {
   id: number;
@@ -41,17 +38,11 @@ interface Registration {
   updatedAt: Date;
   userName: string;
   rol: string;
-}
-  // documentos: Documento[];
-
-interface Documento {
-  id: number;
-  nombre: string;
-  tipo: string;
-  url: string;
+  userId: number;
 }
 
-interface EventoHistorial {
+
+interface EventHistory {
   updatedAt: Date;
   registrationStatus: RegistrationStatus
   workflowState: string;
@@ -90,9 +81,11 @@ interface EventoHistorial {
   ]
 })
 export class SeguimientoComponent implements OnInit {
-  searchValue = '';
-  filterEstado: string | null = null;
-  filterFecha: Date | null = null;
+  searchValue = signal('');
+  filterEstado = signal<string | null>(null)
+  filterStatusWorkflow = signal<string | null>(null)
+  filterFecha =signal<Date | null>(null);
+
   loading = false;
   pageSize = 10;
   pageIndex = 1;
@@ -100,57 +93,72 @@ export class SeguimientoComponent implements OnInit {
   isVisibleModal = false;
   solicitudSeleccionada: Registration | null = null;
 
+
+  appStore = inject(AppStore)
+  historial: EventHistory[] = [];
   RegistrationStatus = RegistrationStatus;
+
+  allRegistrations = signal<Registration[]>([])
   registration = signal<Registration[]>([]);
 
-  historial: EventoHistorial[] = [ ];
+  // Computed signal para el filtrado reactivo
+  filteredRegistrations = computed(() => {
+    const all = [...this.registration()];
+    const search = this.normalizeText(this.searchValue()?.trim() || '');
+    const estado = this.normalizeText(this.filterEstado() || '');
+    const fecha = this.filterFecha();
+    const workflowState = this.normalizeText(this.filterStatusWorkflow() || '')
 
-  LocalStorageService = inject(LocalStorageService)
-  appStore            = inject(AppStore)
+    return all.filter(reg => {
+      if(!this.canViewRequest(reg)) {
+        return false;
+      }
+      const name = this.normalizeText(reg.educationalInstitutionName);
+      const sie = this.normalizeText(reg.educationalInstitutionId.toString());
+      const status = this.normalizeText(reg.registrationStatus);
+      const workflowStatus = this.normalizeText(reg.workflowState);
+
+      const matchesSearch = !search || name.includes(search) || sie.includes(search);
+      const matchesEstado = !estado || status === estado;
+      const matchesWorkflow = !workflowState || workflowStatus === workflowState
+      const matchesFecha = !fecha ||
+        new Date(reg.updatedAt).toDateString() === fecha.toDateString();
+
+      return matchesSearch && matchesEstado && matchesFecha && matchesWorkflow;
+    });
+  });
 
   constructor(
     private message: NzMessageService,
     private modal: NzModalService,
+    public abilityService: AbilityService,
     @Inject('IHistory') private readonly _history: IHistory,
     @Inject('IHighDemand') private readonly _highDemand: IHighDemand,
-    @Inject('IInstituionDetail') private _institution: IInstituionDetail,
-    @Inject('IManagerTeacher') private _teacher: IManagerTeacher,
   ) {}
 
   ngOnInit(): void {
     this.loadData();
+    const { user } = this.appStore.snapshot;
+    this.abilityService.loadAbilities(user.userId).subscribe(() => {
+      const ability = this.abilityService.getAbility();
+      console.log('Habilidades cargadas:', ability?.rules);
+    });
   }
 
   loadData(): void {
     this.loading = true;
-    const { user } = this.appStore.snapshot
-    const { personId } = user;
-
-    this._teacher.getInfoTeacher(personId).pipe(
-      switchMap((response: any) => {
-        const { educationalInstitutionId: sie } = response.data;
-        return this._institution.getInfoInstitution(sie);
-      }),
-      switchMap(institution => {
-        const { id } = institution;
-        const high = this._highDemand.getHighDemandByInstitution(id);
-        return high
-      }),
-      switchMap(highDemand => {
-        const { id } = highDemand
-        return this._history.showList(id);
-      })
-    ).subscribe({
-      next: (history: any) => {
-        this.registration.set(history.data); // asegurarme que history.data existe
-        this.historial = history.data
-        this.loading = false;
+    this._history.showGeneralList().subscribe({
+      next: (response:any) => {
+        const filtered = response.data.filter((r: Registration) => this.canViewRequest(r))
+        this.registration.set([...filtered])
+        this.historial = [...filtered]
+        this.loading = false
       },
       error: (err) => {
-        console.error('Error cargando datos', err);
-        this.loading = false;
+        console.log("error cargando datos", err)
+        this.loading = false
       }
-    });
+    })
   }
 
   onQueryParamsChange(params: any): void {
@@ -160,7 +168,7 @@ export class SeguimientoComponent implements OnInit {
     this.loadData();
   }
 
-  verDetalle(solicitud: Registration): void {
+  seeDetail(solicitud: Registration): void {
     this.solicitudSeleccionada = solicitud;
     this.isVisibleModal = true;
   }
@@ -199,13 +207,47 @@ export class SeguimientoComponent implements OnInit {
     });
   }
 
-  getColorEstado(estado?: string): string {
-    switch (estado) {
+  getColorEstado(state?: string): string {
+    switch (state) {
       case 'APROBADO': return 'success';
       case 'RECHAZADO': return 'error';
       case 'ANULADA': return 'error';
       case 'OBSERVADO': return 'warning';
       default: return 'processing';
     }
+  }
+
+  can(rol: string): boolean {
+    //! El recurso 'follow' (seguimiento) puede ser administrado
+    //! siempre y cuando el Rol del usuario sea 'VER'
+    return this.abilityService.getAbility()?.can('manage', { __typename: 'follow-ver', rol: rol}) || false;
+  }
+
+  canViewRequest(request: Registration): boolean {
+    //! El recurso 'history' (historial) puede ser leido
+    //! siempre y cuando el usuario sea el propietario
+    return this.abilityService.getAbility()?.can('read', { __typename: 'history', userId: request.userId}) || false;
+  }
+
+  // Funciones para la búsqueda
+  private normalizeText(text: string): string {
+    return text
+      ? text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+      : '';
+  }
+
+  onSearchChange(value: string): void {
+    this.searchValue.set(value)
+  }
+
+  onEstadoChange(value: string | null): void {
+    this.filterEstado.set(value)
+  }
+
+  onFechaChange(value: Date | null): void {
+    this.filterFecha.set(value)
+  }
+  onWorkflowStatusChange(value: string | null): void {
+    this.filterStatusWorkflow.set(value)
   }
 }
