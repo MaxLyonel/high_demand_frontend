@@ -5,6 +5,11 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagComponent } from 'ng-zorro-antd/tag';
 import { NzTypographyModule } from 'ng-zorro-antd/typography';
 import IPreRegistration from '../../../../domain/ports/i-pre-registration';
+import { AppStore } from '../../../../infrastructure/store/app.store';
+import IHighDemand from '../../../../domain/ports/i-high-demand';
+import { switchMap, finalize } from 'rxjs';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { CommonModule } from '@angular/common';
 
 
 interface Postulant {
@@ -39,16 +44,19 @@ interface PreRegistration {
   postulant: Postulant;
   state: string
   expand: boolean;
+  representative: any;
   createdAt: Date
 }
 
 @Component({
   imports: [
+    CommonModule,
     NzTableModule,
     NzIconModule,
     NzButtonComponent,
     NzTagComponent,
-    NzTypographyModule
+    NzTypographyModule,
+    NzModalModule
   ],
   selector: 'register-inbox',
   templateUrl: './register.component.html',
@@ -57,19 +65,74 @@ interface PreRegistration {
 export class RegisterInbox implements OnInit {
 
   preRegistrations: PreRegistration[] = []
+  highDemand: any
+  loading:boolean = false
+  isDocumentVisible = false
+  selectedPostulant: any
+  sie: any
 
   constructor(
-    @Inject('IPreRegistration') private _preRegistration: IPreRegistration
+    private readonly appStore: AppStore,
+    @Inject('IPreRegistration') private _preRegistration: IPreRegistration,
+    @Inject('IHighDemand') private _highDemand: IHighDemand
   ) {}
 
   ngOnInit(): void {
-    this.loadData()
+    const { institutionInfo } = this.appStore.snapshot
+    const { id: sie } = institutionInfo
+    this.sie = sie
+    this.loadData(sie)
   }
 
-  loadData() {
-    this._preRegistration.getListAccpeted().subscribe(response => {
-      this.preRegistrations = response.data
+  loadData(sie: number) {
+    this.loading = true
+    this._highDemand.getHighDemandByInstitution(sie).pipe(
+      switchMap(response => {
+        this.highDemand = response
+        return this._preRegistration.getListPreRegistration(this.highDemand.id)
+      })
+    ).subscribe({
+      next: preRegReponse => {
+        this.preRegistrations = preRegReponse.data;
+        this.loading = false
+      }
     })
+  }
+
+  handleCancel(): void {
+    this._preRegistration.invalidatePreRegistration(this.selectedPostulant)
+      .pipe(
+        finalize(() => {
+          this.isDocumentVisible = false;
+        })
+      ).subscribe({
+        next: _ => {
+          this.loadData(this.sie)
+        },
+      })
+  }
+
+  handleOk(): void {
+    this._preRegistration.validatePreRegistration(this.selectedPostulant)
+      .pipe(
+        finalize(() => {
+          this.isDocumentVisible = false
+        })
+      ).subscribe({
+        next: _ => {
+          this.loadData(this.sie)
+        }
+      })
+    this.isDocumentVisible = false
+  }
+
+  onToogle(postulant: any) {
+    this.selectedPostulant = postulant
+    this.isDocumentVisible = true
+  }
+
+  closeModal() {
+    this.isDocumentVisible = false
   }
 
 }

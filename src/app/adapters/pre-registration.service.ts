@@ -71,10 +71,53 @@ export class PreRegistrationAdapterService implements IManagerPreRegistration {
     )
   }
 
+  invalidatePreRegistration(obj: any): Observable<any> {
+    return this.http.post(`pre-registration/invalidate`, obj, {
+      context: new HttpContext().set(IS_USER_ACTION, true)
+    }).pipe(
+      catchError(err => {
+        console.error("Error al invalidar una pre inscripción")
+        return throwError(() => err)
+      })
+    )
+  }
+
+  validatePreRegistration(obj: any): Observable<any> {
+    return this.http.post(`pre-registration/validate`, obj, {
+      context: new HttpContext().set(IS_USER_ACTION, true)
+    }).pipe(
+      catchError(err => {
+        console.error("Error al validar la pre inscripción")
+        return throwError(() => err)
+      })
+    )
+  }
+
+  acceptPreRegistrations(obj: any): Observable<any> {
+    return this.http.post(`pre-registration/accept-chosen`, obj, {
+      context: new HttpContext().set(IS_USER_ACTION, true)
+    }).pipe(
+      catchError(err => {
+        console.error("Error al aceptar preinscripciones")
+        return throwError(() => err)
+      })
+    )
+  }
+
+
   getListPreRegistrations(highDemandId: number): Observable<any> {
     return this.http.get(`pre-registration/list/${highDemandId}`).pipe(
       catchError(err => {
         console.error("Error al obtener la lista de pre inscripciones")
+        return throwError(() => err)
+      })
+    )
+  }
+
+  getListValidPreRegistrations(highDemandId: number): Observable<any> {
+    return this.http.get(`pre-registration/list-valid/${highDemandId}`).pipe(
+      catchError(err => {
+        console.error("Error al obtener el listado de pre inscripciones válidas")
         return throwError(() => err)
       })
     )

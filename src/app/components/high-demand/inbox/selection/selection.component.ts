@@ -19,7 +19,7 @@ import IPreRegistration from '../../../../domain/ports/i-pre-registration';
 import { NzCheckboxComponent } from "ng-zorro-antd/checkbox";
 import { AppStore } from '../../../../infrastructure/store/app.store';
 import IHighDemand from '../../../../domain/ports/i-high-demand';
-import { switchMap } from 'rxjs';
+import { finalize, pipe, switchMap } from 'rxjs';
 
 interface Student {
   id: string;
@@ -192,11 +192,14 @@ export class SelectionInbox implements OnInit {
     this._highDemand.getHighDemandByInstitution(sie).pipe(
       switchMap(response => {
         this.highDemand = response
-        return this._preRegistration.getListPreRegistration(this.highDemand.id);
+        return this._preRegistration.getListValidPreRegistration(this.highDemand.id);
       })
     ).subscribe({
       next: preRegResponse => {
-        this.preRegistrations = preRegResponse.data;
+        this.preRegistrations = preRegResponse.data.map((p:any) => ({
+          ...p,
+          selected: p.state === 'ACEPTADO'
+        }))
         this.filteredPreRegistrations = [...this.preRegistrations];
         this.loading = false;
       },
@@ -255,13 +258,22 @@ export class SelectionInbox implements OnInit {
 
   handleConsolidateOk(): void {
     this.isConsolidateLoading = true;
-    // Simular consolidación
-    setTimeout(() => {
-      this.message.success(`${this.selectedPostulants.length} estudiantes consolidados`);
-      this.selectedPostulants = [];
-      this.isConsolidateVisible = false;
-      this.isConsolidateLoading = false;
-    }, 1000);
+    this._preRegistration.acceptPreRegistrations(this.selectedPostulants)
+      .pipe(
+        finalize(() => {
+          this.isConfirmLoading = false
+          this.isConsolidateVisible = false
+          this.selectedPostulants = []
+        })
+      ).subscribe({
+        next: response => {
+          console.log("Esto nos responde el backend: ", response)
+          this.message.success(`${this.selectedPostulants.length} estudiantes consolidados`);
+        },
+        error: err => {
+          console.log("Error: ", err)
+        }
+      })
   }
 
   getCriteriaColor(criteria: string): string {

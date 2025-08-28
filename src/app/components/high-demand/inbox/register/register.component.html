@@ -2,7 +2,7 @@
   <div class="header-section">
     <h5 nz-typography class="section-title mb-3">PRE INSCRIPCIONES DE ESTUDIANTES</h5>
   </div>
-  
+
   <nz-table
     #groupingTable
     [nzData]="preRegistrations"
@@ -11,12 +11,11 @@
     class="custom-table hugging-table student-table"
     [nzScroll]="{ y: '450px' }"
   >
-    <!-- [nzScroll]="{ x: '1150px', y: '440px' }" -->
     <thead>
       <tr class="header-row">
-        <th rowspan="2" class="header-cell student-section">N°</th>
+        <th rowspan="2" class="header-cell student-section" nzWidth="50px">N°</th>
         <th colspan="7" class="header-cell student-section">Datos del Estudiante</th>
-        <th colspan="4" class="header-cell student-section">Datos del Apoderado</th>
+        <th colspan="4" class="header-cell student-section">Datos de la Inscripción</th>
         <th rowspan="2" class="header-cell student-section">Acciones</th>
       </tr>
       <tr class="subheader-row">
@@ -30,12 +29,12 @@
         <th class="subheader-cell">Año escolaridad</th>
         <th class="subheader-cell">Fecha registro</th>
         <th class="subheader-cell">Estado</th>
-        <th class="subheader-cell" nzWidth="90px">Ver Apoderado</th>
+        <th class="subheader-cell">Ver Apoderado</th>
       </tr>
     </thead>
     <tbody>
       @for(data of groupingTable.data; track data; let i = $index) {
-        <tr class="data-row">
+        <tr class="data-row" [ngClass]="{'row-invalidated': data.state === 'INVALIDADO'}">
           <td class="data-cell number-cell">{{ i+1 }}</td>
           <td class="data-cell">{{ data.postulant.codeRude ?? 'NUEVO' }}</td>
           <td class="data-cell">{{ data.postulant.identityCard ?? 'SIN CARNET'}}</td>
@@ -46,24 +45,27 @@
           <td class="data-cell">{{ data.highDemandCourse.level.name }}</td>
           <td class="data-cell">{{ data.highDemandCourse.grade.name }}</td>
           <td class="data-cell">{{ data.createdAt }}</td>
-          <td class="data-cell">{{ data.state }}</td>
-          <td [(nzExpand)]="data.expand" nzWidth="90px"></td>
+          <td class="data-cell"><nz-tag [nzColor]="data.state === 'INVALIDADO' ? 'red' : 'blue'">{{ data.state }}</nz-tag></td>
+          <td [(nzExpand)]="data.expand"></td>
           <td class="data-cell actions-cell">
             <div class="action-buttons">
-              <!-- <button nz-button nzType="text" nzSize="small" nzShape="circle" class="action-button" nz-tooltip nzTooltipTitle="Aprobar">
-                <span nz-icon nzType="check-circle" nzTheme="outline" style="color: #52c41a;"></span>
-              </button>
-              <button nz-button nzType="text" nzSize="small" nzShape="circle" class="action-button" nz-tooltip nzTooltipTitle="Rechazar">
-                <span nz-icon nzType="close-circle" nzTheme="outline" style="color: #f5222d;"></span>
-              </button> -->
-              <button nz-button nzType="text" nzSize="small" nzShape="circle" class="action-button" nz-tooltip nzTooltipTitle="Generar PDF">
+              <button
+                nz-button
+                nzType="text"
+                nzSize="small"
+                nzShape="circle"
+                class="action-button"
+                nz-tooltip
+                nzTooltipTitle="Generar PDF"
+                (click)="onToogle(data)"
+              >
                 <span nz-icon nzType="file-pdf" nzTheme="outline" style="color: #0D9488;"></span>
               </button>
             </div>
           </td>
         </tr>
         <tr [nzExpand]="data.expand" >
-          <!-- <nz-table #innerTable [nzData]="listofChildrenData" nzSize="small" [nzShowPagination]="false">
+          <nz-table #innerTable [nzData]="[data.representative]" nzSize="small" [nzShowPagination]="false">
             <thead>
               <tr>
                 <th>Carnet Identidad</th>
@@ -76,17 +78,46 @@
             <tbody>
               @for(data of innerTable.data; track data) {
                 <tr>
-                  <td>{{ data.identity_card_tutor }}</td>
-                  <td>{{ data.last_name_tutor }}</td>
-                  <td>{{ data.mothers_last_name_tutor }}</td>
-                  <td>{{ data.full_name_tutor }}</td>
-                  <td>{{ data.relationship}} </td>
+                  <td>{{ data.identityCard }}</td>
+                  <td>{{ data.lastName }}</td>
+                  <td>{{ data.mothersLastName }}</td>
+                  <td>{{ data.name }}</td>
+                  <td>{{ data.nationality}} </td>
                 </tr>
               }
             </tbody>
-          </nz-table> -->
+          </nz-table>
         </tr>
       }
     </tbody>
   </nz-table>
+  <nz-modal
+    [(nzVisible)]="isDocumentVisible"
+    nzTitle="Formulario de pre inscripción"
+    (nzOnCancel)="closeModal()"
+    [nzFooter]="modalFooter"
+  >
+    <ng-container *nzModalContent>
+    </ng-container>
+    <ng-template #modalFooter>
+      <button
+        nz-button
+        nzType="primary"
+        [nzDanger]="true"
+        (click)="handleCancel()"
+        [disabled]="selectedPostulant.state === 'ACEPTADO' || selectedPostulant.state === 'INVALIDADO'"
+      >
+        <nz-icon nzType="close-circle" /> No válido
+      </button>
+      <button
+        nz-button
+        nzType="primary"
+        [nzLoading]="false"
+        (click)="handleOk()"
+        [disabled]="selectedPostulant.state === 'ACEPTADO' || selectedPostulant.state === 'INVALIDADO'"
+      >
+        <nz-icon nzType="check-circle" nzIconfont="10px"/> Válido
+      </button>
+    </ng-template>
+  </nz-modal>
 </div>

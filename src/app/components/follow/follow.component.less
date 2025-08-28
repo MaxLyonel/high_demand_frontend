@@ -1,0 +1,203 @@
+@primary-color: #0D9488;
+@primary-light: #14B8A6;
+@primary-dark: #045e56;
+@text-color: #1E293B;
+@text-secondary: #64748B;
+@border-color: #E2E8F0;
+@background-light: #e4eaf0;
+@success-color: #52c41a;
+@warning-color: #faad14;
+@error-color: #f5222d;
+@processing-color: #1890ff;
+
+.tracking-container {
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+  background-color: @background-light;
+}
+
+.tracking-content {
+  width: 100%;
+  max-width: 900px;
+  background-color: #fff;
+  padding: 32px;
+  border-radius: 12px;
+  border: 1px solid fade(@primary-color, 30%);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.tracking-title {
+  text-align: center;
+  margin-bottom: 24px;
+  color: @primary-dark;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.search-section {
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid @border-color;
+}
+
+.search-header {
+  font-weight: 600;
+  color: @primary-dark;
+  font-size: 16px;
+  margin-bottom: 15px;
+  border-left: 5px solid @primary-color;
+  padding-left: 10px;
+}
+
+.search-form {
+  display: flex;
+  gap: 15px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.search-input {
+  flex: 1;
+  padding: 10px 15px;
+  border: 1px solid @border-color;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+
+  &:focus {
+    outline: none;
+    border-color: @primary-color;
+    box-shadow: 0 0 3px fade(@primary-color, 40%);
+  }
+}
+
+.results-card {
+  padding: 25px;
+  border-radius: 10px;
+  border: 1px solid fade(@primary-color, 50%);
+  margin-bottom: 20px;
+}
+
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid @border-color;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+}
+
+.applicant-name {
+  font-size: 20px;
+  font-weight: 600;
+  color: @text-color;
+}
+
+.download-button {
+  padding: 8px 16px;
+  background-color: @primary-light;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: @primary-color;
+  }
+}
+
+.status-section {
+  text-align: center;
+  margin: 25px 0;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #f8fafc;
+}
+
+.status-label {
+  font-size: 16px;
+  color: @text-secondary;
+  margin-bottom: 10px;
+}
+
+.status-value {
+  font-size: 28px;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.status-aprobado {
+  background-color: fade(@success-color, 15%);
+  color: @success-color;
+  border: 2px solid @success-color;
+}
+
+.status-pendiente {
+  background-color: fade(@warning-color, 15%);
+  color: @warning-color;
+  border: 2px solid @warning-color;
+}
+
+.status-rechazado {
+  background-color: fade(@error-color, 15%);
+  color: @error-color;
+  border: 2px solid @error-color;
+}
+
+.status-procesando {
+  background-color: fade(@processing-color, 15%);
+  color: @processing-color;
+  border: 2px solid @processing-color;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-top: 20px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.detail-item {
+  margin-bottom: 15px;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: @text-secondary;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.detail-value {
+  color: @text-color;
+  font-size: 16px;
+}
+
+.no-results {
+  text-align: center;
+  padding: 30px;
+  color: @text-secondary;
+}

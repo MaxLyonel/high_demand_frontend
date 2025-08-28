@@ -11,10 +11,21 @@ export default interface IManagerPreRegistration {
   getMunicipies(): Observable<any>;
   // ** buscar un estudiante por su código rude **
   searchStudent(sie: number, codeRude: string): Observable<any>;
+
   // ** guardar una pre inscripción **
   savePreRegistration(obj: any): Observable<any>;
+  // ** invalidar una pre inscripción **
+  invalidatePreRegistration(obj: any): Observable<any>;
+  // ** validar una pre inscripción **
+  validatePreRegistration(obj: any): Observable<any>;
+  // ** aceptar pre inscripciones **
+  acceptPreRegistrations(obj: any): Observable<any>;
+
   // ** obtener lista de pre inscripciones **
-  getListPreRegistrations(highDemandId: number): Observable<any>
+  getListPreRegistrations(highDemandId: number): Observable<any>;
+  // ** obtener lista de pre inscripciones validas **
+  getListValidPreRegistrations(highDemandId: number): Observable<any>;
+
   // ** Actualizar el estado de la pre inscripción **
   updatedStatus(preRegistrationId: number): Observable<any>
   // ** obtener lista de pre inscripciones aceptadas **

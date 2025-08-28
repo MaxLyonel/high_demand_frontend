@@ -35,8 +35,28 @@ export default class PreRegistrationManager implements IPreRegistration {
     return result
   }
 
+  invalidatePreRegistration(obj: any): Observable<any> {
+    const result = this._preRegistrationAdapter.invalidatePreRegistration(obj)
+    return result
+  }
+
+  validatePreRegistration(obj: any): Observable<any> {
+    const result = this._preRegistrationAdapter.validatePreRegistration(obj)
+    return result
+  }
+
+  acceptPreRegistrations(obj: any): Observable<any> {
+    const result = this._preRegistrationAdapter.acceptPreRegistrations(obj)
+    return result
+  }
+
   getListPreRegistration(highDemandId: number): Observable<any> {
     const result = this._preRegistrationAdapter.getListPreRegistrations(highDemandId)
+    return result
+  }
+
+  getListValidPreRegistration(highDemandId: number): Observable<any> {
+    const result = this._preRegistrationAdapter.getListValidPreRegistrations(highDemandId)
     return result
   }
 

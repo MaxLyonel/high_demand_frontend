@@ -314,6 +314,7 @@ export default class FormularioInscripcionComponent implements OnInit{
       startWith(this.form.get('justification')?.value)
     ).subscribe((value) => {
       // postulante
+      console.log("justificativo id: ", value)
       const postulantMunicipalityResidence = this.form.get('postulantMunicipalityResidence')
       const postulantAreaResidence = this.form.get('postulantAreaResidence')
       const postulantAddressResidence = this.form.get('postulantAddressResidence')
@@ -334,7 +335,12 @@ export default class FormularioInscripcionComponent implements OnInit{
         postulantAreaResidence?.clearValidators()
         postulantAddressResidence?.clearValidators()
         postulantTelephoneResidence?.clearValidators()
+
       }
+      postulantMunicipalityResidence?.updateValueAndValidity();
+      postulantAreaResidence?.updateValueAndValidity();
+      postulantAddressResidence?.updateValueAndValidity();
+      postulantTelephoneResidence?.updateValueAndValidity();
 
       if(value === 3) {
         guardianPlaceNameWork?.setValidators([Validators.required])
@@ -349,6 +355,11 @@ export default class FormularioInscripcionComponent implements OnInit{
         guardianAddressJob?.clearValidators()
         guardianPhoneJob?.clearValidators()
       }
+      guardianPlaceNameWork?.updateValueAndValidity();
+      guardianMunicipalityWork?.updateValueAndValidity();
+      guardianAreaWork?.updateValueAndValidity();
+      guardianAddressJob?.updateValueAndValidity();
+      guardianPhoneJob?.updateValueAndValidity();
 
     })
   }

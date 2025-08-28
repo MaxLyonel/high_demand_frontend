@@ -1,4 +1,5 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
+import { Router } from "@angular/router";
 import { NzButtonModule } from "ng-zorro-antd/button";
 import { NzCardModule } from "ng-zorro-antd/card";
 
@@ -14,4 +15,9 @@ import { NzCardModule } from "ng-zorro-antd/card";
 })
 export class FollowUpComponent {
 
+  private router = inject(Router)
+
+  onClick() {
+    this.router.navigate(['/seguimiento'])
+  }
 }

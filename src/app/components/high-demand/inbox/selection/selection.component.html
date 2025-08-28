@@ -135,6 +135,7 @@
             <label
               nz-checkbox
               [ngModel]="postulant.selected"
+              [nzDisabled]="postulant.state === 'ACEPTADO'"
               (ngModelChange)="onToggleStudent($event, postulant)"
             ></label>
           </td>

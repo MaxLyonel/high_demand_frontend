@@ -1,4 +1,157 @@
-// @primary-color: #0D9488;
+
+
+
+  /* Variables de colores para mantener consistencia */
+  @screen-md-max: 991px;
+  @primary-color: #0D9488;
+  @primary-light: #14B8A6;
+  @primary-dark: #045e56;
+  @text-color: #1E293B;
+  @text-secondary: #64748B;
+  @border-color: #E2E8F0;
+  @background-light: #e4eaf0;
+  
+  .pre-inscription-container {
+    padding: 16px;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid rgba(13, 148, 136, 0.5);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    margin-bottom: 24px;
+  }
+  
+  .header-section {
+    margin-bottom: 16px;
+  }
+  
+  .section-title {
+    color: @primary-dark !important;
+    font-weight: 600 !important;
+    margin-bottom: 0 !important;
+    border-left: 4px solid @primary-color !important;
+    padding-left: 12px !important;
+  }
+  
+  .student-table {
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+  .student-table .ant-table-thead > tr > th {
+    background: #f0f5ff;
+    font-weight: 600;
+    padding: 12px 8px;
+  }
+  
+  .student-table .ant-table-tbody > tr > td {
+    padding: 10px 8px;
+    vertical-align: middle;
+  }
+  
+  .header-cell {
+    text-align: center;
+    font-weight: 600;
+    background-color: rgba(13, 148, 136, 0.1);
+  }
+  
+  .subheader-cell {
+    text-align: center;
+    font-weight: 600;
+    color: @text-color;
+    background-color: @border-color;
+    border-bottom: 1px solid @border-color;
+  }
+  
+  .data-cell {
+    text-align: center;
+  }
+  
+  .actions-cell {
+    padding: 6px !important;
+  }
+  
+  .action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+  }
+  
+  .action-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+  }
+  
+  /* Ajustes responsivos */
+  @media (max-width: 991px) {
+    .pre-inscription-container {
+      padding: 12px;
+    }
+    
+    .action-buttons {
+      flex-direction: column;
+      gap: 4px;
+    }
+  }
+
+  nz-icon {
+    margin-top: 3px;
+    margin-right: 2px;
+    font-size: 18px;
+  }
+
+  .row-invalidated {
+    background-color: #f8f1f1; /* rojo claro */
+  }
+
+/* Centrar encabezados */
+.custom-table th {
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* Centrar celdas del cuerpo */
+.custom-table td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* Opcional: quitar hover de filas */
+.custom-table .ant-table-tbody > tr:hover > td {
+  background: inherit !important;
+}
+
+
+
+  /* Efecto visual de abrazo */
+  .ant-table-content {
+    overflow: visible !important;
+    
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      height: calc(100% - 2px);
+      width: 1px;
+      background-color: fade(@primary-color, 40%);
+      top: 1px;
+    }
+    
+    &::before {
+      left: 0;
+    }
+    
+    &::after {
+      right: 0;
+    }
+  }
+  
+
+
+
+  // @primary-color: #0D9488;
 // @primary-light: #14B8A6;
 // @primary-dark: #045e56;
 // @text-color: #1E293B;
@@ -99,195 +252,78 @@
 //   }
 // }
 
-// .hugging-table {
-//   /* Eliminar bordes internos por defecto */
-//   th, td {
-//     border: none !important;
-//   }
+.hugging-table {
+  /* Eliminar bordes internos por defecto */
+  th, td {
+    border: none !important;
+  }
 
-//   /* Contenedor principal con bordes solo laterales */
-//   .ant-table-container {
-//     border-left: 1px solid fade(@primary-color, 40%);
-//     border-right: 1px solid fade(@primary-color, 40%);
-//     // border: 1px solid fade(@primary-color, 40%);
-//   }
+  /* Contenedor principal con bordes solo laterales */
+  .ant-table-container {
+    border-left: 1px solid fade(@primary-color, 40%);
+    border-right: 1px solid fade(@primary-color, 40%);
+    // border: 1px solid fade(@primary-color, 40%);
+  }
 
-//   tr > th:nth-child(1),
-//   tr > td:nth-child(2) {
-//     border-left: 1px solid fade(@primary-color, 40%) !important
-//   }
+  tr > th:nth-child(1),
+  tr > td:nth-child(2) {
+    border-left: 1px solid fade(@primary-color, 40%) !important
+  }
 
-//   tr > th:nth-child(8),
-//   tr > td:nth-child(9) {
-//     border-left: 1px solid fade(@primary-color, 40%) !important;
-//   }
+  tr > th:nth-child(8),
+  tr > td:nth-child(9) {
+    border-left: 1px solid fade(@primary-color, 40%) !important;
+  }
 
-//   tr > td:nth-child(14) {
-//     border-left: 1px solid fade(@primary-color, 40%) !important;
-//   }
+  tr > td:nth-child(14) {
+    border-left: 1px solid fade(@primary-color, 40%) !important;
+  }
 
 //   /* Primera columna - Margen izquierdo completo */
-//   tr > th:first-child,
-//   tr > td:first-child {
-//     border-left: 1px solid fade(@primary-color, 40%) !important;
-//     position: relative;
+  tr > th:first-child,
+  tr > td:first-child {
+    border-left: 1px solid fade(@primary-color, 40%) !important;
+    position: relative;
     
-//     &::before {
-//       content: '';
-//       position: absolute;
-//       left: -1px;
-//       top: 0;
-//       bottom: 0;
-//       width: 1px;
-//       // background-color: @border-color;
-//       background-color: fade(@primary-color, 40%);
-//     }
-//   }
+    &::before {
+      content: '';
+      position: absolute;
+      left: -1px;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      // background-color: @border-color;
+      background-color: fade(@primary-color, 40%);
+    }
+  }
 
 //   /* Última columna - Margen derecho completo */
-//   tr > th:last-child,
-//   tr > td:last-child {
-//     border-right: 1px solid fade(@primary-color, 40%) !important;
-//   }
+  tr > th:last-child,
+  tr > td:last-child {
+    border-right: 1px solid fade(@primary-color, 40%) !important;
+  }
 
 //   /* Encabezados principales que "abrazan" */
-//   .header-row {
-//     .header-cell {
-//       &.student-section,
-//       &.parent-section,
-//       &.actions-header {
-//         border-top: 1px solid fade(@primary-color, 40%)!important;
-//         border-bottom: 1px solid fade(@primary-color, 40%) !important;
-//       }
-//     }
-//   }
+  .header-row {
+    .header-cell {
+      &.student-section,
+      &.parent-section,
+      &.actions-header {
+        border-top: 1px solid fade(@primary-color, 40%)!important;
+        border-bottom: 1px solid fade(@primary-color, 40%) !important;
+      }
+    }
+  }
 
 //   /* Filas de datos */
-//   .data-row {
-//     td {
-//       border-bottom: 1px solid fade(@primary-color, 40%) !important;
-//     }
+  // .data-row {
+  //   td {
+  //     border-bottom: 1px solid fade(@primary-color, 40%) !important;
+  //   }
 
-//     &:last-child td {
-//       border-bottom: none !important;
-//     }
-//   }
+  //   &:last-child td {
+  //     border-bottom: none !important;
+  //   }
+  // }
 
-//   /* Efecto visual de abrazo */
-//   .ant-table-content {
-//     overflow: visible !important;
-    
-//     &::before,
-//     &::after {
-//       content: '';
-//       position: absolute;
-//       height: calc(100% - 2px);
-//       width: 1px;
-//       background-color: fade(@primary-color, 40%);
-//       top: 1px;
-//     }
-    
-//     &::before {
-//       left: 0;
-//     }
-    
-//     &::after {
-//       right: 0;
-//     }
-//   }
-// }
-
-  /* Variables de colores para mantener consistencia */
-  @screen-md-max: 991px;
-  @primary-color: #0D9488;
-  @primary-light: #14B8A6;
-  @primary-dark: #045e56;
-  @text-color: #1E293B;
-  @text-secondary: #64748B;
-  @border-color: #E2E8F0;
-  @background-light: #e4eaf0;
-  
-  .pre-inscription-container {
-    padding: 16px;
-    background: #fff;
-    border-radius: 8px;
-    border: 1px solid rgba(13, 148, 136, 0.5);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    margin-bottom: 24px;
-  }
-  
-  .header-section {
-    margin-bottom: 16px;
-  }
-  
-  .section-title {
-    color: @primary-dark !important;
-    font-weight: 600 !important;
-    margin-bottom: 0 !important;
-    border-left: 4px solid @primary-color !important;
-    padding-left: 12px !important;
-  }
-  
-  .student-table {
-    border-radius: 4px;
-    overflow: hidden;
-  }
-  
-  .student-table .ant-table-thead > tr > th {
-    background: #f0f5ff;
-    font-weight: 600;
-    padding: 12px 8px;
-  }
-  
-  .student-table .ant-table-tbody > tr > td {
-    padding: 10px 8px;
-    vertical-align: middle;
-  }
-  
-  .header-cell {
-    text-align: center;
-    font-weight: 600;
-    background-color: rgba(13, 148, 136, 0.1);
-  }
-  
-  .subheader-cell {
-    text-align: center;
-    font-weight: 600;
-    color: @text-color;
-    background-color: @border-color;
-    border-bottom: 1px solid @border-color;
-  }
-  
-  .data-cell {
-    text-align: center;
-  }
-  
-  .actions-cell {
-    padding: 6px !important;
-  }
-  
-  .action-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 6px;
-  }
-  
-  .action-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-  }
-  
-  /* Ajustes responsivos */
-  @media (max-width: 991px) {
-    .pre-inscription-container {
-      padding: 12px;
-    }
-    
-    .action-buttons {
-      flex-direction: column;
-      gap: 4px;
-    }
-  }
+}

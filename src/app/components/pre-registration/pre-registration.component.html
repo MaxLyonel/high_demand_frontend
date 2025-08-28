@@ -153,7 +153,7 @@
                     <nz-form-control>
                       <nz-radio-group formControlName="justification">
                       @for(criteria of criterias; track criteria) {
-                        <label nz-radio [nzValue]="criteria.id">{{criteria.name}}</label>
+                        <label nz-radio [nzValue]="criteria.id">{{ criteria.id}} {{criteria.name}}</label>
                       }
                       </nz-radio-group>
                     </nz-form-control>

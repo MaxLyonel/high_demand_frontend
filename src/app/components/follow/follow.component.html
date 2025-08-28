@@ -1,0 +1,91 @@
+<div class="tracking-container">
+    <div class="tracking-content">
+      <h1 class="tracking-title">SEGUIMIENTO DE PRE INSCRIPCIONES</h1>
+      
+      <nz-card nzTitle="BUSCAR PRE INSCRIPCIÓN" class="search-section">
+        <div nz-row nzGutter="16">
+          <div nz-col nzSpan="18">
+            <input 
+              nz-input 
+              [(ngModel)]="searchTerm"
+              placeholder="Ingrese el código de pre inscripción o cédula de identidad"
+              (keyup.enter)="searchApplication()"
+              class="search-input" />
+          </div>
+          <div nz-col nzSpan="6">
+            <button 
+              nz-button 
+              nzType="primary" 
+              (click)="searchApplication()"
+              [nzLoading]="isLoading"
+              style="width: 100%">
+              Buscar
+            </button>
+          </div>
+        </div>
+      </nz-card>
+      
+      <div class="no-results" *ngIf="!isLoading && !searchResults">
+        <nz-alert nzType="info" nzMessage="No se encontraron resultados para su búsqueda." 
+                  nzDescription="Verifique el código o cédula ingresada e intente nuevamente.">
+        </nz-alert>
+      </div>
+      
+      <div *ngIf="searchResults">
+        <nz-card class="results-card">
+          <div class="results-header">
+            <div class="applicant-name">{{ searchResults.applicantName }}</div>
+            <button nz-button class="download-button" (click)="downloadCertificate()">
+              <i nz-icon nzType="download"></i> Descargar Constancia
+            </button>
+          </div>
+          
+          <div nz-row nzGutter="16" class="details-grid">
+            <div nz-col nzSpan="12">
+              <div class="detail-item">
+                <div class="detail-label">CÓDIGO DE PRE INSCRIPCIÓN</div>
+                <div class="detail-value">{{ searchResults.applicationCode }}</div>
+              </div>
+            </div>
+            <div nz-col nzSpan="12">
+              <div class="detail-item">
+                <div class="detail-label">FECHA DE INSCRIPCIÓN</div>
+                <div class="detail-value">{{ searchResults.applicationDate }}</div>
+              </div>
+            </div>
+            <div nz-col nzSpan="12">
+              <div class="detail-item">
+                <div class="detail-label">UNIDAD EDUCATIVA</div>
+                <div class="detail-value">{{ searchResults.institutionName }}</div>
+              </div>
+            </div>
+            <div nz-col nzSpan="12">
+              <div class="detail-item">
+                <div class="detail-label">NIVEL EDUCATIVO</div>
+                <div class="detail-value">{{ searchResults.educationalLevel }}</div>
+              </div>
+            </div>
+            <div nz-col nzSpan="12">
+              <div class="detail-item">
+                <div class="detail-label">CURSO</div>
+                <div class="detail-value">{{ searchResults.course }}</div>
+              </div>
+            </div>
+            <div nz-col nzSpan="12">
+              <div class="detail-item">
+                <div class="detail-label">JUSTIFICATIVO</div>
+                <div class="detail-value">{{ searchResults.justification }}</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="status-section">
+            <div class="status-label">ESTADO DE LA PRE INSCRIPCIÓN</div>
+            <div class="status-value" [ngClass]="searchResults.statusClass">
+              {{ searchResults.status }}
+            </div>
+          </div>
+        </nz-card>
+      </div>
+    </div>
+  </div>
