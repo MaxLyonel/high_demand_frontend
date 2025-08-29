@@ -25,6 +25,8 @@ export default interface IManagerPreRegistration {
   getListPreRegistrations(highDemandId: number): Observable<any>;
   // ** obtener lista de pre inscripciones validas **
   getListValidPreRegistrations(highDemandId: number): Observable<any>;
+  // ** obtener lista de pre isncripciones para el seguimiento **
+  getListPreRegistrationFollow(identityCardPostulant: string): Observable<any>;
 
   // ** Actualizar el estado de la pre inscripción **
   updatedStatus(preRegistrationId: number): Observable<any>

@@ -160,6 +160,7 @@ export class SelectionInbox implements OnInit {
   criterias: any[] = []
   levels: any[] = []
   highDemand: any
+  sie: any;
 
   constructor(
     private message: NzMessageService,
@@ -171,6 +172,7 @@ export class SelectionInbox implements OnInit {
   ngOnInit(): void {
     const { institutionInfo } = this.appStore.snapshot
     const { id: sie } = institutionInfo
+    this.sie = sie
     this.loadCriterias();
     this.loadLevels();
     this.loadPostulants(sie);
@@ -268,6 +270,7 @@ export class SelectionInbox implements OnInit {
       ).subscribe({
         next: response => {
           console.log("Esto nos responde el backend: ", response)
+          this.loadPostulants(this.sie)
           this.message.success(`${this.selectedPostulants.length} estudiantes consolidados`);
         },
         error: err => {
@@ -297,12 +300,12 @@ export class SelectionInbox implements OnInit {
 
     this.isConfirmLoading = true;
     const { id: preRegistrationId } = this.selectedPostulant
-    this._preRegistration.updatedStatus(preRegistrationId).subscribe(response => {
-      this.selectedPostulant!.selected = this.tempChecked;
-      this.selectedPostulants.push(this.selectedPostulant!)
-      this.isConfirmVisible = false;
-      this.isConfirmLoading = false;
+    this.selectedPostulant!.selected = this.tempChecked;
+    this.selectedPostulants.push(this.selectedPostulant!)
+    this.isConfirmVisible = false;
+    this.isConfirmLoading = false;
       this.message.success(`Postulante ${this.selectedPostulant?.postulant.name} seleccionado`);
-    })
+    // this._preRegistration.updatedStatus(preRegistrationId).subscribe(response => {
+    // })
   }
 }

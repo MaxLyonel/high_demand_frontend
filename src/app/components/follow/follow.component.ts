@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -7,6 +7,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
+import IPreRegistration from '../../domain/ports/i-pre-registration';
 
 interface PreInscription {
   id: number;
@@ -40,7 +41,7 @@ interface PreInscription {
 })
 export default class PreInscriptionTrackingComponent {
   searchTerm: string = '';
-  searchResults: PreInscription | null = null;
+  searchResults: PreInscription[] = []
   isLoading: boolean = false;
 
   // Datos de ejemplo
@@ -99,26 +100,72 @@ export default class PreInscriptionTrackingComponent {
     }
   ];
 
+  constructor(
+    @Inject('IPreRegistration') private _preRegistration: IPreRegistration
+  ) {}
+
   searchApplication(): void {
     if (!this.searchTerm.trim()) {
       return;
     }
 
     this.isLoading = true;
-    
-    // Simular llamada a API
-    setTimeout(() => {
-      this.searchResults = this.preinscripcionesData.find(item => 
-        item.applicationCode === this.searchTerm || item.identityCard === this.searchTerm
-      ) || null;
-      
-      this.isLoading = false;
-    }, 500);
+
+    this._preRegistration.getListPreRegistrationFollow(this.searchTerm).subscribe({
+      next: response => {
+        if(response?.data?.length === 0) {
+          this.searchResults = []
+        } else {
+          const mapped = response.data.map((item: any) => this.mapToPreInscription(item));
+          // 👇 si quieres guardar solo el primero
+          // this.searchResults = mapped.length ? mapped[0] : null;
+
+          // 👇 si prefieres manejarlo como lista en vez de único resultado
+          this.searchResults = mapped;
+        }
+
+        this.isLoading = false;
+      },
+      error: () => {
+        this.searchResults = [];
+        this.isLoading = false;
+      }
+    });
   }
+
 
   downloadCertificate(): void {
     // Lógica para descargar constancia
     alert('Iniciando descarga de la constancia de pre inscripción...');
     // En una implementación real, aquí iría la lógica para generar/descargar el PDF
+  }
+
+  private mapToPreInscription(apiResponse: any): PreInscription {
+    return {
+      id: apiResponse.id,
+      applicationCode: `PI-${new Date(apiResponse.createdAt).getFullYear()}-${String(apiResponse.id).padStart(6, '0')}`,
+      applicantName: `${apiResponse.postulant.name} ${apiResponse.postulant.lastName} ${apiResponse.postulant.mothersLastName}`.trim(),
+      applicationDate: new Date(apiResponse.createdAt).toLocaleDateString('es-BO', {
+        day: '2-digit', month: 'long', year: 'numeric'
+      }),
+      institutionName: apiResponse.highDemandCourse?.highDemandRegistration?.educationalInstitution?.name ?? '',
+      educationalLevel: apiResponse.highDemandCourse?.level?.name, // puedes mapear el id → string
+      course: `${apiResponse.highDemandCourse?.grade?.name} ${apiResponse.highDemandCourse?.parallel?.name}`, // puedes juntar grado + paralelo
+      justification: apiResponse.criteria?.description ?? '',
+      status: apiResponse.state,
+      statusClass: this.mapStatusClass(apiResponse.state),
+      identityCard: apiResponse.postulant.identityCard
+    };
+  }
+
+  private mapStatusClass(state: string): string {
+    switch (state) {
+      case 'ACEPTADO': return 'status-aprobado';
+      case 'NO ACEPTADO': return 'status-procesado';
+      case 'VALIDADO': return 'status-pendiente';
+      case 'INVALIDADO': return 'status-rechazado';
+      case 'REGISTRADO': return 'status-procesando';
+      default: return 'status-default';
+    }
   }
 }

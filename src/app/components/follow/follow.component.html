@@ -1,21 +1,21 @@
 <div class="tracking-container">
     <div class="tracking-content">
       <h1 class="tracking-title">SEGUIMIENTO DE PRE INSCRIPCIONES</h1>
-      
+
       <nz-card nzTitle="BUSCAR PRE INSCRIPCIÓN" class="search-section">
         <div nz-row nzGutter="16">
           <div nz-col nzSpan="18">
-            <input 
-              nz-input 
+            <input
+              nz-input
               [(ngModel)]="searchTerm"
-              placeholder="Ingrese el código de pre inscripción o cédula de identidad"
+              placeholder="Ingrese la cédula de identidad del postulante"
               (keyup.enter)="searchApplication()"
               class="search-input" />
           </div>
           <div nz-col nzSpan="6">
-            <button 
-              nz-button 
-              nzType="primary" 
+            <button
+              nz-button
+              nzType="primary"
               (click)="searchApplication()"
               [nzLoading]="isLoading"
               style="width: 100%">
@@ -24,65 +24,69 @@
           </div>
         </div>
       </nz-card>
-      
-      <div class="no-results" *ngIf="!isLoading && !searchResults">
-        <nz-alert nzType="info" nzMessage="No se encontraron resultados para su búsqueda." 
-                  nzDescription="Verifique el código o cédula ingresada e intente nuevamente.">
-        </nz-alert>
-      </div>
-      
-      <div *ngIf="searchResults">
+
+      @if(!isLoading && searchResults.length === 0) {
+        <div class="no-results">
+          <nz-alert nzType="info" nzMessage="No se encontraron resultados para su búsqueda."
+                    nzDescription="Verifique el carnet ingresado e intente nuevamente.">
+          </nz-alert>
+        </div>
+      }
+
+      <div *ngIf="searchResults.length">
         <nz-card class="results-card">
           <div class="results-header">
-            <div class="applicant-name">{{ searchResults.applicantName }}</div>
-            <button nz-button class="download-button" (click)="downloadCertificate()">
+            <div class="applicant-name">{{ searchResults[0].applicantName }}</div>
+            <button nz-button class="download-button" (click)="downloadCertificate()"
+              [disabled]="searchResults[0].status !== 'ACEPTADO'"
+            >
               <i nz-icon nzType="download"></i> Descargar Constancia
             </button>
           </div>
-          
+
           <div nz-row nzGutter="16" class="details-grid">
             <div nz-col nzSpan="12">
               <div class="detail-item">
                 <div class="detail-label">CÓDIGO DE PRE INSCRIPCIÓN</div>
-                <div class="detail-value">{{ searchResults.applicationCode }}</div>
+                <div class="detail-value">{{ searchResults[0].applicationCode }}</div>
               </div>
             </div>
             <div nz-col nzSpan="12">
               <div class="detail-item">
                 <div class="detail-label">FECHA DE INSCRIPCIÓN</div>
-                <div class="detail-value">{{ searchResults.applicationDate }}</div>
+                <div class="detail-value">{{ searchResults[0].applicationDate }}</div>
               </div>
             </div>
             <div nz-col nzSpan="12">
               <div class="detail-item">
                 <div class="detail-label">UNIDAD EDUCATIVA</div>
-                <div class="detail-value">{{ searchResults.institutionName }}</div>
+                <div class="detail-value">{{ searchResults[0].institutionName }}</div>
               </div>
             </div>
             <div nz-col nzSpan="12">
               <div class="detail-item">
                 <div class="detail-label">NIVEL EDUCATIVO</div>
-                <div class="detail-value">{{ searchResults.educationalLevel }}</div>
+                <div class="detail-value">{{ searchResults[0].educationalLevel }}</div>
               </div>
             </div>
             <div nz-col nzSpan="12">
               <div class="detail-item">
                 <div class="detail-label">CURSO</div>
-                <div class="detail-value">{{ searchResults.course }}</div>
+                <div class="detail-value">{{ searchResults[0].course }}</div>
               </div>
             </div>
             <div nz-col nzSpan="12">
               <div class="detail-item">
                 <div class="detail-label">JUSTIFICATIVO</div>
-                <div class="detail-value">{{ searchResults.justification }}</div>
+                <div class="detail-value">{{ searchResults[0].justification }}</div>
               </div>
             </div>
           </div>
-          
+
           <div class="status-section">
             <div class="status-label">ESTADO DE LA PRE INSCRIPCIÓN</div>
-            <div class="status-value" [ngClass]="searchResults.statusClass">
-              {{ searchResults.status }}
+            <div class="status-value" [ngClass]="searchResults[0].statusClass">
+              {{ searchResults[0].status }}
             </div>
           </div>
         </nz-card>

@@ -60,6 +60,11 @@ export default class PreRegistrationManager implements IPreRegistration {
     return result
   }
 
+  getListPreRegistrationFollow(identityCardPostulant: string): Observable<any> {
+    const result = this._preRegistrationAdapter.getListPreRegistrationFollow(identityCardPostulant)
+    return result
+  }
+
   updatedStatus(preRegistrationId: number): Observable<any> {
     const result = this._preRegistrationAdapter.updatedStatus(preRegistrationId)
     return result

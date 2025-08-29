@@ -123,6 +123,17 @@ export class PreRegistrationAdapterService implements IManagerPreRegistration {
     )
   }
 
+  getListPreRegistrationFollow(identityCardPostulant: string): Observable<any> {
+    return this.http.get(`pre-registration/list-follow/${identityCardPostulant}`, {
+      context: new HttpContext().set(IS_USER_ACTION, true)
+    }).pipe(
+      catchError(err => {
+        console.error("Error al obtener pre inscripciones para el seguimiento")
+        return throwError(() => err)
+      })
+    )
+  }
+
   updatedStatus(preRegistrationId: number): Observable<any> {
     return this.http.get(`pre-registration/update-status/${preRegistrationId}`).pipe(
       catchError(err => {

@@ -224,7 +224,7 @@ export class BandejaComponent implements OnInit {
 
   finalize(highDemand: HighDemand): void {
     this.modal.confirm({
-      nzTitle: `¿Esta seguro de inscribir a la Unidad Educativa${highDemand.institution.name} como alta demanda?`,
+      nzTitle: `¿Esta seguro de inscribir a la Unidad Educativa ${highDemand.institution.name} como alta demanda?`,
       nzContent: 'Por favor revise bien si corresponde',
       nzOkText: 'Confirmar',
       nzCancelText: 'Cancelar',
