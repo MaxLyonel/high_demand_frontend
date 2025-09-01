@@ -19,6 +19,9 @@ import { User } from '../domain/models/user.model';
 import { AppStore } from './store/app.store';
 import { PreRegistrationAdapterService } from '../adapters/pre-registration.service';
 import PreRegistrationManager from '../domain/pre-registration-manager';
+import RolManager from '../domain/rol-manager';
+import IRoles from '../domain/ports/i-roles';
+import { RolAdapterService } from '../adapters/rol.sevice';
 
 @Component({
   selector: 'app-root',
@@ -43,7 +46,10 @@ import PreRegistrationManager from '../domain/pre-registration-manager';
     { provide: 'IHistory', useClass: HistoryManager },
 
     { provide: 'IManagerPreRegistration', useClass: PreRegistrationAdapterService },
-    { provide: 'IPreRegistration', useClass: PreRegistrationManager }
+    { provide: 'IPreRegistration', useClass: PreRegistrationManager },
+
+    { provide: 'IManagerRol', useClass: RolAdapterService },
+    { provide: 'IRoles', useClass: RolManager }
   ]
 })
 export class AppComponent implements OnInit {

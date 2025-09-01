@@ -1,87 +1,96 @@
 <nz-layout class="app-layout">
-  <nz-sider class="menu-sidebar"
+  <!-- Sidebar con scroll independiente -->
+  <nz-sider 
+    class="menu-sidebar"
     nzCollapsible
     nzWidth="256px"
     nzBreakpoint="md"
     [(nzCollapsed)]="isCollapsed"
-    [nzTrigger]="null"
-  >
+    [nzTrigger]="null">
+    
     <div class="sidebar-logo">
-      <a href="https://ng.ant.design/" target="_blank">
+      <a>
         <img src="https://ng.ant.design/assets/img/logo.svg" alt="logo">
         <h1>ALTA DEMANDA</h1>
       </a>
     </div>
-    <ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
-      @if(canManageAdmin$ | async){
-      <li nz-submenu nzOpen nzTitle="Dashboard" nzIcon="dashboard" >
+    
+    <!-- Contenedor con scroll para el menú -->
+    <div class="sidebar-menu-container">
+      <ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
+        <!-- @if(canManageAdmin$ | async){ -->
+        <li nz-submenu nzOpen nzTitle="Dashboard" nzIcon="dashboard">
+            <ul>
+              <li nz-menu-item nzMatchRouter>
+                <a routerLink="/alta-demanda/control-acceso">Admintrar Acceso</a>
+              </li>
+              <li nz-menu-item nzMatchRouter>
+                <a routerLink="/alta-demanda/dashboard">Dashboard</a>
+              </li>
+            </ul>
+        </li>
+        <!-- } -->
+        @if(canManagePostulation$ | async) {
+        <li nz-submenu nzOpen nzTitle="Postulacion UE" nzIcon="inbox">
           <ul>
             <li nz-menu-item nzMatchRouter>
-              <a routerLink="/alta-demanda/control-acceso">Admintrar Acceso</a>
-            </li>
-            <li nz-menu-item nzMatchRouter>
-              <a routerLink="/alta-demanda/dashboard">Dashboard</a>
+              <a routerLink="/alta-demanda/postulacion">Postular</a>
             </li>
           </ul>
-      </li>
-      }
-      @if(canManagePostulation$ | async) {
-      <li nz-submenu nzOpen nzTitle="Postulacion UE" nzIcon="inbox">
-        <ul>
-          <li nz-menu-item nzMatchRouter>
-            <a routerLink="/alta-demanda/postulacion" >Postular</a>
-          </li>
-        </ul>
-      </li>
-      }
-      <li nz-submenu nzOpen nzTitle="Bandejas" nzIcon="inbox">
-        <ul>
-          @if(canManageInbox$ | async) {
-          <li nz-menu-item nzMatchRouter>
-            <a routerLink="/alta-demanda/main-inbox">Bandeja</a>
-          </li>
-          }
-          @if(canManagePostulation$ | async) {
-          <li nz-menu-item nzMatchRouter>
-            <a routerLink="/alta-demanda/register-inbox">Bandeja de Registro</a>
-          </li>
-          <li nz-menu-item nzMatchRouter>
-            <a routerLink="/alta-demanda/selection-inbox">Bandeja de seleccion</a>
-          </li>
-          }
-        </ul>
-      </li>
-      @if((canManageFollowVer$ | async) || (canManageFollowDirector$ | async)) {
-      <li nz-submenu nzOpen nzTitle="Seguimiento" nzIcon="form">
-        <ul>
-          <li nz-menu-item nzMatchRouter>
-            <a routerLink="/alta-demanda/follow-up">Seguimiento</a>
-          </li>
-        </ul>
-      </li>
-      }
-      @if(canManageAdmin$ | async) {
-      <li nz-submenu nzOpen nzTitle="Administracion" nzIcon="setting">
-        <ul>
-          <li nz-menu-item nzMatchRouter>
-            <a routerLink="/alta-demanda/admin">Configuracion</a>
-          </li>
-        </ul>
-      </li>
-      }
-    </ul>
+        </li>
+        }
+        <li nz-submenu nzOpen nzTitle="Bandejas" nzIcon="inbox">
+          <ul>
+            @if(canManageInbox$ | async) {
+            <li nz-menu-item nzMatchRouter>
+              <a routerLink="/alta-demanda/main-inbox">Bandeja</a>
+            </li>
+            }
+            @if(canManagePostulation$ | async) {
+            <li nz-menu-item nzMatchRouter>
+              <a routerLink="/alta-demanda/register-inbox">Bandeja de Registro</a>
+            </li>
+            <li nz-menu-item nzMatchRouter>
+              <a routerLink="/alta-demanda/selection-inbox">Bandeja de seleccion</a>
+            </li>
+            }
+          </ul>
+        </li>
+        @if((canManageFollowVer$ | async) || (canManageFollowDirector$ | async)) {
+        <li nz-submenu nzOpen nzTitle="Seguimiento" nzIcon="form">
+          <ul>
+            <li nz-menu-item nzMatchRouter>
+              <a routerLink="/alta-demanda/follow-up">Seguimiento</a>
+            </li>
+          </ul>
+        </li>
+        }
+        @if(canManageAdmin$ | async) {
+        <li nz-submenu nzOpen nzTitle="Administracion" nzIcon="setting">
+          <ul>
+            <li nz-menu-item nzMatchRouter>
+              <a routerLink="/alta-demanda/admin">Configuracion</a>
+            </li>
+          </ul>
+        </li>
+        }
+      </ul>
+    </div>
   </nz-sider>
+  
   <nz-layout>
     <nz-header>
       <div class="app-header">
         <span class="header-trigger" (click)="isCollapsed = !isCollapsed">
-          <nz-icon class="trigger" [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'" />
+          <span class="trigger">
+            <i nz-icon [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"></i>
+          </span>
         </span>
         <div class="header-avatar-container">
           <div>
-            <span nz-typography >Usuario: {{user.username}}</span>
+            <span nz-typography>Usuario: {{user.username}}</span>
           </div>
-          <div >
+          <div>
             <span nz-typography>Rol: {{ role.name }}</span>
           </div>
           <div nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click" nzPlacement="bottomRight">
@@ -101,7 +110,9 @@
         </div>
       </div>
     </nz-header>
-    <nz-content>
+    
+    <!-- Contenido principal con scroll independiente -->
+    <nz-content class="main-content-with-scroll">
       <div class="inner-content">
         <router-outlet></router-outlet>
       </div>

@@ -1,92 +1,215 @@
-  <nz-content class="access-control-content">
-    <div class="roles-cards">
-      <nz-card nzHoverable class="role-card">
+<nz-content class="access-control-content">
+  <!-- Tarjetas de roles -->
+  <div class="roles-cards">
+    @for(rol of availableRoles; track rol.id) {
+      <nz-card nzHoverable class="role-card" [nzActions]="[adminAction]">
         <div class="role-content">
           <div class="role-icon" style="background-color: #f0f7ff;">
-            <i nz-icon nzType="safety-certificate" nzTheme="fill" style="color: #52c41a;"></i>
+            <i
+              nz-icon
+              nzType="user"
+              nzTheme="outline"
+              [ngStyle]="{ color: getRoleColor(rol.id) }"
+            ></i>
           </div>
           <div class="role-info">
-            <p class="role-title">DIRECTOR UNIDAD EDUCATIVA</p>
+            <p class="role-title">{{ rol.name | uppercase }}</p>
             <span nz-typography nzType="secondary">Rol que gestiona las postulaciones</span>
-            <button nz-button nzType="primary" (click)="adminRol()">ADMINISTRAR</button>
           </div>
         </div>
+        <ng-template #adminAction>
+          <button nz-button nzType="link" (click)="adminRol('director')">ADMINISTRAR</button>
+        </ng-template>
       </nz-card>
+    }
+  </div>
 
-      <nz-card nzHoverable class="role-card">
-        <div class="role-content">
-          <div class="role-icon" style="background-color: #f6ffed;">
-            <i nz-icon nzType="safety-certificate" nzTheme="fill" style="color: #52c41a;"></i>
-          </div>
-          <div class="role-info">
-            <p class="role-title">DISTRITAL</p>
-            <span nz-typography nzType="secondary">Rol que aprueba o anula postulaciones</span>
-            <button nz-button nzType="primary" (click)="adminRol()">ADMINISTRAR</button>
-          </div>
-        </div>
-      </nz-card>
-
-      <nz-card nzHoverable class="role-card">
-        <div class="role-content">
-          <div class="role-icon" style="background-color: #fff7e6;">
-            <i nz-icon nzType="safety-certificate" nzTheme="fill" style="color: #52c41a;"></i>
-          </div>
-          <div class="role-info">
-            <p class="role-title">DEPARTAMENTAL</p>
-            <span nz-typography nzType="secondary">Rol que aprueba o anula postulaciones</span>
-            <button nz-button nzType="primary" (click)="adminRol()">ADMINISTRAR</button>
-          </div>
-        </div>
-      </nz-card>
-
-      <nz-card nzHoverable class="role-card">
-        <div class="role-content">
-          <div class="role-icon" style="background-color: #fff0f6;">
-            <i nz-icon nzType="safety-certificate" nzTheme="fill" style="color: #52c41a;"></i>
-          </div>
-          <div class="role-info">
-            <p class="role-title">ROL VER</p>
-            <span nz-typography nzType="secondary">Rol que determina el opeartivo</span>
-            <button nz-button nzType="primary" (click)="adminRol()">ADMINISTRAR</button>
-          </div>
-        </div>
-      </nz-card>
-    </div>
-
-    <nz-card class="permisos-container">
-      @if(showPermissions === true) {
-        <div>
+  <!-- Panel de administración de permisos -->
+  <nz-card class="permisos-container" [nzBordered]="false">
+    <nz-tabset>
+      <!-- Pestaña de permisos -->
+      <nz-tab nzTitle="Permisos">
+        <div class="tab-content">
           <div class="permisos-filters">
-            <nz-input-group nzSearch [nzSuffix]="suffixIconButton">
-              <input type="text" nz-input placeholder="Buscar por descriptor" />
+            <nz-input-group nzSearch class="search-input" nzSize="default">
+              <input type="text" nz-input placeholder="Buscar por descriptor" [(ngModel)]="searchText" />
             </nz-input-group>
-            <ng-template #suffixIconButton>
-              <button nz-button nzType="primary" nzSearch><i nz-icon nzType="search"></i></button>
-            </ng-template>
-            <nz-space>
-              <!-- <nz-tag *nzSpaceItem nzMode="checkable" [nzChecked]="filterActivo" (nzCheckedChange)="filterActivo = $event">
-                Solo activos
-              </nz-tag> -->
-            </nz-space>
-            <button nz-button nzType="primary" >
+            
+            <nz-select nzPlaceHolder="Filtrar por estado" [(ngModel)]="filterEstado" style="width: 150px;">
+              <nz-option nzValue="all" nzLabel="Todos"></nz-option>
+              <nz-option nzValue="active" nzLabel="Activos"></nz-option>
+              <nz-option nzValue="inactive" nzLabel="Inactivos"></nz-option>
+            </nz-select>
+            
+            <button nz-button nzType="primary" (click)="showCreatePermisoModal()">
               <i nz-icon nzType="plus"></i> Nuevo Permiso
             </button>
           </div>
 
-          <nz-table #permisosTable nzSize="small" nzBordered [nzLoading]="isLoadingTable">
+          <nz-table #permisosTable nzSize="small" [nzData]="filteredPermisos" nzBordered>
             <thead>
               <tr class="header-row">
                 <th class="header-cell" nzWidth="80px">Nro</th>
-                <th class="header-cell">Descripción</th>
-                <th class="header-cell">Recurso</th>
+                <th class="header-cell">Acción</th>
+                <th class="header-cell">Subject</th>
+                <th class="header-cell">Condiciones</th>
                 <th class="header-cell">Estado</th>
-                <th class="header-cell">Acciones</th>
+                <th class="header-cell" nzWidth="150px">Acciones</th>
               </tr>
             </thead>
             <tbody>
+              <tr *ngFor="let permiso of permisosTable.data; let i = index">
+                <td>{{ i + 1 }}</td>
+                <td>
+                  <nz-tag class="action-badge" [nzColor]="getActionColor(permiso.action)">
+                    {{ permiso.action }}
+                  </nz-tag>
+                </td>
+                <td>{{ permiso.subject }}</td>
+                <td>
+                  <span *ngIf="permiso.condiciones; else sinCondiciones">
+                    {{ permiso.condiciones | json }}
+                  </span>
+                  <ng-template #sinCondiciones>
+                    <nz-tag nzMode="default">Sin condiciones</nz-tag>
+                  </ng-template>
+                </td>
+                <td>
+                  <nz-tag [nzColor]="permiso.activo ? 'green' : 'red'">
+                    {{ permiso.activo ? 'Activo' : 'Inactivo' }}
+                  </nz-tag>
+                </td>
+                <td>
+                  <button nz-button nzType="link" nzSize="small" (click)="editPermiso(permiso)">
+                    <i nz-icon nzType="edit"></i> Editar
+                  </button>
+                  <nz-divider nzType="vertical"></nz-divider>
+                  <button nz-button nzType="link" nzSize="small" nzDanger (click)="togglePermisoStatus(permiso)">
+                    {{ permiso.activo ? 'Desactivar' : 'Activar' }}
+                  </button>
+                </td>
+              </tr>
             </tbody>
           </nz-table>
         </div>
-      }
-    </nz-card>
-  </nz-content>
+      </nz-tab>
+
+      <!-- Pestaña de asignación de roles -->
+      <nz-tab nzTitle="Asignación de Roles">
+        <div class="tab-content">
+          <nz-alert nzType="info" nzMessage="Seleccione un usuario para asignarle roles" nzShowIcon class="mb-3"></nz-alert>
+          
+          <div class="permisos-filters">
+            <nz-input-group nzSearch class="search-input" nzSize="default">
+              <input type="text" nz-input placeholder="Buscar usuario" [(ngModel)]="userSearchText" />
+            </nz-input-group>
+          </div>
+
+          <nz-list class="users-list" [nzLoading]="loadingUsers">
+            <nz-list-item *ngFor="let user of filteredUsers" class="user-item">
+              <nz-list-item-meta
+                [nzTitle]="user.nombre"
+                [nzDescription]="user.email">
+              </nz-list-item-meta>
+
+              <div>
+                <nz-select
+                  nzMode="multiple"
+                  nzPlaceHolder="Asignar roles"
+                  [(ngModel)]="user.roles"
+                  style="width: 300px;"
+                  (ngModelChange)="updateUserRoles(user)">
+                  <nz-option
+                    *ngFor="let role of availableRoles"
+                    [nzValue]="role.id"
+                    [nzLabel]="role.name">
+                  </nz-option>
+                </nz-select>
+              </div>
+            </nz-list-item>
+          </nz-list>
+        </div>
+      </nz-tab>
+    </nz-tabset>
+  </nz-card>
+</nz-content>
+
+<!-- Modal para crear/editar permisos -->
+<nz-modal 
+  [(nzVisible)]="isPermisoModalVisible" 
+  [nzTitle]="isEditingPermiso ? 'Editar Permiso' : 'Crear Nuevo Permiso'" 
+  (nzOnCancel)="closePermisoModal()"
+  (nzOnOk)="savePermiso()"
+  nzOkText="Guardar"
+  nzCancelText="Cancelar">
+  <div *nzModalContent class="permiso-form">
+    <div class="form-row">
+      <nz-form-item>
+        <nz-form-label nzFor="accion" nzRequired>Acción</nz-form-label>
+        <nz-form-control>
+          <nz-select 
+            id="accion" 
+            nzPlaceHolder="Seleccione una acción" 
+            [(ngModel)]="currentPermiso.action" 
+            nzAllowClear
+            nzShowSearch>
+            <nz-option *ngFor="let accion of availableActions" [nzValue]="accion" [nzLabel]="accion"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    
+    <div class="form-row">
+      <nz-form-item>
+        <nz-form-label nzFor="subject" nzRequired>Subject</nz-form-label>
+        <nz-form-control>
+          <nz-select 
+            id="subject" 
+            nzPlaceHolder="Seleccione un subject" 
+            [(ngModel)]="currentPermiso.subject" 
+            nzAllowClear
+            nzShowSearch>
+            <nz-option *ngFor="let subject of availableSubjects" [nzValue]="subject" [nzLabel]="subject"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    
+    <div class="form-row">
+      <nz-form-item>
+        <nz-form-label>Condiciones (Opcional)</nz-form-label>
+        <nz-form-control>
+          <div class="conditions-builder">
+            <div *ngFor="let condition of currentPermiso.conditions; let i = index" class="condition-row">
+              <nz-input-group nzCompact>
+                <nz-select [(ngModel)]="condition.field" style="width: 30%" placeholder="Campo">
+                  <nz-option *ngFor="let field of availableFields" [nzValue]="field" [nzLabel]="field"></nz-option>
+                </nz-select>
+                <nz-select [(ngModel)]="condition.operator" style="width: 30%" placeholder="Operador">
+                  <nz-option *ngFor="let op of availableOperators" [nzValue]="op.value" [nzLabel]="op.label"></nz-option>
+                </nz-select>
+                <input nz-input [(ngModel)]="condition.value" style="width: 30%" placeholder="Valor">
+                <button nz-button nzDanger (click)="removeCondition(i)">
+                  <i nz-icon nzType="delete"></i>
+                </button>
+              </nz-input-group>
+            </div>
+            
+            <button nz-button nzType="dashed" (click)="addCondition()" style="width: 100%; margin-top: 8px;">
+              <i nz-icon nzType="plus"></i> Añadir condición
+            </button>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    
+    <div class="form-row">
+      <nz-form-item>
+        <nz-form-label>Estado</nz-form-label>
+        <nz-form-control>
+          <nz-switch [(ngModel)]="currentPermiso.activo" nzCheckedChildren="Activo" nzUnCheckedChildren="Inactivo"></nz-switch>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+</nz-modal>

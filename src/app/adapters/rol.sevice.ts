@@ -1,4 +1,4 @@
-import { Observable, tap } from "rxjs";
+import { catchError, Observable, tap, throwError } from "rxjs";
 import IManagerRol from "../domain/ports/i-manager-rol";
 import { inject, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
@@ -12,8 +12,10 @@ export class RolAdapterService implements IManagerRol {
   private appStore = inject(AppStore)
 
   getRoles(): Observable<any> {
-    return this.http.get('/roles').pipe(
-      tap((roles: any) => {
+    return this.http.get('rol/all').pipe(
+      catchError(err => {
+        console.error("Error al obtener los roles")
+        return throwError(() => err)
       })
     )
   }

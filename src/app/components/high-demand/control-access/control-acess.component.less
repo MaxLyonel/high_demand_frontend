@@ -1,141 +1,115 @@
-// Variables de color
-@primary-color: #0D9488;
-@primary-light: #14B8A6;
-@primary-dark: #045e56;
-@text-color: #1E293B;
-@text-secondary: #64748B;
-@border-color: #E2E8F0;
-@background-light: #f8fafc;
-@screen-md: 991px;
-@screen-sm: 450px;
-
 .access-control-content {
-  margin: 24px;
-  min-height: calc(100vh - 112px);
+  padding: 0px;
+  // background: #f5f5f5;
+  min-height: 100vh;
+}
 
-  .roles-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 16px;
-    margin-bottom: 24px;
+.roles-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
 
-    .role-card {
-      border-radius: 8px;
-      border: 1px solid @border-color;
-      transition: all 0.3s;
-
-      &:hover {
-        transform: translateY(-4px);
-        border: 1px solid @primary-color;
-      }
-
-      .role-content {
-        display: flex;
-
-        .role-icon {
-          width: 68px;
-          height: 58px;
-          border-radius: 90%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin-right: 16px;
-
-          i {
-            font-size: 20px;
-          }
-        }
-
-        .role-info {
-          .role-title {
-            color: @text-secondary;
-            margin-bottom: 4px;
-            font-size: 14px;
-          }
-        }
-      }
-    }
-  }
-
-  .quick-actions {
-    .section-title {
-      color: @text-color;
-      font-weight: 500;
-      margin-bottom: 16px;
-    }
-
-    .actions-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 15px;
-
-      button {
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        font-size: 16px;
-
-        i {
-          font-size: 24px;
-        }
-      }
-    }
+.role-card {
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
   }
 }
 
-// Estilos responsivos
-@media (max-width: @screen-md) {
-  .dashboard-content {
-    margin: 16px;
-
-    .roles-cards {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
+.role-content {
+  display: flex;
+  align-items: center;
 }
 
-@media (max-width: @screen-sm) {
-  .roles-cards {
-    grid-template-columns: 1fr !important;
-  }
+.role-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+}
+
+.role-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #262626;
 }
 
 .permisos-container {
-  margin: 18px;
-  border: 1px solid fade(@primary-color, 60%);
+  border-radius: 8px;
+}
 
-  .permisos-filters {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-    gap: 16px;
-    flex-wrap: wrap;
+.permisos-filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
 
-    nz-input-group {
-      flex: 1;
-      min-width: 250px;
-    }
-    nz-space {
-      margin-right: auto;
-    }
+.search-input {
+  width: 300px;
+}
+
+.header-row {
+  background-color: #fafafa;
+}
+
+.header-cell {
+  font-weight: 600 !important;
+}
+
+.permiso-form {
+  padding: 16px 0;
+}
+
+.form-row {
+  margin-bottom: 16px;
+}
+
+.conditions-builder {
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  padding: 12px;
+  background: #fafafa;
+}
+
+.condition-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  align-items: center;
+}
+
+.action-badge {
+  margin-right: 4px;
+}
+
+.tab-content {
+  padding: 16px 0;
+}
+
+.users-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.user-item {
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+  
+  &:last-child {
+    border-bottom: none;
   }
 }
 
-.custom-table {
-  border: 1px solid fade(@text-color, 25%);
-
-  .header-row {
-    background-color: @background-light;
-
-    .header-cell {
-      font-weight: 600;
-      text-align: center;
-      color:@text-color;
-      background-color: @border-color;
-      border-bottom: 1px solid @border-color;
-    }
-  }
+.mb-3 {
+  margin-bottom: 16px;
 }

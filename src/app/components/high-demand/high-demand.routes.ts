@@ -5,7 +5,8 @@ import { SelectionInbox } from './inbox/selection/selection.component';
 import { BandejaComponent } from './inbox/main/main.component';
 import { SeguimientoComponent } from './follow-up/follow-up.component';
 import { OperativoConfigComponent } from './admin/admin.component';
-import { ControlAccessComponent } from './control-access/control-access.component';
+// import { ControlAccessComponent } from './control-access/control-access.component';
+import { AccessControlComponent } from './control-access/control-access.component';
 
 
 export const HIGH_DEMAND: Routes = [
@@ -13,7 +14,7 @@ export const HIGH_DEMAND: Routes = [
     path: '',
     loadComponent: () => import('./layout/layout.component'),
     children: [
-      { path: 'dashboard', component: ControlAccessComponent },
+      { path: 'dashboard', component: AccessControlComponent },
       // { path: 'control-acceso', component: DashboardComponent },
       { path: 'postulacion', component: PostulationComponent },
       { path: 'main-inbox', component: BandejaComponent },
