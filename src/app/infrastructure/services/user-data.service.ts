@@ -44,6 +44,8 @@ export class UserDataService {
       case 48:
         this.router.navigate(['/alta-demanda/main-inbox'])
         break;
+      case 50:
+        this.router.navigate(['/alta-demanda/dashboard'])
     }
   }
 }

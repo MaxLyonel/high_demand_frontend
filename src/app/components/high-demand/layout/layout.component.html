@@ -1,35 +1,35 @@
 <nz-layout class="app-layout">
   <!-- Sidebar con scroll independiente -->
-  <nz-sider 
+  <nz-sider
     class="menu-sidebar"
     nzCollapsible
     nzWidth="256px"
     nzBreakpoint="md"
     [(nzCollapsed)]="isCollapsed"
     [nzTrigger]="null">
-    
+
     <div class="sidebar-logo">
       <a>
         <img src="https://ng.ant.design/assets/img/logo.svg" alt="logo">
         <h1>ALTA DEMANDA</h1>
       </a>
     </div>
-    
+
     <!-- Contenedor con scroll para el menú -->
     <div class="sidebar-menu-container">
       <ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
-        <!-- @if(canManageAdmin$ | async){ -->
+        @if(canManageAdmin$ | async){
         <li nz-submenu nzOpen nzTitle="Dashboard" nzIcon="dashboard">
             <ul>
-              <li nz-menu-item nzMatchRouter>
+              <!-- <li nz-menu-item nzMatchRouter>
                 <a routerLink="/alta-demanda/control-acceso">Admintrar Acceso</a>
-              </li>
+              </li> -->
               <li nz-menu-item nzMatchRouter>
                 <a routerLink="/alta-demanda/dashboard">Dashboard</a>
               </li>
             </ul>
         </li>
-        <!-- } -->
+        }
         @if(canManagePostulation$ | async) {
         <li nz-submenu nzOpen nzTitle="Postulacion UE" nzIcon="inbox">
           <ul>
@@ -66,18 +66,18 @@
         </li>
         }
         @if(canManageAdmin$ | async) {
-        <li nz-submenu nzOpen nzTitle="Administracion" nzIcon="setting">
+        <!-- <li nz-submenu nzOpen nzTitle="Administracion" nzIcon="setting">
           <ul>
             <li nz-menu-item nzMatchRouter>
               <a routerLink="/alta-demanda/admin">Configuracion</a>
             </li>
           </ul>
-        </li>
+        </li> -->
         }
       </ul>
     </div>
   </nz-sider>
-  
+
   <nz-layout>
     <nz-header>
       <div class="app-header">
@@ -110,7 +110,7 @@
         </div>
       </div>
     </nz-header>
-    
+
     <!-- Contenido principal con scroll independiente -->
     <nz-content class="main-content-with-scroll">
       <div class="inner-content">

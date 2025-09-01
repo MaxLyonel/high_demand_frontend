@@ -22,6 +22,8 @@ import PreRegistrationManager from '../domain/pre-registration-manager';
 import RolManager from '../domain/rol-manager';
 import IRoles from '../domain/ports/i-roles';
 import { RolAdapterService } from '../adapters/rol.sevice';
+import { PermissionAdapterService } from '../adapters/perimssion.sevice';
+import PermissionManager from '../domain/permission-manager';
 
 @Component({
   selector: 'app-root',
@@ -49,7 +51,10 @@ import { RolAdapterService } from '../adapters/rol.sevice';
     { provide: 'IPreRegistration', useClass: PreRegistrationManager },
 
     { provide: 'IManagerRol', useClass: RolAdapterService },
-    { provide: 'IRoles', useClass: RolManager }
+    { provide: 'IRoles', useClass: RolManager },
+
+    { provide: 'IManagerPermission', useClass: PermissionAdapterService },
+    { provide: 'IPermission', useClass: PermissionManager}
   ]
 })
 export class AppComponent implements OnInit {
