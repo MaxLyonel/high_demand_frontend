@@ -7,15 +7,16 @@
       <!-- Fase 1: Postulación UE -->
       <nz-timeline-item nzColor="blue">
         <nz-card nzTitle="FASE 1: POSTULACIÓN UNIDADES EDUCATIVAS" [nzBordered]="true">
+          <!-- <h5 nz-typography class="section-title">SEGUIMIENTO DE SOLICITUDES</h5> -->
           <div nz-row [nzGutter]="16">
             <div nz-col [nzSpan]="12">
               <nz-form-item>
-                <nz-form-label nzFor="fec_pos_ue_ini">Fecha Inicio</nz-form-label>
+                <nz-form-label nzFor="datePosUEIni">Fecha Inicio</nz-form-label>
                 <nz-form-control>
-                  <nz-date-picker 
-                    formControlName="fec_pos_ue_ini" 
-                    nzShowTime 
-                    nzFormat="yyyy-MM-dd HH:mm" 
+                  <nz-date-picker
+                    formControlName="datePosUEIni"
+                    nzShowTime
+                    nzFormat="yyyy-MM-dd HH:mm"
                     style="width: 100%"
                   ></nz-date-picker>
                     <!-- [nzDisabled]="!canManageConfig" -->
@@ -24,12 +25,12 @@
             </div>
             <div nz-col [nzSpan]="12">
               <nz-form-item>
-                <nz-form-label nzFor="fec_pos_ue_fin">Fecha Fin</nz-form-label>
+                <nz-form-label nzFor="datePosUEEnd">Fecha Fin</nz-form-label>
                 <nz-form-control>
-                  <nz-date-picker 
-                    formControlName="fec_pos_ue_fin" 
-                    nzShowTime 
-                    nzFormat="yyyy-MM-dd HH:mm" 
+                  <nz-date-picker
+                    formControlName="datePosUEEnd"
+                    nzShowTime
+                    nzFormat="yyyy-MM-dd HH:mm"
                     style="width: 100%"
                   ></nz-date-picker>
                     <!-- [nzDisabled]="!canManageConfig" -->
@@ -46,12 +47,12 @@
           <div nz-row [nzGutter]="16">
             <div nz-col [nzSpan]="12">
               <nz-form-item>
-                <nz-form-label nzFor="fec_rev_dis_ini">Fecha Inicio</nz-form-label>
+                <nz-form-label nzFor="dateRevDisIni">Fecha Inicio</nz-form-label>
                 <nz-form-control>
-                  <nz-date-picker 
-                    formControlName="fec_rev_dis_ini" 
-                    nzShowTime 
-                    nzFormat="yyyy-MM-dd HH:mm" 
+                  <nz-date-picker
+                    formControlName="dateRevDisIni"
+                    nzShowTime
+                    nzFormat="yyyy-MM-dd HH:mm"
                     style="width: 100%"
                   ></nz-date-picker>
                     <!-- [nzDisabled]="!canManageConfig" -->
@@ -60,12 +61,12 @@
             </div>
             <div nz-col [nzSpan]="12">
               <nz-form-item>
-                <nz-form-label nzFor="fec_rev_dis_fin">Fecha Fin</nz-form-label>
+                <nz-form-label nzFor="dateRevDisEnd">Fecha Fin</nz-form-label>
                 <nz-form-control>
-                  <nz-date-picker 
-                    formControlName="fec_rev_dis_fin" 
-                    nzShowTime 
-                    nzFormat="yyyy-MM-dd HH:mm" 
+                  <nz-date-picker
+                    formControlName="dateRevDisEnd"
+                    nzShowTime
+                    nzFormat="yyyy-MM-dd HH:mm"
                     style="width: 100%"
                   ></nz-date-picker>
                 </nz-form-control>
@@ -82,12 +83,12 @@
           <div nz-row [nzGutter]="16">
             <div nz-col [nzSpan]="12">
               <nz-form-item>
-                <nz-form-label nzFor="fec_rev_dep_ini">Fecha Inicio</nz-form-label>
+                <nz-form-label nzFor="dateRevDepIni">Fecha Inicio</nz-form-label>
                 <nz-form-control>
-                  <nz-date-picker 
-                    formControlName="fec_rev_dep_ini" 
-                    nzShowTime 
-                    nzFormat="yyyy-MM-dd HH:mm" 
+                  <nz-date-picker
+                    formControlName="dateRevDepIni"
+                    nzShowTime
+                    nzFormat="yyyy-MM-dd HH:mm"
                     style="width: 100%"
                   ></nz-date-picker>
                     <!-- [nzDisabled]="!canManageConfig" -->
@@ -96,12 +97,12 @@
             </div>
             <div nz-col [nzSpan]="12">
               <nz-form-item>
-                <nz-form-label nzFor="fec_rev_dep_fin">Fecha Fin</nz-form-label>
+                <nz-form-label nzFor="dateRevDepEnd">Fecha Fin</nz-form-label>
                 <nz-form-control>
-                  <nz-date-picker 
-                    formControlName="fec_rev_dep_fin" 
-                    nzShowTime 
-                    nzFormat="yyyy-MM-dd HH:mm" 
+                  <nz-date-picker
+                    formControlName="dateRevDepEnd"
+                    nzShowTime
+                    nzFormat="yyyy-MM-dd HH:mm"
                     style="width: 100%"
                   ></nz-date-picker>
                     <!-- [nzDisabled]="!canManageConfig" -->
@@ -118,12 +119,12 @@
           <div nz-row [nzGutter]="16">
             <div nz-col [nzSpan]="12">
               <nz-form-item>
-                <nz-form-label nzFor="fec_ope_ini">Fecha Inicio</nz-form-label>
+                <nz-form-label nzFor="dateOpeIni">Fecha Inicio</nz-form-label>
                 <nz-form-control>
-                  <nz-date-picker 
-                    formControlName="fec_ope_ini" 
-                    nzShowTime 
-                    nzFormat="yyyy-MM-dd HH:mm" 
+                  <nz-date-picker
+                    formControlName="dateOpeIni"
+                    nzShowTime
+                    nzFormat="yyyy-MM-dd HH:mm"
                     style="width: 100%"
                   ></nz-date-picker>
                     <!-- [nzDisabled]="!canManageConfig" -->
@@ -132,12 +133,12 @@
             </div>
             <nz-col [nzSpan]="12">
               <nz-form-item>
-                <nz-form-label nzFor="fec_ope_fin">Fecha Fin</nz-form-label>
+                <nz-form-label nzFor="dateOpeEnd">Fecha Fin</nz-form-label>
                 <nz-form-control>
-                  <nz-date-picker 
-                    formControlName="fec_ope_fin" 
-                    nzShowTime 
-                    nzFormat="yyyy-MM-dd HH:mm" 
+                  <nz-date-picker
+                    formControlName="dateOpeEnd"
+                    nzShowTime
+                    nzFormat="yyyy-MM-dd HH:mm"
                     style="width: 100%"
                   ></nz-date-picker>
                     <!-- [nzDisabled]="!canManageConfig" -->
@@ -154,12 +155,12 @@
           <div nz-row [nzGutter]="16">
             <nz-col [nzSpan]="24">
               <nz-form-item>
-                <nz-form-label nzFor="fecha_sorteo">Fecha y Hora</nz-form-label>
+                <nz-form-label nzFor="dateLottery">Fecha y Hora</nz-form-label>
                 <nz-form-control>
-                  <nz-date-picker 
-                    formControlName="fecha_sorteo" 
-                    nzShowTime 
-                    nzFormat="yyyy-MM-dd HH:mm" 
+                  <nz-date-picker
+                    formControlName="dateLottery"
+                    nzShowTime
+                    nzFormat="yyyy-MM-dd HH:mm"
                     style="width: 100%"
                   ></nz-date-picker>
                     <!-- [nzDisabled]="!canManageConfig" -->
@@ -172,18 +173,18 @@
     </nz-timeline>
 
     <div class="form-actions">
-      <button 
-        nz-button 
-        nzType="primary" 
-        [nzLoading]="isLoading" 
+      <button
+        nz-button
+        nzType="primary"
+        [nzLoading]="isLoading"
         [disabled]="!configForm.valid || !canManageConfig"
       >
         Guardar Configuración
       </button>
-      <button 
-        nz-button 
-        nzType="default" 
-        class="ml-2" 
+      <button
+        nz-button
+        nzType="default"
+        class="ml-2"
         (click)="resetForm()"
         [disabled]="!canManageConfig"
       >
@@ -199,8 +200,8 @@
   (nzOnCancel)="handleCancel()"
   (nzOnOk)="handleOk()"
 >
-  <!-- <ng-container *nzModalContent>
+  <ng-container *nzModalContent>
     <p>¿Está seguro que desea guardar esta configuración de fechas?</p>
     <nz-alert nzType="warning" nzMessage="Esta acción afectará el flujo del operativo" class="mt-2"></nz-alert>
-  </ng-container> -->
+  </ng-container>
 </nz-modal>

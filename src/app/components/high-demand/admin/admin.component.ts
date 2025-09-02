@@ -1,35 +1,41 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 // import { OperativoService } from '../../services/operativo.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
 // import { Ability } from '@casl/ability';
-import { NzCardComponent } from "ng-zorro-antd/card";
-import { NzTimelineComponent, NzTimelineItemComponent } from "ng-zorro-antd/timeline";
+import { NzCardComponent, NzCardModule } from "ng-zorro-antd/card";
+import { NzTimelineComponent, NzTimelineItemComponent, NzTimelineModule } from "ng-zorro-antd/timeline";
 import { NzFormItemComponent, NzFormModule } from "ng-zorro-antd/form";
-import { NzModalComponent, NzModalService } from "ng-zorro-antd/modal";
+import { NzModalComponent, NzModalModule, NzModalService } from "ng-zorro-antd/modal";
 import { NzTimePickerComponent, NzTimePickerModule } from 'ng-zorro-antd/time-picker';
 // import { Operativo } from '../../interfaces/operativo.interface';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzInputModule } from 'ng-zorro-antd/input';
+import { CommonModule } from '@angular/common';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import IOperative from '../../../domain/ports/i-operative';
 
 @Component({
   selector: 'app-operativo-config',
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.less'],
   imports: [
+    CommonModule,
     FormsModule,
-    NzCardComponent,
-    NzTimelineComponent,
+    NzCardModule,
+    NzTimelineModule,
     NzTimelineItemComponent,
     NzFormItemComponent,
-    NzModalComponent,
+    NzFormModule,
+    NzModalModule,
     NzFormModule,
     NzTimePickerModule,
     NzAlertModule,
     NzButtonModule,
     ReactiveFormsModule,
-    NzInputModule
+    NzInputModule,
+    NzDatePickerModule
   ],
   providers: [
     NzMessageService,
@@ -42,30 +48,31 @@ export class OperativoConfigComponent implements OnInit {
   isVisibleModal = false;
   canManageConfig = false;
   ability: any;
-  // currentConfig: Operativo | null = null;
+  currentConfig: any | null = null;
 
   constructor(
     private fb: FormBuilder,
-    // private operativoService: OperativoService,
     private message: NzMessageService,
+    @Inject('IOperative') private _operative: IOperative
     // private ability: Ability
   ) {
     this.configForm = this.fb.group({
-      fec_pos_ue_ini: [null, Validators.required],
-      fec_pos_ue_fin: [null, Validators.required],
-      fec_rev_dis_ini: [null, Validators.required],
-      fec_rev_dis_fin: [null, Validators.required],
-      fec_rev_dep_ini: [null, Validators.required],
-      fec_rev_dep_fin: [null, Validators.required],
-      fec_ope_ini: [null, Validators.required],
-      fec_ope_fin: [null, Validators.required],
-      fecha_sorteo: [null, Validators.required],
-      gestion_id: [new Date().getFullYear(), Validators.required]
+      id: [null],
+      datePosUEIni: [null, Validators.required],
+      datePosUEEnd: [null, Validators.required],
+      dateRevDisIni: [null, Validators.required],
+      dateRevDisEnd: [null, Validators.required],
+      dateRevDepIni: [null, Validators.required],
+      dateRevDepEnd: [null, Validators.required],
+      dateOpeIni: [null, Validators.required],
+      dateOpeEnd: [null, Validators.required],
+      dateLottery: [null, Validators.required],
+      gestionId: [new Date().getFullYear(), Validators.required]
     });
 
     // Verificar permisos con CASL
-    // this.canManageConfig = this.ability.can('manage', 'OperativoConfig');
-    this.canManageConfig = false
+    // this.canManageConfig = this.ability.can('manage', '');
+    this.canManageConfig = true
   }
 
   ngOnInit(): void {
@@ -74,17 +81,18 @@ export class OperativoConfigComponent implements OnInit {
 
   loadCurrentConfig(): void {
     this.isLoading = true;
-    // this.operativoService.getCurrentConfig().subscribe({
-    //   next: (config) => {
-    //     this.currentConfig = config;
-    //     this.configForm.patchValue(config);
-    //     this.isLoading = false;
-    //   },
-    //   error: () => {
-    //     this.message.error('Error al cargar la configuración actual');
-    //     this.isLoading = false;
-    //   }
-    // });
+    this._operative.getOperative(2025).subscribe({
+      next: (config) => {
+        console.log("Configuración obtenida: ", config.data)
+        this.currentConfig = config.data;
+        this.configForm.patchValue(config.data);
+        this.isLoading = false;
+      },
+      error: () => {
+        this.message.error('Error al cargar la configuración actual');
+        this.isLoading = false;
+      }
+    });
   }
 
   submitForm(): void {
@@ -95,19 +103,19 @@ export class OperativoConfigComponent implements OnInit {
     this.isLoading = true;
     const formData = this.configForm.value;
 
-    // this.operativoService.updateConfig(formData).subscribe({
-    //   next: () => {
-    //     this.message.success('Configuración guardada exitosamente');
-    //     this.isLoading = false;
-    //     this.isVisibleModal = false;
-    //     this.loadCurrentConfig();
-    //   },
-    //   error: () => {
-    //     this.message.error('Error al guardar la configuración');
-    //     this.isLoading = false;
-    //     this.isVisibleModal = false;
-    //   }
-    // });
+    this._operative.saveOperative(formData).subscribe({
+      next: () => {
+        this.message.success('Configuración guardada exitosamente');
+        this.isLoading = false;
+        this.isVisibleModal = false;
+        this.loadCurrentConfig();
+      },
+      error: () => {
+        this.message.error('Error al guardar la configuración');
+        this.isLoading = false;
+        this.isVisibleModal = false;
+      }
+    });
   }
 
   handleCancel(): void {
@@ -115,13 +123,13 @@ export class OperativoConfigComponent implements OnInit {
   }
 
   resetForm(): void {
-    // if (this.currentConfig) {
-    //   this.configForm.reset(this.currentConfig);
-    // } else {
-    //   this.configForm.reset({
-    //     gestion_id: new Date().getFullYear()
-    //   });
-    // }
+    if (this.currentConfig) {
+      this.configForm.reset(this.currentConfig);
+    } else {
+      this.configForm.reset({
+        gestion_id: new Date().getFullYear()
+      });
+    }
   }
 
   // Verificación de fechas (puedes agregar validaciones cruzadas)

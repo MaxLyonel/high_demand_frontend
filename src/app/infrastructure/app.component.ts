@@ -24,6 +24,8 @@ import IRoles from '../domain/ports/i-roles';
 import { RolAdapterService } from '../adapters/rol.sevice';
 import { PermissionAdapterService } from '../adapters/perimssion.sevice';
 import PermissionManager from '../domain/permission-manager';
+import OperativeManager from '../domain/operative-manager';
+import { OperativeAdapterService } from '../adapters/operative.service';
 
 @Component({
   selector: 'app-root',
@@ -54,7 +56,10 @@ import PermissionManager from '../domain/permission-manager';
     { provide: 'IRoles', useClass: RolManager },
 
     { provide: 'IManagerPermission', useClass: PermissionAdapterService },
-    { provide: 'IPermission', useClass: PermissionManager}
+    { provide: 'IPermission', useClass: PermissionManager},
+
+    { provide: 'IManagerOperative', useClass: OperativeAdapterService },
+    { provide: 'IOperative', useClass: OperativeManager}
   ]
 })
 export class AppComponent implements OnInit {
