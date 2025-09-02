@@ -12,6 +12,8 @@ import { NzTypographyModule } from "ng-zorro-antd/typography";
 import { AbilityService } from "../../../infrastructure/services/ability.service";
 import { map, tap } from "rxjs";
 import { CommonModule } from "@angular/common";
+import * as iconv from 'iconv-lite'
+import { Buffer } from 'buffer'
 
 
 @Component({
@@ -35,6 +37,7 @@ export default class LayoutComponent implements OnInit{
   isCollapsed = false;
   user!: any
   role!: any
+  roleName!: any
 
 
   public router = inject(Router)
@@ -68,6 +71,8 @@ export default class LayoutComponent implements OnInit{
     const { user } = this.appStore.snapshot
     this.user = user
     this.role = user.selectedRole
+    const buffer = Buffer.from(user.selectedRole.name, 'latin1')
+    this.roleName = iconv.decode(buffer, 'utf-8')
     this.cdr.detectChanges()
 
     // this.abilities.loadAbilities(user.id).subscribe(() => {
