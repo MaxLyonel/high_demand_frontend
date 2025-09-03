@@ -15,7 +15,6 @@ export const HIGH_DEMAND: Routes = [
     loadComponent: () => import('./layout/layout.component'),
     children: [
       { path: 'dashboard', component: AccessControlComponent },
-      // { path: 'control-acceso', component: DashboardComponent },
       { path: 'postulacion', component: PostulationComponent },
       { path: 'main-inbox', component: BandejaComponent },
       { path: 'register-inbox', component: RegisterInbox },

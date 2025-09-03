@@ -24,8 +24,4 @@ export class NotificationService {
         this.notification.error(title, message, { nzPlacement: 'bottomRight' });
     }
   }
-
-  // error(message: string, title: string) {
-  //   this.notification.warning(message, title, { nzPlacement: 'bottomRight' })
-  // }
 }
