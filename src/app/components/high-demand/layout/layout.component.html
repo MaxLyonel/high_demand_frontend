@@ -25,12 +25,12 @@
                 <a routerLink="/alta-demanda/control-acceso">Admintrar Acceso</a>
               </li> -->
               <li nz-menu-item nzMatchRouter>
-                <a routerLink="/alta-demanda/dashboard">Dashboard</a>
+                <a routerLink="/alta-demanda/dashboard">Administrar acceso</a>
               </li>
             </ul>
         </li>
         }
-        @if(canManagePostulation$ | async) {
+        @if(canReadPostulation$ | async) {
         <li nz-submenu nzOpen nzTitle="Postulacion UE" nzIcon="inbox">
           <ul>
             <li nz-menu-item nzMatchRouter>
@@ -39,24 +39,29 @@
           </ul>
         </li>
         }
-        <li nz-submenu nzOpen nzTitle="Bandejas" nzIcon="inbox">
-          <ul>
-            @if(canManageInbox$ | async) {
-            <li nz-menu-item nzMatchRouter>
-              <a routerLink="/alta-demanda/main-inbox">Bandeja</a>
-            </li>
-            }
-            @if(canManagePostulation$ | async) {
-            <li nz-menu-item nzMatchRouter>
-              <a routerLink="/alta-demanda/register-inbox">Bandeja de Registro</a>
-            </li>
-            <li nz-menu-item nzMatchRouter>
-              <a routerLink="/alta-demanda/selection-inbox">Bandeja de seleccion</a>
-            </li>
-            }
-          </ul>
-        </li>
-        @if((canManageFollowVer$ | async) || (canManageFollowDirector$ | async)) {
+        @if((canReadInbox$ | async) || (canReadInboxRegister$ | async) || (canReadInboxSelection$ | async)) {
+          <li nz-submenu nzOpen nzTitle="Bandejas" nzIcon="inbox">
+            <ul>
+              @if(canReadInbox$ | async) {
+              <li nz-menu-item nzMatchRouter>
+                <a routerLink="/alta-demanda/main-inbox">Bandeja</a>
+              </li>
+              }
+              @if(canReadInboxRegister$ | async) {
+              <li nz-menu-item nzMatchRouter>
+                <a routerLink="/alta-demanda/register-inbox">Bandeja de Registro</a>
+              </li>
+              }
+              @if(canReadInboxSelection$ | async) {
+              <li nz-menu-item nzMatchRouter>
+                <a routerLink="/alta-demanda/selection-inbox">Bandeja de seleccion</a>
+              </li>
+              }
+            </ul>
+          </li>
+        }
+
+        @if(canReadFollow$ | async) {
         <li nz-submenu nzOpen nzTitle="Seguimiento" nzIcon="form">
           <ul>
             <li nz-menu-item nzMatchRouter>
@@ -65,7 +70,7 @@
           </ul>
         </li>
         }
-        @if(canManageAdmin$ | async) {
+        @if(canManageConfig$ | async) {
         <li nz-submenu nzOpen nzTitle="Administración" nzIcon="setting">
           <ul>
             <li nz-menu-item nzMatchRouter>

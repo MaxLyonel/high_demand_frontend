@@ -196,3 +196,71 @@ button, .ant-tabs-tab, .ant-checkbox-wrapper {
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
 }
+
+.sie-search-container {
+  background-color: white;
+  border-radius: 8px;
+  padding: 24px;
+  // box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+}
+
+.search-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.search-icon {
+  color: @primary-color;
+  font-size: 24px;
+  margin-right: 12px;
+}
+
+.search-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: @primary-color;
+  margin: 0;
+}
+
+.search-description {
+  margin-bottom: 24px;
+}
+
+.search-form {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  align-items: flex-start;
+
+  nz-input-group {
+    flex: 1;
+  }
+}
+
+.search-button {
+  background-color: @primary-color;
+  border-color: @primary-dark;
+
+  &:hover {
+    background-color: @primary-light;
+    border-color: @primary-light;
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .search-form {
+    flex-direction: column;
+  }
+
+  .result-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .result-sie {
+    align-self: flex-start;
+  }
+}

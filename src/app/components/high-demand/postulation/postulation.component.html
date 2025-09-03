@@ -1,160 +1,212 @@
 <nz-space nzDirection="vertical" nzSize="large">
-  <!-- Tarjeta de información de la unidad educativa -->
-  <nz-card class="info-card" *nzSpaceItem [nzBordered]="true">
+  @if(canCreatePostulation()){
+    @if(!institution()) {
+      <div class="sie-search-container">
+        <div class="search-header">
+          <i nz-icon nzType="search" class="search-icon"></i>
+          <h2 class="search-title">Buscar Institución por SIE</h2>
+        </div>
 
-    <h5 nz-typography class="section-title">UNIDAD EDUCATIVA</h5>
-    <nz-descriptions
-      nzLayout="vertical"
-      nzSize="small"
-      [nzColumn]="4"
-      class="bold-description-labels"
-    >
-      <nz-descriptions-item nzTitle="NOMBRE" >{{ institution?.name }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="SIE">{{ institution?.id }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="ESTADO">
-        <nz-tag [nzColor]="institution?.state === 'Abierta' ? 'success' : 'error'">
-          {{ institution?.state | uppercase }}
-        </nz-tag>
-      </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="ÁMBITO">{{ institution?.scope }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="DEPENDENCIA">{{ institution?.scope }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="DIRECCIÓN" [nzSpan]="2" style="text-transform: capitalize;">
-        {{ institution?.direction }}
-      </nz-descriptions-item>
-    </nz-descriptions>
-  </nz-card>
+        <p class="search-description">
+          Ingrese el código SIE (ID de institución) para buscar y cargar los datos de la unidad educativa.
+        </p>
 
-  <!-- Tarjeta de inscripción -->
-  @if(canUpdateUser()) {
-  <nz-card *nzSpaceItem [nzBordered]="true" class="inscription-card">
-    <div nz-row [nzGutter]="15">
-      <!-- Sección de niveles, grados y paralelos -->
-      <div nz-col [nzSpan]="15">
-        <h5 nz-typography class="section-title">INSCRIPCIÓN DE LA UNIDAD EDUCATIVA</h5>
+        <div class="search-form">
+          <nz-input-group nzSearch [nzSuffix]="suffixIcon" class="search-input">
+            <input
+              type="text"
+              nz-input
+              placeholder="Ingrese el código SIE"
+              [(ngModel)]="sieCode"
+              (keyup.enter)="searchInstitution()"
+            />
+          </nz-input-group>
 
-        <!-- Sección de cursos para seleccionar -->
-        <div nz-row [nzGutter]="16" nzJustify="start">
-          <div nz-col [nzSpan]="10" class="course border-partial-init">
-            <div style="padding: 5px;">
-              <span nz-typography ><strong>NIVELES</strong></span>
-              <nz-radio-group
-                [(ngModel)]="selectedLevelId"
-                (ngModelChange)="onLevelSelected($event)"
-                nzButtonStyle="solid"
-                class="full-width-radio-group"
-              >
-                @for(level of levels; track level) {
-                  <label nz-radio-button [nzValue]="level.id">{{level.name}}</label>
-                }
-              </nz-radio-group>
+          <ng-template #suffixIcon>
+            <i nz-icon [nzType]="isLoading ? 'loading' : 'search'" (click)="searchInstitution()"></i>
+          </ng-template>
 
-            </div>
-          </div>
-          <!-- grados -->
-          <div nz-col [nzSpan]="4" class="course">
-            <div style="padding: 5px;">
-              <span nz-typography><strong>GRADOS</strong></span>
-              <nz-radio-group
-                [(ngModel)]="selectedGradeId"
-                (ngModelChange)="onGradeSelected($event)"
-                nzButtonStyle="solid"
-                class="full-width-radio-group"
-              >
-                @for(grade of gradesToShow; track grade) {
-                  <label nz-radio-button [nzValue]="grade.id">{{grade.name}}</label>
-                }
-              </nz-radio-group>
-            </div>
-          </div>
-          <!-- paralelos -->
-          <div nz-col [nzSpan]="4" class="course border-partial-end">
-            <div style="padding: 5px;">
-              <span nz-typography><strong>PARALELOS</strong></span>
-              <nz-radio-group
-                [(ngModel)]="selectedParallelId"
-                nzButtonStyle="solid"
-              >
-                @for(parallel of parallelsToShow; track parallel) {
-                  <label nz-radio-button [nzValue]="parallel.id">Paralelo {{parallel.name}}</label>
-                }
-              </nz-radio-group>
-            </div>
-          </div>
-          <div nz-col [nzSpan]="6">
-            <div class="parallel-form">
-              <label class="form-label">Número de plazas</label>
-              <nz-input-group [nzSuffix]="inputClearTpl" class="quota-input">
-                <input
-                  type="number"
-                  nz-input
-                  [(ngModel)]="inputValue"
-                  placeholder="Nro plaza"
-                />
-              </nz-input-group>
+          <button
+            nz-button
+            nzType="primary"
+            class="search-button"
+            (click)="searchInstitution()"
+            [nzLoading]="isLoading"
+          >
+            Buscar
+          </button>
 
-              <ng-template #inputClearTpl>
-                <nz-icon
-                  *ngIf="inputValue"
-                  class="ant-input-clear-icon"
-                  nzTheme="fill"
-                  nzType="close-circle"
-                  (click)="inputValue = null"
-                ></nz-icon>
-              </ng-template>
+          <button
+            nz-button
+            nzType="default"
+            (click)="clearSearch()"
+            [disabled]="!sieCode && !institution()"
+          >
+            Limpiar
+          </button>
+        </div>
 
-              <button
-                nz-button
-                nzType="primary"
-                class="register-btn"
-                [disabled]="(inputValue === 0 || inputValue === null || hasSavedCourses) ? true : false"
-                (click)="showConfirmRegistrationQuota()"
-              >
-                REGISTRAR
-              </button>
-            </div>
-          </div>
+        <div *ngIf="errorMessage" class="error-message">
+          <i nz-icon nzType="close-circle" nzTheme="fill"></i>
+          {{ errorMessage }}
         </div>
       </div>
-      <!-- Sección de cursos seleccionados -->
-      <div nz-col [nzSpan]="9">
-        <h5 nz-typography class="section-title">CURSOS SELECCIONADOS</h5>
-        <nz-list class="course-list" [nzLoading]="initLoading" nzItemLayout="horizontal">
-          @for (item of listCourse; track $index) {
-            <nz-list-item class="course-item">
-              <div class="course-content">
-                <nz-list-item-meta [nzDescription]="item.name"></nz-list-item-meta>
-                  <label
-                    nz-checkbox
-                    [(ngModel)]="item.checked"
-                    (ngModelChange)="onCheckboxChange(item, $event)"
-                  ></label>
+    } @else {
+      <!-- Tarjeta de información de la unidad educativa -->
+      <nz-card class="info-card" *nzSpaceItem [nzBordered]="true">
+        <h5 nz-typography class="section-title">UNIDAD EDUCATIVA</h5>
+        <nz-descriptions
+          nzLayout="vertical"
+          nzSize="small"
+          [nzColumn]="4"
+          class="bold-description-labels"
+        >
+          <nz-descriptions-item nzTitle="NOMBRE" >{{ institution()?.name }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="SIE">{{ institution()?.id }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="ESTADO">
+            <nz-tag [nzColor]="institution()?.state === 'Abierta' ? 'success' : 'error'">
+              {{ institution()?.state | uppercase }}
+            </nz-tag>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="ÁMBITO">{{ institution()?.scope }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="DEPENDENCIA">{{ institution()?.scope }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="DIRECCIÓN" [nzSpan]="2" style="text-transform: capitalize;">
+            {{ institution()?.direction }}
+          </nz-descriptions-item>
+        </nz-descriptions>
+      </nz-card>
+
+      <!-- Tarjeta de inscripción -->
+      <nz-card *nzSpaceItem [nzBordered]="true" class="inscription-card">
+        <div nz-row [nzGutter]="15">
+          <!-- Sección de niveles, grados y paralelos -->
+          <div nz-col [nzSpan]="15">
+            <h5 nz-typography class="section-title">INSCRIPCIÓN DE LA UNIDAD EDUCATIVA</h5>
+    
+            <!-- Sección de cursos para seleccionar -->
+            <div nz-row [nzGutter]="16" nzJustify="start">
+              <div nz-col [nzSpan]="10" class="course border-partial-init">
+                <div style="padding: 5px;">
+                  <span nz-typography ><strong>NIVELES</strong></span>
+                  <nz-radio-group
+                    [(ngModel)]="selectedLevelId"
+                    (ngModelChange)="onLevelSelected($event)"
+                    nzButtonStyle="solid"
+                    class="full-width-radio-group"
+                  >
+                    @for(level of levels; track level) {
+                      <label nz-radio-button [nzValue]="level.id">{{level.name}}</label>
+                    }
+                  </nz-radio-group>
+    
+                </div>
               </div>
-            </nz-list-item>
-          }
-        </nz-list>
-          <div class="action-buttons">
-            <button
-              nz-button
-              nzType="primary"
-              class="mr-2"
-              (click)="showConfirmRegistrationHighDemand()"
-              class="flex-button"
-              [disabled]="hasSavedCourses || selectedCourses().length === 0"
-            >
-              <i nz-icon nzType="check-circle"></i> CONSOLIDAR
-            </button>
-            <button
-              nz-button
-              nzType="default"
-              (click)="saveCourses()"
-              class="flex-button"
-              [disabled]="(listCourse.length === 0 || selectedCourses().length === 0) ? true : false"
-            >
-              <i nz-icon nzType="save"></i> GUARDAR
-            </button>
+              <!-- grados -->
+              <div nz-col [nzSpan]="4" class="course">
+                <div style="padding: 5px;">
+                  <span nz-typography><strong>GRADOS</strong></span>
+                  <nz-radio-group
+                    [(ngModel)]="selectedGradeId"
+                    (ngModelChange)="onGradeSelected($event)"
+                    nzButtonStyle="solid"
+                    class="full-width-radio-group"
+                  >
+                    @for(grade of gradesToShow; track grade) {
+                      <label nz-radio-button [nzValue]="grade.id">{{grade.name}}</label>
+                    }
+                  </nz-radio-group>
+                </div>
+              </div>
+              <!-- paralelos -->
+              <div nz-col [nzSpan]="4" class="course border-partial-end">
+                <div style="padding: 5px;">
+                  <span nz-typography><strong>PARALELOS</strong></span>
+                  <nz-radio-group
+                    [(ngModel)]="selectedParallelId"
+                    nzButtonStyle="solid"
+                  >
+                    @for(parallel of parallelsToShow; track parallel) {
+                      <label nz-radio-button [nzValue]="parallel.id">Paralelo {{parallel.name}}</label>
+                    }
+                  </nz-radio-group>
+                </div>
+              </div>
+              <div nz-col [nzSpan]="6">
+                <div class="parallel-form">
+                  <label class="form-label">Número de plazas</label>
+                  <nz-input-group [nzSuffix]="inputClearTpl" class="quota-input">
+                    <input
+                      type="number"
+                      nz-input
+                      [(ngModel)]="inputValue"
+                      placeholder="Nro plaza"
+                    />
+                  </nz-input-group>
+    
+                  <ng-template #inputClearTpl>
+                    <nz-icon
+                      *ngIf="inputValue"
+                      class="ant-input-clear-icon"
+                      nzTheme="fill"
+                      nzType="close-circle"
+                      (click)="inputValue = null"
+                    ></nz-icon>
+                  </ng-template>
+    
+                  <button
+                    nz-button
+                    nzType="primary"
+                    class="register-btn"
+                    [disabled]="(inputValue === 0 || inputValue === null || hasSavedCourses) ? true : false"
+                    (click)="showConfirmRegistrationQuota()"
+                  >
+                    REGISTRAR
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
-      </div>
-    </div>
-  </nz-card>
+          <!-- Sección de cursos seleccionados -->
+          <div nz-col [nzSpan]="9">
+            <h5 nz-typography class="section-title">CURSOS SELECCIONADOS</h5>
+            <nz-list class="course-list" [nzLoading]="initLoading" nzItemLayout="horizontal">
+              @for (item of listCourse; track $index) {
+                <nz-list-item class="course-item">
+                  <div class="course-content">
+                    <nz-list-item-meta [nzDescription]="item.name"></nz-list-item-meta>
+                      <label
+                        nz-checkbox
+                        [(ngModel)]="item.checked"
+                        (ngModelChange)="onCheckboxChange(item, $event)"
+                      ></label>
+                  </div>
+                </nz-list-item>
+              }
+            </nz-list>
+              <div class="action-buttons">
+                <button
+                  nz-button
+                  nzType="primary"
+                  class="mr-2"
+                  (click)="showConfirmRegistrationHighDemand()"
+                  class="flex-button"
+                  [disabled]="hasSavedCourses || selectedCourses().length === 0"
+                >
+                  <i nz-icon nzType="check-circle"></i> CONSOLIDAR
+                </button>
+                <button
+                  nz-button
+                  nzType="default"
+                  (click)="saveCourses()"
+                  class="flex-button"
+                  [disabled]="(listCourse.length === 0 || selectedCourses().length === 0) ? true : false"
+                >
+                  <i nz-icon nzType="save"></i> GUARDAR
+                </button>
+              </div>
+          </div>
+        </div>
+      </nz-card>
+    }
   }
 </nz-space>

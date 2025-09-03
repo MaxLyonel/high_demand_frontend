@@ -1,7 +1,7 @@
 // framework angular
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
-import { Component, inject, Inject, OnInit, signal } from "@angular/core";
+import { Component, EventEmitter, inject, Inject, OnInit, Output, signal } from "@angular/core";
 // external dependencies
 import { FormsModule } from "@angular/forms";
 import { finalize, of, switchMap, tap } from 'rxjs';
@@ -28,6 +28,7 @@ import IHighDemand from "../../../domain/ports/i-high-demand";
 import { AppStore } from '../../../infrastructure/store/app.store';
 import { AbilityService } from "../../../infrastructure/services/ability.service";
 import { User } from "../../../domain/models/user.model";
+import IManagerInstitution from "../../../domain/ports/i-manager-institution";
 
 
 interface CourseList {
@@ -58,7 +59,7 @@ interface CourseList {
     NzSpaceModule,
     NzTabsModule,
     NzTagComponent,
-    NzTypographyModule
+    NzTypographyModule,
   ],
   selector: 'app-postulation',
   templateUrl: './postulation.component.html',
@@ -79,7 +80,7 @@ export class PostulationComponent implements OnInit {
 
   // --- variables receptoras ---
   levels!: any
-  institution!: any
+  institution = signal<any>(null);
   inputValue: number | null = null;
 
   // --- indicadores de carga
@@ -95,10 +96,16 @@ export class PostulationComponent implements OnInit {
   confirmModal?: NzModalRef;
   user!: User
   highDemand: any
+  showApplication = signal<boolean>(false)
+
+  sieCode: string = '';
+  isLoading: boolean = false;
+  errorMessage: string = '';
 
   constructor(
     @Inject('ICourseList')   private _courses    : ICourseList,
-    @Inject('IHighDemand')   private _highDemand : IHighDemand
+    @Inject('IHighDemand')   private _highDemand : IHighDemand,
+    @Inject('IManagerInstitution') private _institution: IManagerInstitution
   ) {}
 
   get hasSavedCourses() {
@@ -114,54 +121,13 @@ export class PostulationComponent implements OnInit {
     }
 
     const { id: institutionId } = institutionInfo
-    this.institution = institutionInfo
+    this.getFullInfo(institutionId)
 
-    this._courses.showCourses(institutionId, 2025).pipe(
-      finalize(() => {
-        this.initLoading = false
-      }),
-      tap(courses => {
-        this.levels = courses;
-      }),
-      switchMap(() => this._highDemand.getHighDemandByInstitution(institutionId)),
-      switchMap((highDemand) => {
-        if(!highDemand) {
-          return of([])
-        }
-        const { rolId, workflowStateId } = highDemand
-        // Si aún esta con el director, y su estado es EN REVISIÓN
-        if(rolId === 9 && workflowStateId === 2) {
-          this.appStore.setHighDemandCoursesSaved(false)
-        } else {
-          this.appStore.setHighDemandCoursesSaved(true)
-        }
-        this.highDemand = highDemand
-        return this._highDemand.getCoures(highDemand.id)
-      })
-    ).subscribe({
-        next: (courses) => {
-          this.listCourse = []
-          for(let course of courses) {
-            this.listCourse.push({
-              checked: true,
-              name: `${course.levelName} - ${course.gradeName} ${course.parallelName} - cupo:${course.totalQuota}`,
-              quota: course.levelId!,
-              levelId: course.levelId,
-              gradeId: course.gradeId,
-              parallelId: course.parallelId
-            })
-          }
-          this.selectedCourses.set(this.listCourse)
-        },
-        error: (err) => {
-          console.error('Error cargando datos', err);
-        }
-    })
   }
 
   // ============= FUNCIONES PRINCIPALES ==========
   saveCourses() { // Registrar institución con sus cursos como alta demanda
-    const { id: educationalInstitutionId } = this.institution;
+    const { id: educationalInstitutionId } = this.institution();
     const { user } = this.appStore.snapshot
     const { userId, selectedRole } = user
     const rolAllowed = selectedRole.id
@@ -273,7 +239,7 @@ export class PostulationComponent implements OnInit {
   }
   //  ====================== FIN MODALES ============================
 
-  canUpdateUser = () => {
+  canCreatePostulation = () => {
     if (!this.user) {
       return false;
     }
@@ -283,7 +249,78 @@ export class PostulationComponent implements OnInit {
     };
 
     // this.abilities.debugCan('manage', 'postulation');
-    return this.abilities.getAbility()?.can('manage', 'postulation' ) ?? false;
+    return this.abilities.getAbility()?.can('create', 'postulation' ) ?? false;
+  }
+
+  searchInstitution(): void {
+    if (!this.sieCode.trim()) {
+      this.errorMessage = 'Por favor ingrese un código SIE válido';
+      return;
+    }
+    this.isLoading = true;
+    this.errorMessage = '';
+    this.institution.set(null);
+    this.getFullInfo(Number(this.sieCode))
+
+  }
+
+  clearSearch(): void {
+    this.sieCode = '';
+    this.institution.set(null);
+    this.errorMessage = '';
+  }
+
+  getFullInfo(sie: number) {
+    this._institution.getInfo(sie).pipe(
+      tap(institution => {
+        if(!institution) this.errorMessage = 'No se encontró Unidad Educativa con el SIE introducido';
+        this.institution.set(institution);
+      }),
+      switchMap(() =>
+        this._courses.showCourses(sie, 2025)
+      ),
+      tap(courses => {
+        this.levels = courses
+      }),
+      switchMap(() =>
+        this._highDemand.getHighDemandByInstitution(sie)
+      ),
+      switchMap((highDemand) => {
+        if (!highDemand) {
+          return of([]);
+        }
+        const { rolId, workflowStateId } = highDemand;
+        // Si aún está con el director, y su estado es EN REVISIÓN
+        if (rolId === 9 && workflowStateId === 2) {
+          this.appStore.setHighDemandCoursesSaved(false);
+        } else {
+          this.appStore.setHighDemandCoursesSaved(true);
+        }
+        this.highDemand = highDemand;
+        return this._highDemand.getCoures(highDemand.id);
+      }),
+      finalize(() => {
+        this.isLoading = false;
+        this.initLoading = false;
+      })
+    ).subscribe({
+      next: (courses) => {
+        this.listCourse = courses.map((course:any) => ({
+          checked: true,
+          name: `${course.levelName} - ${course.gradeName} ${course.parallelName} - cupo:${course.totalQuota}`,
+          quota: course.levelId!,
+          levelId: course.levelId,
+          gradeId: course.gradeId,
+          parallelId: course.parallelId
+        }));
+        this.showApplication.set(true);
+        this.selectedCourses.set(this.listCourse);
+      },
+      error: (err) => {
+        this.showApplication.set(false);
+        console.error('Error cargando datos', err);
+      }
+    });
   }
 
 }

@@ -51,20 +51,28 @@ export default class LayoutComponent implements OnInit{
     map(ability => ability?.can('manage', 'admin') ?? false)
   );
 
-  canManagePostulation$ = this.abilities.ability$.pipe(
-    map(ability => ability?.can('manage', 'postulation') ?? false)
+  canReadPostulation$ = this.abilities.ability$.pipe(
+    map(ability => ability?.can('read', 'postulation') ?? false)
   );
 
-  canManageInbox$ = this.abilities.ability$.pipe(
-    map(ability => ability?.can('manage', 'inbox') ?? false)
+  canReadInbox$ = this.abilities.ability$.pipe(
+    map(ability => ability?.can('read', 'inbox') ?? false)
   );
 
-  canManageFollowVer$ = this.abilities.ability$.pipe(
-    map(ability => ability?.can('manage', 'follow-ver') ?? false)
+  canReadInboxRegister$ = this.abilities.ability$.pipe(
+    map(ability => ability?.can('read', 'inbox-register'))
+  )
+
+  canReadInboxSelection$ = this.abilities.ability$.pipe(
+    map(ability => ability?.can('read', 'inbox-selection'))
+  )
+
+  canReadFollow$ = this.abilities.ability$.pipe(
+    map(ability => ability?.can('read', 'follow') ?? false)
   );
 
-  canManageFollowDirector$ = this.abilities.ability$.pipe(
-    map(ability => ability?.can('manage', 'follow-director') ?? false)
+  canManageConfig$ = this.abilities.ability$.pipe(
+    map(ability => ability?.can('manage', 'config'))
   )
 
   ngOnInit(): void {
@@ -75,10 +83,10 @@ export default class LayoutComponent implements OnInit{
     this.roleName = iconv.decode(buffer, 'utf-8')
     this.cdr.detectChanges()
 
-    // this.abilities.loadAbilities(user.id).subscribe(() => {
-    //   const ability = this.abilities.getAbility();
-    //   console.log('Abilities cargadas:', ability?.rules);
-    // });
+    this.abilities.loadAbilities(user.id).subscribe(() => {
+      const ability = this.abilities.getAbility();
+      // console.log('Abilities cargadas:', ability?.rules);
+    });
   }
 
   goToProfile() {

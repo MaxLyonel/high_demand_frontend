@@ -40,6 +40,11 @@ interface Permission {
   conditions?: Condition[];
 }
 
+interface RolPermission {
+  active: boolean,
+  permission: Permission
+}
+
 interface Condition {
   field: string;
   operator: string;
@@ -56,7 +61,7 @@ interface User {
 interface Role {
   id: number;
   name: string;
-  permissions: Permission[];
+  rolPermissions: RolPermission[];
 }
 
 @Component({
@@ -140,9 +145,16 @@ export class AccessControlComponent implements OnInit {
   // ** Gestión de roles **
   loadRoles() {
     this._rol.showRoles().subscribe((response: any) => {
+      console.log(response.data)
       this.availableRoles = response.data
       this.selectedRole = this.availableRoles[0]
-      this.permissions = this.availableRoles[0].permissions
+      // this.permissions = this.availableRoles[0].rolPermissions.map(p => p.permission)
+      this.permissions = this.availableRoles[0].rolPermissions.map(rp => ({
+        ...rp.permission,
+        action: rp.permission.action,    // si existe
+        subject: rp.permission.subject   // si existe
+      }));
+      console.log("permisos cargasdos: ", this.permissions)
     })
   }
 
@@ -151,7 +163,7 @@ export class AccessControlComponent implements OnInit {
     this.selectedRole = rol
     setTimeout(() => {
       const indexFindedRol = this.availableRoles.findIndex(r => r.id == rol.id)
-      this.permissions = this.availableRoles[indexFindedRol].permissions
+      this.permissions = this.availableRoles[indexFindedRol].rolPermissions.map(p => p.permission)
       this.loadingTable = false
     }, 300)
   }
@@ -182,7 +194,8 @@ export class AccessControlComponent implements OnInit {
   }
 
   get filteredPermisos(): Permission[] {
-    return this.permissions.filter(permission => {
+    console.log("permisos: ", this.permissions)
+    const filtered =  this.permissions.filter(permission => {
       const matchesSearch = permission.subject?.name.toLowerCase().includes(this.searchText.toLowerCase()) ||
                            permission.action?.name.toLowerCase().includes(this.searchText.toLowerCase());
       const matchesEstado = this.filterStatus === 'all' ||
@@ -190,6 +203,8 @@ export class AccessControlComponent implements OnInit {
                            (this.filterStatus === 'inactive' && !permission.active);
       return matchesSearch && matchesEstado;
     });
+    console.log("permisos filtrados: ", filtered)
+    return filtered
   }
 
   showCreatePermisoModal(): void {
@@ -219,13 +234,14 @@ export class AccessControlComponent implements OnInit {
 
   savePermission(): void {
     if (this.isEditingPermission) {
-      // Actualizar permiso existente
+    //   // Actualizar permiso existente
       const index = this.permissions.findIndex(p => p.id === this.currentPermission.id);
-      if (index !== -1) {
-        this.permissions[index] = { ...this.currentPermission };
-      }
+      console.log("esto es index: ", index)
+    //   if (index !== -1) {
+    //     this.permissions[index] = { ...this.currentPermission };
+    //   }
     } else {
-      // Crear nuevo permiso
+    //   // Crear nuevo permiso
       const newId = Math.max(...this.permissions.map(p => p.id || 0)) + 1;
       const newObj = {
         rol: this.selectedRole,
@@ -248,7 +264,10 @@ export class AccessControlComponent implements OnInit {
       ...permission,
       rolId: this.selectedRole.id
     }
-    this._permission.changePermissionStatus(permissionProp).subscribe(() => {
+    console.log("permissionProp", permissionProp)
+    console.log("permission.active", permission.active)
+    this._permission.changePermissionStatus(permissionProp).subscribe((response) => {
+      console.log("Respuesta backend: ", response)
       this.loadRoles()
     })
   }
