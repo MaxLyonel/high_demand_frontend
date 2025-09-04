@@ -153,77 +153,105 @@
   nzOkText="Guardar"
   nzCancelText="Cancelar">
   <div *nzModalContent class="permiso-form">
-    <div class="form-row">
-      <nz-form-item>
-        <nz-form-label nzFor="description" nzRequired>Descripción</nz-form-label>
-        <nz-form-control>
-          <input nz-input id="description" [(ngModel)]="currentPermission.description" placeholder="Ingrese descripción" />
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-label nzFor="accion" nzRequired>Acción</nz-form-label>
-        <nz-form-control>
-          <nz-select
-            id="accion"
-            nzPlaceHolder="Seleccione una acción"
-            [(ngModel)]="currentPermission.action"
-            nzAllowClear
-            nzShowSearch
-          >
-            @for(action of availableActions; track action.id) {
-              <nz-option [nzValue]="action" [nzLabel]="action.name"></nz-option>
-            }
-          </nz-select>
-        </nz-form-control>
-      </nz-form-item>
-    </div>
+    @if(!isEditingPermission){
+    <nz-form-item>
+      <nz-switch
+        [(ngModel)]="use"
+        nzCheckedChildren="Crear" nzUnCheckedChildren="Utilizar uno nuevo">
+      </nz-switch>
+    </nz-form-item>
+    }
+    @if(!use) {
+      <div class="form-row">
+        <nz-form-item>
+          <nz-form-label nzFor="permission" nzRequired>Permisos</nz-form-label>
+          <nz-form-control>
+            <nz-select
+              nzPlaceHolder="Seleccione un permiso"
+              nzAllowClear
+              [(ngModel)]="reusedPermission"
+            >
+              @for(permission of availablePermissions; track permission.id){
+                <nz-option [nzValue]="permission" [nzLabel]="permission.description"></nz-option>
+              }
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    } @else {
+      <div class="form-row">
+        <nz-form-item>
+          <nz-form-label nzFor="description" nzRequired>Descripción</nz-form-label>
+          <nz-form-control>
+            <input nz-input id="description" [(ngModel)]="currentPermission.description" placeholder="Ingrese descripción" />
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label nzFor="accion" nzRequired>Acción</nz-form-label>
+          <nz-form-control>
+            <nz-select
+              id="accion"
+              nzPlaceHolder="Seleccione una acción"
+              [compareWith]="compareObjects"
+              [(ngModel)]="currentPermission.action"
+              nzAllowClear
+              nzShowSearch
+            >
+              @for(action of availableActions; track action.id) {
+                <nz-option [nzValue]="action" [nzLabel]="action.name"></nz-option>
+              }
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
 
-    <div class="form-row">
-      <nz-form-item>
-        <nz-form-label nzFor="subject" nzRequired>Subject</nz-form-label>
-        <nz-form-control>
-          <nz-select
-            id="subject"
-            nzPlaceHolder="Seleccione un subject"
-            [(ngModel)]="currentPermission.subject"
-            nzAllowClear
-            nzShowSearch
-          >
-            @for(subject of availableSubjects; track subject.id) {
-              <nz-option [nzValue]="subject" [nzLabel]="subject.name"></nz-option>
-            }
-          </nz-select>
-        </nz-form-control>
-      </nz-form-item>
-    </div>
+      <div class="form-row">
+        <nz-form-item>
+          <nz-form-label nzFor="subject" nzRequired>Subject</nz-form-label>
+          <nz-form-control>
+            <nz-select
+              id="subject"
+              nzPlaceHolder="Seleccione un subject"
+              [compareWith]="compareObjects"
+              [(ngModel)]="currentPermission.subject"
+              nzAllowClear
+              nzShowSearch
+            >
+              @for(subject of availableSubjects; track subject.id) {
+                <nz-option [nzValue]="subject" [nzLabel]="subject.name"></nz-option>
+              }
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
 
-    <div class="form-row">
-      <nz-form-item>
-        <nz-form-label>Condiciones (Opcional)</nz-form-label>
-        <nz-form-control>
-          <div class="conditions-builder">
-            <div *ngFor="let condition of currentPermission.conditions; let i = index" class="condition-row">
-              <nz-input-group nzCompact>
-                <nz-select [(ngModel)]="condition.field" style="width: 30%" placeholder="Campo">
-                  <nz-option *ngFor="let field of availableFields" [nzValue]="field" [nzLabel]="field"></nz-option>
-                </nz-select>
-                <nz-select [(ngModel)]="condition.operator" style="width: 30%" placeholder="Operador">
-                  <nz-option *ngFor="let op of availableOperators" [nzValue]="op" [nzLabel]="op"></nz-option>
-                </nz-select>
-                <input nz-input [(ngModel)]="condition.value" style="width: 30%" placeholder="Valor">
-                <button nz-button nzDanger (click)="removeCondition(i)">
-                  <i nz-icon nzType="delete"></i>
-                </button>
-              </nz-input-group>
+      <div class="form-row">
+        <nz-form-item>
+          <nz-form-label>Condiciones (Opcional)</nz-form-label>
+          <nz-form-control>
+            <div class="conditions-builder">
+              <div *ngFor="let condition of currentPermission.conditions; let i = index" class="condition-row">
+                <nz-input-group nzCompact>
+                  <nz-select [(ngModel)]="condition.field" style="width: 30%" placeholder="Campo">
+                    <nz-option *ngFor="let field of availableFields" [nzValue]="field" [nzLabel]="field"></nz-option>
+                  </nz-select>
+                  <nz-select [(ngModel)]="condition.operator" style="width: 30%" placeholder="Operador">
+                    <nz-option *ngFor="let op of availableOperators" [nzValue]="op" [nzLabel]="op"></nz-option>
+                  </nz-select>
+                  <input nz-input [(ngModel)]="condition.value" style="width: 30%" placeholder="Valor">
+                  <button nz-button nzDanger (click)="removeCondition(i)">
+                    <i nz-icon nzType="delete"></i>
+                  </button>
+                </nz-input-group>
+              </div>
+              <button nz-button nzType="dashed" (click)="addCondition()" style="width: 100%; margin-top: 8px;">
+                <i nz-icon nzType="plus"></i> Añadir condición
+              </button>
             </div>
-            <button nz-button nzType="dashed" (click)="addCondition()" style="width: 100%; margin-top: 8px;">
-              <i nz-icon nzType="plus"></i> Añadir condición
-            </button>
-          </div>
-        </nz-form-control>
-      </nz-form-item>
-    </div>
-
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    }
     <div class="form-row">
       <nz-form-item>
         <nz-form-label>Estado</nz-form-label>

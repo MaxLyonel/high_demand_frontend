@@ -26,6 +26,7 @@ import { AppStore } from '../../../infrastructure/store/app.store';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { AbilityService } from '../../../infrastructure/services/ability.service';
+import { switchMap } from 'rxjs';
 
 interface Registration {
   id: number;
@@ -38,6 +39,7 @@ interface Registration {
   updatedAt: Date;
   userName: string;
   rol: string;
+  rolId: number;
   userId: number;
 }
 
@@ -101,8 +103,15 @@ export class SeguimientoComponent implements OnInit {
   allRegistrations = signal<Registration[]>([])
   registration = signal<Registration[]>([]);
 
+  abilitiesLoaded = signal(false);
+  user!: any
+  selectedRole!: any
+
   // Computed signal para el filtrado reactivo
   filteredRegistrations = computed(() => {
+    if(!this.abilitiesLoaded()) {
+      return []
+    }
     const all = [...this.registration()];
     const search = this.normalizeText(this.searchValue()?.trim() || '');
     const estado = this.normalizeText(this.filterEstado() || '');
@@ -137,25 +146,28 @@ export class SeguimientoComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadData();
     const { user } = this.appStore.snapshot;
     this.abilityService.loadAbilities(user.userId).subscribe(() => {
-      const ability = this.abilityService.getAbility();
-      console.log('Habilidades cargadas:', ability?.rules);
+      this.abilitiesLoaded.set(true);
+      this.loadData();
     });
   }
 
   loadData(): void {
+    const { user } = this.appStore.snapshot
+    this.user = user
+    this.selectedRole = user.selectedRole
     this.loading = true;
-    this._history.showGeneralList().subscribe({
+    this.abilityService.loadAbilities(user.userId).pipe(
+      switchMap(() => this._history.showGeneralList())
+    ).subscribe({
       next: (response:any) => {
         const filtered = response.data.filter((r: Registration) => this.canViewRequest(r))
-        this.registration.set([...filtered])
-        this.historial = [...filtered]
-        this.loading = false
+        this.registration.set([...filtered]);
+        this.historial = [...filtered];
+        this.loading = false;
       },
       error: (err) => {
-        console.log("error cargando datos", err)
         this.loading = false
       }
     })
@@ -217,18 +229,6 @@ export class SeguimientoComponent implements OnInit {
     }
   }
 
-  can(rol: string): boolean {
-    //! El recurso 'follow' (seguimiento) puede ser administrado
-    //! siempre y cuando el Rol del usuario sea 'VER'
-    return this.abilityService.getAbility()?.can('manage', { __typename: 'follow-ver', rol: rol}) || false;
-  }
-
-  canViewRequest(request: Registration): boolean {
-    //! El recurso 'history' (historial) puede ser leido
-    //! siempre y cuando el usuario sea el propietario
-    return this.abilityService.getAbility()?.can('read', { __typename: 'history', userId: request.userId}) || false;
-  }
-
   // Funciones para la búsqueda
   private normalizeText(text: string): string {
     return text
@@ -250,4 +250,33 @@ export class SeguimientoComponent implements OnInit {
   onWorkflowStatusChange(value: string | null): void {
     this.filterStatusWorkflow.set(value)
   }
+
+  // ** ACCESOS **
+  canViewAllRequests(): boolean {
+    //! El recurso 'follow' (seguimiento) puede ser administrado
+    //! siempre y cuando el Rol del usuario sea 'VER'
+    return this.abilityService.getAbility()?.can('update', { __typename: 'history', rol_id: this.selectedRole?.id.toString()}) || false;
+  }
+
+  canAnnularRequest(request: Registration): boolean {
+    const result = this.abilityService.getAbility()
+      ?.can('delete', { __typename: 'history', user_id: request.userId }) || false
+    return result
+  }
+
+  canDownloadRequest(request: Registration): boolean {
+    const result = this.abilityService.getAbility()
+      ?.can('read', { __typename: 'request-report', user_id: request.userId }) || false
+    return result
+  }
+
+  canViewRequest(request: Registration): boolean {
+    //! El recurso 'history' (historial) puede ser leido
+    //! siempre y cuando el usuario sea el propietario
+    // this.abilityService.debugCan('read', { __typename: 'history', user_id: request.userId });
+    const result =  this.abilityService.getAbility()
+      ?.can('read', { __typename: 'history', user_id: request.userId}) || false;
+    return result
+  }
+
 }

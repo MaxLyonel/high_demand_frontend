@@ -1,12 +1,11 @@
 <nz-space nzDirection="vertical" nzSize="large">
   @if(canCreatePostulation()){
     @if(!institution()) {
-      <div class="sie-search-container">
-        <div class="search-header">
+      <nz-card class="info-card">
+        <h5 nz-typography class="section-title">
           <i nz-icon nzType="search" class="search-icon"></i>
-          <h2 class="search-title">Buscar Institución por SIE</h2>
-        </div>
-
+          Buscar Institución por SIE
+        </h5>
         <p class="search-description">
           Ingrese el código SIE (ID de institución) para buscar y cargar los datos de la unidad educativa.
         </p>
@@ -50,7 +49,7 @@
           <i nz-icon nzType="close-circle" nzTheme="fill"></i>
           {{ errorMessage }}
         </div>
-      </div>
+      </nz-card>
     } @else {
       <!-- Tarjeta de información de la unidad educativa -->
       <nz-card class="info-card" *nzSpaceItem [nzBordered]="true">
@@ -82,7 +81,7 @@
           <!-- Sección de niveles, grados y paralelos -->
           <div nz-col [nzSpan]="15">
             <h5 nz-typography class="section-title">INSCRIPCIÓN DE LA UNIDAD EDUCATIVA</h5>
-    
+
             <!-- Sección de cursos para seleccionar -->
             <div nz-row [nzGutter]="16" nzJustify="start">
               <div nz-col [nzSpan]="10" class="course border-partial-init">
@@ -98,7 +97,7 @@
                       <label nz-radio-button [nzValue]="level.id">{{level.name}}</label>
                     }
                   </nz-radio-group>
-    
+
                 </div>
               </div>
               <!-- grados -->
@@ -142,7 +141,7 @@
                       placeholder="Nro plaza"
                     />
                   </nz-input-group>
-    
+
                   <ng-template #inputClearTpl>
                     <nz-icon
                       *ngIf="inputValue"
@@ -152,7 +151,7 @@
                       (click)="inputValue = null"
                     ></nz-icon>
                   </ng-template>
-    
+
                   <button
                     nz-button
                     nzType="primary"

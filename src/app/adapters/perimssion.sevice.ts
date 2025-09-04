@@ -39,6 +39,17 @@ export class PermissionAdapterService implements IManagerPermission {
     )
   }
 
+  sendToUpdate(obj: any): Observable<any> {
+    return this.http.post('permission/update', obj, {
+      context: new HttpContext().set(IS_USER_ACTION, true)
+    }).pipe(
+      catchError(err => {
+        console.error("Error al actualizar el permiso", err)
+        return throwError(() => err)
+      })
+    )
+  }
+
   getOperators(): Observable<any> {
     return this.http.get(`permission/operators`).pipe(
       catchError(err => {
@@ -63,6 +74,15 @@ export class PermissionAdapterService implements IManagerPermission {
     }).pipe(
       catchError(err => {
         console.error("Error al actualizar el permiso")
+        return throwError(() => err)
+      })
+    )
+  }
+
+  getPermissions(): Observable<any> {
+    return this.http.get('permission/all').pipe(
+      catchError(err => {
+        console.error("Error al obtener los permisos ")
         return throwError(() => err)
       })
     )

@@ -1,56 +1,57 @@
 <nz-card class="seguimiento-container">
   <div class="seguimiento-header">
     <h5 nz-typography class="section-title">SEGUIMIENTO DE SOLICITUDES</h5>
-    @if(can('VER')) {
-      <div class="seguimiento-filters">
-        <nz-space>
-          <nz-select
-            *nzSpaceItem
-            nzPlaceHolder="Filtrar por estado"
-            [ngModel]="filterStatusWorkflow()"
-            (ngModelChange)="onWorkflowStatusChange($event)"
-            nzAllowClear
-          >
-            <nz-option nzValue="enviado" nzLabel="Enviado"></nz-option>
-            <nz-option nzValue="en revision" nzLabel="En revisón"></nz-option>
-          </nz-select>
+      @if(canViewAllRequests()){
+        <div class="seguimiento-filters">
+          <nz-space>
+            <nz-select
+              *nzSpaceItem
+              nzPlaceHolder="Filtrar por estado"
+              [ngModel]="filterStatusWorkflow()"
+              (ngModelChange)="onWorkflowStatusChange($event)"
+              nzAllowClear
+            >
+              <nz-option nzValue="enviado" nzLabel="Enviado"></nz-option>
+              <nz-option nzValue="en revision" nzLabel="En revisón"></nz-option>
+            </nz-select>
 
-          <nz-select
-            *nzSpaceItem
-            nzPlaceHolder="Filtrar por estado"
-            [ngModel]="filterEstado()"
-            (ngModelChange)="onEstadoChange($event)"
-            nzAllowClear
-          >
-            <nz-option nzValue="REGISTRADO" nzLabel="Registrado"></nz-option>
-            <nz-option nzValue="APROBADO" nzLabel="Aprobado"></nz-option>
-            <nz-option nzValue="OBSERVADO" nzLabel="Observado"></nz-option>
-            <nz-option nzValue="ANULADO" nzLabel="Anulado"></nz-option>
-            <nz-option nzValue="RECHAZADO" nzLabel="Rechazado"></nz-option>
-          </nz-select>
+            <nz-select
+              *nzSpaceItem
+              nzPlaceHolder="Filtrar por estado"
+              [ngModel]="filterEstado()"
+              (ngModelChange)="onEstadoChange($event)"
+              nzAllowClear
+            >
+              <nz-option nzValue="REGISTRADO" nzLabel="Registrado"></nz-option>
+              <nz-option nzValue="APROBADO" nzLabel="Aprobado"></nz-option>
+              <nz-option nzValue="OBSERVADO" nzLabel="Observado"></nz-option>
+              <nz-option nzValue="ANULADO" nzLabel="Anulado"></nz-option>
+              <nz-option nzValue="RECHAZADO" nzLabel="Rechazado"></nz-option>
+            </nz-select>
 
-          <nz-date-picker
-            *nzSpaceItem
-            nzPlaceHolder="Filtrar por fecha"
-            [ngModel]="filterFecha()"
-            (ngModelChange)="onFechaChange($event)"
-            nzStyle="width: 200px"
-          ></nz-date-picker>
-        </nz-space>
-        <nz-input-group nzSearch [nzSuffix]="suffixIconButton">
-          <input
-            type="text"
-            nz-input
-            placeholder="Buscar por unidad educativa o SIE"
-            [ngModel]="searchValue()"
-            (ngModelChange)="onSearchChange($event)"
-          />
-        </nz-input-group>
-        <ng-template #suffixIconButton>
-          <button nz-button nzType="primary" nzSearch><i nz-icon nzType="search"></i></button>
-        </ng-template>
-      </div>
-    }
+            <nz-date-picker
+              *nzSpaceItem
+              nzPlaceHolder="Filtrar por fecha"
+              [ngModel]="filterFecha()"
+              (ngModelChange)="onFechaChange($event)"
+              nzStyle="width: 200px"
+            ></nz-date-picker>
+          </nz-space>
+          <nz-input-group nzSearch [nzSuffix]="suffixIconButton">
+            <input
+              type="text"
+              nz-input
+              placeholder="Buscar por unidad educativa o SIE"
+              [ngModel]="searchValue()"
+              (ngModelChange)="onSearchChange($event)"
+            />
+          </nz-input-group>
+          <ng-template #suffixIconButton>
+            <button nz-button nzType="primary" nzSearch><i nz-icon nzType="search"></i></button>
+          </ng-template>
+        </div>
+      }
+
   </div>
 
   <nz-tabset>
@@ -119,25 +120,29 @@
                     >
                       <i nz-icon nzType="file-search"></i>
                     </button>
-                    <button
-                      nz-button
-                      nzType="link"
-                      nzSize="small"
-                      (click)="descargarDocumentos(request)"
-                      nz-tooltip="Descargar solicitud"
-                    >
-                      <i nz-icon nzType="download"></i>
-                    </button>
-                    <button
-                      nz-button
-                      nzType="link"
-                      nzSize="small"
-                      nzDanger
-                      (click)="cancelRequest(request)"
-                      nz-tooltip="Cancelar solicitud"
-                    >
-                      <i nz-icon nzType="close-circle"></i>
-                    </button>
+                    @if(canDownloadRequest(request)) {
+                      <button
+                        nz-button
+                        nzType="link"
+                        nzSize="small"
+                        (click)="descargarDocumentos(request)"
+                        nz-tooltip="Descargar solicitud"
+                      >
+                        <i nz-icon nzType="download"></i>
+                      </button>
+                    }
+                    @if(canAnnularRequest(request)) {
+                      <button
+                        nz-button
+                        nzType="link"
+                        nzSize="small"
+                        nzDanger
+                        (click)="cancelRequest(request)"
+                        nz-tooltip="Cancelar solicitud"
+                      >
+                        <i nz-icon nzType="close-circle"></i>
+                      </button>
+                    }
                   }
                 </div>
               </td>
@@ -147,7 +152,7 @@
       </nz-table>
     </nz-tab>
 
-    @if(!can('VER')) {
+    @if(!canViewAllRequests()) {
       <nz-tab nzTitle="Historial">
         <div class="historial-scroll">
           <nz-timeline>

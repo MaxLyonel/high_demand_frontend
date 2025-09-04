@@ -52,7 +52,7 @@ export default class LayoutComponent implements OnInit{
   );
 
   canReadPostulation$ = this.abilities.ability$.pipe(
-    map(ability => ability?.can('read', 'postulation') ?? false)
+    map(ability => ability?.can('create', 'postulation') ?? false)
   );
 
   canReadInbox$ = this.abilities.ability$.pipe(
@@ -68,7 +68,7 @@ export default class LayoutComponent implements OnInit{
   )
 
   canReadFollow$ = this.abilities.ability$.pipe(
-    map(ability => ability?.can('read', 'follow') ?? false)
+    map(ability => ability?.can('read', 'history') ?? false)
   );
 
   canManageConfig$ = this.abilities.ability$.pipe(

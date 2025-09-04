@@ -34,7 +34,6 @@ interface Permission {
   id?: number;
   action: Action | null;
   subject: Subject | null;
-  condiciones?: any;
   active: boolean;
   description: string,
   conditions?: Condition[];
@@ -46,6 +45,7 @@ interface RolPermission {
 }
 
 interface Condition {
+  id: number | null;
   field: string;
   operator: string;
   value: any;
@@ -85,7 +85,8 @@ interface Role {
     NzListModule,
     NzTableModule,
     NzTabsModule,
-    NzLayoutModule
+    NzLayoutModule,
+    NzSwitchModule
   ],
   templateUrl: './control-access.component.html',
   styleUrls: ['./control-acess.component.less']
@@ -104,6 +105,8 @@ export class AccessControlComponent implements OnInit {
     conditions: []
   };
 
+  reusedPermission: any;
+
   // Variables para la asignación de roles
   userSearchText: string = '';
   loadingUsers: boolean = false;
@@ -113,6 +116,7 @@ export class AccessControlComponent implements OnInit {
   availableSubjects: Subject[] = [];
   availableOperators: any[] = [];
   availableFields: string[] = [];
+  availablePermissions: any[] = []
 
   availableRoles: Role[] = [];
 
@@ -127,6 +131,7 @@ export class AccessControlComponent implements OnInit {
 
   loadingTable: boolean = false
   selectedRole: any
+  use: boolean = true
 
   constructor(
     @Inject('IRoles') private _rol: IRoles,
@@ -140,6 +145,7 @@ export class AccessControlComponent implements OnInit {
     this.loadResources();
     this.loadOperators();
     this.loadFields();
+    this.loadPermissions();
   }
 
   // ** Gestión de roles **
@@ -195,6 +201,12 @@ export class AccessControlComponent implements OnInit {
     })
   }
 
+  loadPermissions() {
+    this._permission.getPermissions().subscribe((response:any) => {
+      this.availablePermissions = response.data
+    })
+  }
+
   get filteredPermisos(): Permission[] {
     const filtered =  this.permissions.filter(permission => {
       const matchesSearch = permission.subject?.name.toLowerCase().includes(this.searchText.toLowerCase()) ||
@@ -229,22 +241,37 @@ export class AccessControlComponent implements OnInit {
   }
 
   closePermissionModal(): void {
+    this.use = true
     this.isPermissionModalVisible = false;
   }
 
   savePermission(): void {
     if (this.isEditingPermission) {
       // Actualizar permiso existente
+      const newObj = {
+        rol: this.selectedRole,
+        ...this.currentPermission
+      }
+      this._permission.updatePermission(newObj).subscribe({
+        next: response => {
+          console.log("Edición de permiso exitoso: ", response)
+        }
+      })
       const index = this.permissions.findIndex(p => p.id === this.currentPermission.id);
       if (index !== -1) {
         this.permissions[index] = { ...this.currentPermission };
       }
     } else {
       // Crear nuevo permiso
+      if(!this.use) {
+        this.reusedPermission.conditions = this.reusedPermission.condition
+        this.currentPermission = this.reusedPermission
+      }
       const newId = Math.max(...this.permissions.map(p => p.id || 0)) + 1;
       const newObj = {
         rol: this.selectedRole,
-        ...this.currentPermission
+        ...this.currentPermission,
+        conditions: this.currentPermission.conditions || [] // 🔑 forzar plural
       }
       this._permission.createPermission(newObj).subscribe({
         next: response => {
@@ -271,7 +298,7 @@ export class AccessControlComponent implements OnInit {
 
   // ** Gestión de condiciones **
   addCondition(): void {
-    this.currentPermission.conditions!.push({ field: '', operator: '', value: '' });
+    this.currentPermission.conditions!.push({ id: null, field: '', operator: '', value: '' });
   }
 
   removeCondition(index: number): void {
@@ -321,5 +348,10 @@ export class AccessControlComponent implements OnInit {
       case 49: return '#1890ff';
       default: return '#1890ff';
     }
+  }
+
+  compareObjects(o1: any, o2: any): boolean {
+    if (!o1 || !o2) return false;
+    return o1.id === o2.id; // comparar por id aunque no sean la misma referencia
   }
 }

@@ -37,6 +37,15 @@ export default class PermissionManager implements IPermission {
     )
   }
 
+  updatePermission(obj: any): Observable<any> {
+    return this._permissionManager.sendToUpdate(obj).pipe(
+      catchError(error => {
+        console.error("Error durante la actualización")
+        return throwError(() => error)
+      })
+    )
+  }
+
   getOperators(): Observable<any> {
     return this._permissionManager.getOperators().pipe(
       catchError(error => {
@@ -59,6 +68,15 @@ export default class PermissionManager implements IPermission {
     return this._permissionManager.changePermissionStatus(obj).pipe(
       catchError(error => {
         console.error("Error al actualizar el permiso")
+        return throwError(() => error)
+      })
+    )
+  }
+
+  getPermissions(): Observable<any> {
+    return this._permissionManager.getPermissions().pipe(
+      catchError(error => {
+        console.error("Error al obtener los permisos")
         return throwError(() => error)
       })
     )

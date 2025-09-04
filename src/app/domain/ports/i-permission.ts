@@ -6,7 +6,9 @@ export default interface IPermission {
   getActions(): Observable<any>;
   getResources(): Observable<any>;
   createPermission(obj: any): Observable<any>;
+  updatePermission(obj: any): Observable<any>;
   getOperators(): Observable<any>;
   getFields(): Observable<any>;
-  changePermissionStatus(obj: any): Observable<any>
+  changePermissionStatus(obj: any): Observable<any>;
+  getPermissions(): Observable<any>;
 }
