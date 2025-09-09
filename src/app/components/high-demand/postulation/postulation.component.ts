@@ -130,7 +130,7 @@ export class PostulationComponent implements OnInit {
     const { id: educationalInstitutionId } = this.institution();
     const { user } = this.appStore.snapshot
     const { userId, selectedRole } = user
-    const rolAllowed = selectedRole.id
+    const rolAllowed = selectedRole.role.id
 
     const highDemand = {
       educationalInstitutionId,

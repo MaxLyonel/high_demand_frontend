@@ -93,10 +93,10 @@
         </span>
         <div class="header-avatar-container">
           <div>
-            <span nz-typography>Usuario: {{user.username}}</span>
+            <span nz-typography><b>Usuario:</b> {{user.username}}</span>
           </div>
           <div>
-            <span nz-typography>Rol: {{ roleName }}</span>
+            <span nz-typography><b>Rol: </b> {{ roleName }}</span>
           </div>
           <div nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click" nzPlacement="bottomRight">
             <nz-avatar
@@ -122,17 +122,39 @@
       >
         <ng-container *nzDrawerContent>
           <p>USUARIO PERFIL</p>
-          <!-- {{ user | json }} -->
+          <!-- {{ user.selectedRole.placeType | json }} -->
           <nz-descriptions [nzColumn]="2" nzTitle="Datos personales">
-            <nz-descriptions-item nzTitle="Nombre" [nzSpan]="2">{{user.person.name}}</nz-descriptions-item>
-            <nz-descriptions-item nzTitle="Apellidos" [nzSpan]="2">{{user.person.lastName}} {{user.person.mothersLastName}}</nz-descriptions-item>
-            <nz-descriptions-item nzTitle="Carnet" [nzSpan]="2">{{user.person.identityCard}}</nz-descriptions-item>
+            <nz-descriptions-item [nzTitle]="nombreTpl" [nzSpan]="2">
+              {{ user.person.name | uppercase }}
+            </nz-descriptions-item>
+            <nz-descriptions-item [nzTitle]="apellidosTpl" [nzSpan]="2">
+              {{ user.person.lastName | uppercase }} {{ user.person.mothersLastName | uppercase }}
+            </nz-descriptions-item>
+            <nz-descriptions-item [nzTitle]="carnetTpl" [nzSpan]="2">
+              {{ user.person.identityCard }}
+            </nz-descriptions-item>
           </nz-descriptions>
           <nz-descriptions [nzColumn]="2" nzTitle="Datos adminstrativos">
-            <!-- <nz-descriptions-item nzTitle="Cargo" [nzSpan]="2">Programmer</nz-descriptions-item> -->
-            <nz-descriptions-item nzTitle="Rol" [nzSpan]="2">{{ roleName }}</nz-descriptions-item>
-            <nz-descriptions-item nzTitle="Departamento" [nzSpan]="2">AFX</nz-descriptions-item>
+            <nz-descriptions-item [nzTitle]="rolTpl" [nzSpan]="2">{{ roleName | uppercase }}</nz-descriptions-item>
+            @if(user.selectedRole.role.id == 37) {
+              <nz-descriptions-item [nzTitle]="distritoTpl" [nzSpan]="2">{{ user.selectedRole.placeType.id == 0 ? 'Bolivia' : user.selectedRole.placeType.name | uppercase }}</nz-descriptions-item>
+              <nz-descriptions-item [nzTitle]="departmentTpl" [nzSpan]="2">{{ user.selectedRole.placeType?.parent.id == 0 ? 'Bolivia' : user.selectedRole.placeType?.parent.name | uppercase }}</nz-descriptions-item>
+            } @else if(user.selectedRole.role.id == 38){
+              <nz-descriptions-item [nzTitle]="departmentTpl" [nzSpan]="2">{{ user.selectedRole.placeType.id == 0 ? 'Bolivia' : user.selectedRole.placeType.name | uppercase }}</nz-descriptions-item>
+            } @else {
+              <nz-descriptions-item [nzTitle]="place" [nzSpan]="2">{{ user.selectedRole.placeType.id == 0 ? 'Bolivia' : user.selectedRole.placeType.name | uppercase }}</nz-descriptions-item>
+            }
           </nz-descriptions>
+
+          <!-- Títulos personalizados -->
+          <ng-template #nombreTpl> <b>Nombre</b> </ng-template>
+          <ng-template #apellidosTpl> <b>Apellidos</b> </ng-template>
+          <ng-template #carnetTpl> <b>Carnet</b> </ng-template>
+
+          <ng-template #rolTpl> <b>Rol</b> </ng-template>
+          <ng-template #distritoTpl> <b >Distrito</b> </ng-template>
+          <ng-template #departmentTpl> <b>Departamento</b> </ng-template>
+          <ng-template #place> <b>Lugar</b> </ng-template>
         </ng-container>
       </nz-drawer>
     </nz-header>

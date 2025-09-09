@@ -60,19 +60,27 @@
           [nzColumn]="4"
           class="bold-description-labels"
         >
-          <nz-descriptions-item nzTitle="NOMBRE" >{{ institution()?.name }}</nz-descriptions-item>
-          <nz-descriptions-item nzTitle="SIE">{{ institution()?.id }}</nz-descriptions-item>
-          <nz-descriptions-item nzTitle="ESTADO">
+          <nz-descriptions-item [nzTitle]="nombreTpl" >{{ institution()?.name }}</nz-descriptions-item>
+          <nz-descriptions-item [nzTitle]="sieTpl">{{ institution()?.id }}</nz-descriptions-item>
+          <nz-descriptions-item [nzTitle]="estadoTpl">
             <nz-tag [nzColor]="institution()?.state === 'Abierta' ? 'success' : 'error'">
               {{ institution()?.state | uppercase }}
             </nz-tag>
           </nz-descriptions-item>
-          <nz-descriptions-item nzTitle="ÁMBITO">{{ institution()?.scope }}</nz-descriptions-item>
-          <nz-descriptions-item nzTitle="DEPENDENCIA">{{ institution()?.scope }}</nz-descriptions-item>
-          <nz-descriptions-item nzTitle="DIRECCIÓN" [nzSpan]="2" style="text-transform: capitalize;">
+          <nz-descriptions-item [nzTitle]="ambitoTpl">{{ institution()?.scope }}</nz-descriptions-item>
+          <nz-descriptions-item [nzTitle]="dependenciaTpl">{{ institution()?.scope }}</nz-descriptions-item>
+          <nz-descriptions-item [nzTitle]="direccionTpl" [nzSpan]="2" style="text-transform: capitalize;">
             {{ institution()?.direction }}
           </nz-descriptions-item>
         </nz-descriptions>
+
+        <ng-template #nombreTpl> <b>NOMBRE</b> </ng-template>
+        <ng-template #sieTpl> <b>SIE</b> </ng-template>
+        <ng-template #estadoTpl> <b>ESTADO</b> </ng-template>
+
+        <ng-template #ambitoTpl> <b>ÁMBITO</b> </ng-template>
+        <ng-template #dependenciaTpl> <b >DEPENDENCIA</b> </ng-template>
+        <ng-template #direccionTpl> <b>DIRECCIÓN</b> </ng-template>
       </nz-card>
 
       <!-- Tarjeta de inscripción -->

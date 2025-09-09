@@ -27,10 +27,7 @@ import { LoginComponent } from "./components/login/login.component";
   encapsulation: ViewEncapsulation.None
 })
 export default class LayoutComponent implements OnInit {
-  // AfterViewInit
-  // ngAfterViewInit() {
-  //   this.createParticles(100);
-  // }
+
   ngOnInit() {
     this.createParticles(200);
   }

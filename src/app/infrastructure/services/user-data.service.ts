@@ -20,8 +20,12 @@ export class UserDataService {
   ) {}
 
   loadUserSpecificData(user: any) {
-    if(!user && !user.id && !user.selectedRole) return;
-    switch(user.selectedRole.id) {
+    if(!user && !user.id && !user.selectedRole && !user.selectedRole.role) {
+      console.error("Sin roles")
+      return;
+    }
+    const roleId = user.selectedRole.role.id
+    switch(roleId) {
       case 9:
         this._teacher.getInfoTeacher(user.person.id).pipe(
           tap((teacherInfo: any) => this.appStore.setTeacherInfo(teacherInfo.data)),

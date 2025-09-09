@@ -130,7 +130,7 @@ export class BandejaComponent implements OnInit {
   loadData(type: string): void {
     this.loading = true;
     const { user } = this.appStore.snapshot;
-    this.rolId = user.selectedRole.id;
+    this.rolId = user.selectedRole.role.id;
     this._highDemand.getActionFromRoles(this.rolId!).subscribe((response) => {
       this.actionRoles = response.data;
     });

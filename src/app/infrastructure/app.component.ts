@@ -71,7 +71,7 @@ export class AppComponent implements OnInit {
       if(user) {
         this.abilityService.loadAbilities(user.userId).subscribe(() => {
           const ability = this.abilityService.getAbility()
-          console.log("habilidades --> ", ability.rules)
+          // console.log("habilidades --> ", ability.rules)
           this.cdr.detectChanges();
         });
       }

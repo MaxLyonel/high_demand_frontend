@@ -87,7 +87,7 @@ export default class LayoutComponent implements OnInit{
     const { user } = this.appStore.snapshot
     this.user = user
     this.role = user.selectedRole
-    const buffer = Buffer.from(user.selectedRole.name, 'latin1')
+    const buffer = Buffer.from(user.selectedRole.role.name, 'latin1')
     this.roleName = iconv.decode(buffer, 'utf-8')
     this.cdr.detectChanges()
 

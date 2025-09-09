@@ -59,7 +59,6 @@ export class LoginComponent {
     setTimeout(() => {
       this.auth.performLogin({ username, password }).subscribe({
         next: () => {
-          // En app.component.ts o login.component.ts
           const { user } = this.appStore.snapshot
           this.abilityService.loadAbilities(user.userId).subscribe();
           if(user.roles.length > 1 ) {
