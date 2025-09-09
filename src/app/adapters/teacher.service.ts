@@ -13,7 +13,7 @@ export class TeacherAdapterService implements IManagerTeacher {
   getInfoTeacher(personId: number): Observable<Teacher> {
     const params = new HttpParams()
       .set('personId', personId)
-      .set('gestionId', 2025)
+      .set('gestionId', 2025) //TODO
 
     return this.http.get<Teacher>(`auth/info-teacher`, { params }).pipe(
       catchError(err => {

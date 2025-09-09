@@ -14,6 +14,9 @@ import { map, tap } from "rxjs";
 import { CommonModule } from "@angular/common";
 import * as iconv from 'iconv-lite'
 import { Buffer } from 'buffer'
+import { NzDrawerModule } from 'ng-zorro-antd/drawer';
+import { NzDescriptionsModule } from "ng-zorro-antd/descriptions";
+import { NzDividerModule } from "ng-zorro-antd/divider";
 
 
 @Component({
@@ -28,6 +31,9 @@ import { Buffer } from 'buffer'
     NzDropDownModule,
     NzAvatarModule,
     NzTypographyModule,
+    NzDrawerModule,
+    NzDescriptionsModule,
+    NzDividerModule,
     CommonModule
 ],
   templateUrl: './layout.component.html',
@@ -38,6 +44,8 @@ export default class LayoutComponent implements OnInit{
   user!: any
   role!: any
   roleName!: any
+
+  visibleProfile:boolean = false
 
 
   public router = inject(Router)
@@ -90,12 +98,17 @@ export default class LayoutComponent implements OnInit{
   }
 
   goToProfile() {
-    this.router.navigate(['/perfil']);
+    this.visibleProfile = true
+    // this.router.navigate(['/perfil']);
   }
 
   logout() {
     this.authService.logout().subscribe(() => {
       this.router.navigate(['/acceso']);
     });
+  }
+
+  close() {
+    this.visibleProfile = false
   }
 }

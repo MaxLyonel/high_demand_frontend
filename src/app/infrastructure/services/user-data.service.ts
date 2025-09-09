@@ -23,7 +23,7 @@ export class UserDataService {
     if(!user && !user.id && !user.selectedRole) return;
     switch(user.selectedRole.id) {
       case 9:
-        this._teacher.getInfoTeacher(user.personId).pipe(
+        this._teacher.getInfoTeacher(user.person.id).pipe(
           tap((teacherInfo: any) => this.appStore.setTeacherInfo(teacherInfo.data)),
           switchMap((teacherInfo:any) => {
             const { data } = teacherInfo

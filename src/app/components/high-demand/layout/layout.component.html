@@ -101,7 +101,7 @@
           <div nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click" nzPlacement="bottomRight">
             <nz-avatar
               [nzSrc]="'https://i.pravatar.cc/150?img=32'"
-              nzSize="default" 
+              nzSize="default"
               class="header-avatar">
             </nz-avatar>
           </div>
@@ -114,6 +114,27 @@
           </nz-dropdown-menu>
         </div>
       </div>
+      <nz-drawer
+        [nzVisible]="visibleProfile"
+        [nzWidth]="270"
+        [nzClosable]="false"
+        (nzOnClose)="close()"
+      >
+        <ng-container *nzDrawerContent>
+          <p>USUARIO PERFIL</p>
+          <!-- {{ user | json }} -->
+          <nz-descriptions [nzColumn]="2" nzTitle="Datos personales">
+            <nz-descriptions-item nzTitle="Nombre" [nzSpan]="2">{{user.person.name}}</nz-descriptions-item>
+            <nz-descriptions-item nzTitle="Apellidos" [nzSpan]="2">{{user.person.lastName}} {{user.person.mothersLastName}}</nz-descriptions-item>
+            <nz-descriptions-item nzTitle="Carnet" [nzSpan]="2">{{user.person.identityCard}}</nz-descriptions-item>
+          </nz-descriptions>
+          <nz-descriptions [nzColumn]="2" nzTitle="Datos adminstrativos">
+            <!-- <nz-descriptions-item nzTitle="Cargo" [nzSpan]="2">Programmer</nz-descriptions-item> -->
+            <nz-descriptions-item nzTitle="Rol" [nzSpan]="2">{{ roleName }}</nz-descriptions-item>
+            <nz-descriptions-item nzTitle="Departamento" [nzSpan]="2">AFX</nz-descriptions-item>
+          </nz-descriptions>
+        </ng-container>
+      </nz-drawer>
     </nz-header>
 
     <!-- Contenido principal con scroll independiente -->

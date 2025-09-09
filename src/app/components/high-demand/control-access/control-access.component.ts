@@ -220,6 +220,7 @@ export class AccessControlComponent implements OnInit {
   }
 
   showCreatePermisoModal(): void {
+    this.loadPermissions()
     this.isEditingPermission = false;
     this.currentPermission = {
       action: null,
