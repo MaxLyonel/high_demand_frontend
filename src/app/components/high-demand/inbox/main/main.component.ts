@@ -5,7 +5,7 @@ import {
   NzTableModule,
 } from 'ng-zorro-antd/table';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalLegacyAPI, NzModalService } from 'ng-zorro-antd/modal';
+import { NzModalLegacyAPI, NzModalService, NzModalContentDirective, NzModalModule } from 'ng-zorro-antd/modal';
 import { NzCardComponent } from 'ng-zorro-antd/card';
 import { NzRadioComponent, NzRadioGroupComponent } from 'ng-zorro-antd/radio';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -19,6 +19,8 @@ import IHighDemand from '../../../../domain/ports/i-high-demand';
 import { AppStore } from '../../../../infrastructure/store/app.store';
 
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzListModule } from 'ng-zorro-antd/list';
+import { CommonModule } from '@angular/common';
 
 interface Institution {
   id: number;
@@ -49,7 +51,7 @@ interface HighDemand {
   registrationStatus: string;
   inbox: boolean;
   rol: Rol;
-  course: any;
+  courses: any;
 }
 
 @Component({
@@ -57,6 +59,7 @@ interface HighDemand {
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.less'],
   imports: [
+    CommonModule,
     FormsModule,
     NzCardComponent,
     NzRadioGroupComponent,
@@ -69,7 +72,10 @@ interface HighDemand {
     NzIconModule,
     NzTypographyModule,
     NzToolTipModule,
-  ],
+    NzModalModule,
+    NzListModule,
+    NzModalContentDirective
+],
   providers: [NzModalService],
 })
 export class BandejaComponent implements OnInit {
@@ -96,6 +102,10 @@ export class BandejaComponent implements OnInit {
   actionRoles: Array<any> = [];
   motivo: any
 
+  isSeeVisibleCourse: boolean = false
+  courses: any
+  highDemandSelected:any
+
   constructor(
     private message: NzMessageService,
     private modal: NzModalService,
@@ -104,6 +114,17 @@ export class BandejaComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadData(this.activeTray);
+  }
+
+  get filteredHighDemands(): HighDemand[] {
+    if (!this.searchValue.trim()) {
+      return this.highDemands;
+    }
+    const search = this.searchValue.toLowerCase();
+    return this.highDemands.filter(hd =>
+      hd.institution?.name?.toLowerCase().includes(search) ||
+      hd.institution?.id?.toString().includes(search) // suponiendo que el "SIE" es el id de la institución
+    );
   }
 
   loadData(type: string): void {
@@ -267,11 +288,24 @@ export class BandejaComponent implements OnInit {
   }
 
   verCursos(unidad: HighDemand): void {
-    this.modal.info({
-      nzTitle: `Cursos de ${unidad.institution.name}`,
-      nzContent: `La unidad educativa tiene ${unidad.course} cursos registrados.`,
-      nzOkText: 'Cerrar',
-    });
+    this.isSeeVisibleCourse = true
+    this.courses = this.searchCourses(unidad.institution.id)
+  }
+
+  handleSeeCourseCancel() {
+    this.isSeeVisibleCourse = false
+    this.highDemandSelected = null
+  }
+
+  handleSeeCourseOk() {
+    this.isSeeVisibleCourse = false
+    this.highDemandSelected = null
+  }
+
+  searchCourses(institutionId: number) {
+    const highDemandFound = this.highDemands.find((hd:HighDemand) => hd.institution.id == institutionId)
+    this.highDemandSelected = highDemandFound
+    return highDemandFound?.courses
   }
 
   // Métodos para cambiar entre bandejas

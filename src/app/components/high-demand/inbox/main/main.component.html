@@ -23,7 +23,7 @@
       <button nz-button nzType="primary" nzSearch><i nz-icon nzType="search"></i></button>
     </ng-template>
 
-  <nz-space>
+  <!-- <nz-space>
       <nz-tag
         *nzSpaceItem
         nzMode="checkable"
@@ -41,12 +41,12 @@
       >
         Filtro Flujo
       </nz-tag>
-  </nz-space>
+  </nz-space> -->
   </div>
 
   <nz-table
     #filterTable
-    [nzData]="highDemands"
+    [nzData]="filteredHighDemands"
     [nzLoading]="loading"
     [nzTotal]="total"
     [nzPageSize]="pageSize"
@@ -58,6 +58,7 @@
     nzShowSizeChanger
     class="custom-table"
   >
+    <!-- [nzData]="highDemands" -->
     <thead>
       <tr class="header-row">
         <th class="header-cell" >Unidad Educativa</th>
@@ -84,7 +85,7 @@
             nzSize="small"
             (click)="verCursos(data)"
           >
-            {{ data.course }} cursos
+            {{ data.courses.length }} cursos
           </button>
         </td>
         <td>
@@ -170,4 +171,30 @@
 
     </tbody>
   </nz-table>
+
+  <nz-modal
+    nzTitle="Cursos de la Unidad Educativa"
+    [(nzVisible)]="isSeeVisibleCourse"
+    (nzOnCancel)="handleSeeCourseCancel()"
+    (nzOnOk)="handleSeeCourseOk()"
+  >
+    <ng-container *nzModalContent>
+      <p>La unidad educativa {{highDemandSelected.institution.name}} tiene {{courses.length + 1}} cursos registrados.</p>
+      <nz-list
+        [nzDataSource]=""
+        nzBordered
+        nzSize="small"
+        class="mt-3"
+      >
+        @for(course of courses; track course.id) {
+          <nz-list-item>
+            {{ course.level.name }} {{ course.grade.name }} {{ course.parallel.name }}
+            <nz-tag [nzColor]="'success'">
+            Cupo: {{ course.totalQuota }}
+            </nz-tag>
+          </nz-list-item>
+        }
+      </nz-list>
+    </ng-container>
+  </nz-modal>
 </nz-card>
