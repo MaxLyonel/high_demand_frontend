@@ -124,7 +124,7 @@ export default class FormularioInscripcionComponent implements OnInit{
       postulantTelephoneResidence: [''],
 
       // Sección V: Hermanos en la misma unidad
-      postulantSiblings: this.fb.array([]),
+      postulantSiblings: this.fb.array([], [Validators.required, Validators.minLength(1)]),
 
       // Sección VI: Datos de Pre-Inscripción
       justification: [1, Validators.required],
@@ -314,7 +314,6 @@ export default class FormularioInscripcionComponent implements OnInit{
       startWith(this.form.get('justification')?.value)
     ).subscribe((value) => {
       // postulante
-      console.log("justificativo id: ", value)
       const postulantMunicipalityResidence = this.form.get('postulantMunicipalityResidence')
       const postulantAreaResidence = this.form.get('postulantAreaResidence')
       const postulantAddressResidence = this.form.get('postulantAddressResidence')
@@ -325,6 +324,15 @@ export default class FormularioInscripcionComponent implements OnInit{
       const guardianAreaWork = this.form.get('guardianAreaWork')
       const guardianAddressJob = this.form.get('guardianAddressJob')
       const guardianPhoneJob = this.form.get('guardianPhoneJob')
+
+      const postulantSiblings = this.form.get('postulantSiblings')
+      if(value === 1) {
+        postulantSiblings?.setValidators([Validators.required, Validators.minLength(1)])
+      } else {
+        postulantSiblings?.clearValidators()
+      }
+      postulantSiblings?.updateValueAndValidity()
+
       if(value === 2) {
         postulantMunicipalityResidence?.setValidators([Validators.required])
         postulantAreaResidence?.setValidators([Validators.required])
@@ -335,7 +343,6 @@ export default class FormularioInscripcionComponent implements OnInit{
         postulantAreaResidence?.clearValidators()
         postulantAddressResidence?.clearValidators()
         postulantTelephoneResidence?.clearValidators()
-
       }
       postulantMunicipalityResidence?.updateValueAndValidity();
       postulantAreaResidence?.updateValueAndValidity();
@@ -375,6 +382,10 @@ export default class FormularioInscripcionComponent implements OnInit{
       } else if (control instanceof FormGroup) {
         this.showInvalidFields(control); // Si hay grupos anidados, recorrerlos también
       } else if (control instanceof FormArray) {
+        control.markAsTouched({ onlySelf: true })
+        if(control.invalid) {
+          console.log(`FormArray inválido: ${field}`)
+        }
         control.controls.forEach((group) => {
           if (group instanceof FormGroup) {
             this.showInvalidFields(group);
@@ -409,13 +420,24 @@ export default class FormularioInscripcionComponent implements OnInit{
         if(!selectedInstitution) return
         const sie = selectedInstitution.educationalInstitutionId
         this._preRgistration.searchStudent(sie, rude).subscribe((response) => {
-          this.rude = ''
-          this.studentBrother = response.data
+          const brother = response.data;
+          if(!brother) return;
+          const siblingGroup = this.fb.group({
+            codeRude: [brother.codigo_rude, Validators.required],
+            name: [`${brother.nombre} ${brother.paterno} ${brother.materno}`],
+            level: [brother?.nivel_educacion || ''],
+            grade: [brother.anio_escolaridad || '']
+          })
+          this.postulantSiblingsArray.push(siblingGroup)
+          this.form.get('postulantSiblings')?.updateValueAndValidity()
         })
       }
     });
   }
 
+  get postulantSiblingsArray(): FormGroup[] {
+    return (this.form.get('postulantSiblings') as FormArray<FormGroup>).controls;
+  }
 
   // getters y setters
   get justification(): number {

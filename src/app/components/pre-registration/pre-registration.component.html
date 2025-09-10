@@ -39,7 +39,7 @@
                   </nz-form-item>
                 </div>
               </div>
-  
+
               <div nz-row nzGutter="16">
                 <div nz-col nzSpan="12">
                   <nz-form-item>
@@ -58,7 +58,7 @@
                   </nz-form-item>
                 </div>
               </div>
-  
+
               <div nz-row nzGutter="16">
                 <div nz-col nzSpan="6">
                   <nz-form-item>
@@ -86,7 +86,7 @@
                 </div>
               </div>
             </nz-card>
-  
+
             <!-- Sección II: Datos de Pre-Inscripción -->
             <nz-card nzTitle="II. DATOS DE PRE INSCRIPCIÓN" [nzBordered]="false" class="section-card">
               <div nz-row nzGutter="16">
@@ -145,7 +145,7 @@
                   </nz-form-item>
                 </div>
               </div>
-  
+
               <div nz-row>
                 <div nz-col nzSpan="24">
                   <nz-form-item>
@@ -159,67 +159,56 @@
                     </nz-form-control>
                   </nz-form-item>
                 </div>
-  
               </div>
-  
               <div nz-row nzGutter="16">
-                <!-- <div nz-col nzSpan="12">
-                  <nz-form-item>
-                    <nz-form-label nzRequired>Lugar y Fecha</nz-form-label>
-                    <nz-form-control>
-                      <input nz-input formControlName="placeDate" readonly>
-                    </nz-form-control>
-                  </nz-form-item>
-                </div> -->
-                <!-- <div nz-col nzSpan="12">
-                  <nz-form-item>
-                    <nz-form-label>Firma del padre/madre o tutor(s)</nz-form-label>
-                    <nz-form-control>
-                      <div class="signature-placeholder"></div>
-                    </nz-form-control>
-                  </nz-form-item>
-                </div> -->
               </div>
-  
-              <!-- <div nz-row>
-                <div nz-col nzSpan="24">
-                  <nz-form-item>
-                    <nz-form-label>Sello y firma del Director(s) y/o Responsable de la Unidad Educativa</nz-form-label>
-                    <nz-form-control>
-                      <div class="signature-placeholder"></div>
-                    </nz-form-control>
-                  </nz-form-item>
-                </div>
-              </div> -->
             </nz-card>
-  
             <!-- Sección : Hermanos en la misma unidad -->
             @if(justification === 1) {
               <nz-card nzTitle="HERMANA(S) O HERMANO(S) EN ETAPA DE ESCOLARIDAD EN LA UNIDAD EDUCATIVA A LA QUE POSTULA EN LA PRESENTE GESTIÓN" [nzBordered]="false" class="section-card">
                 <div nz-row>
                   <div nz-col nzSpan="24">
                     <nz-alert nzShowIcon nzType="warning" nzMessage="Solo llene en caso de tener hermanas/os en la Unidad Educativa que postula" ></nz-alert>
-                    <nz-table #hermanosTable [nzData]="[]" nzSize="small" [nzShowPagination]="false">
-                      <thead>
-                        <tr>
-                          <th>Código Rude</th>
-                          <th>Nombre</th>
-                          <th>Nivel de educación</th>
-                          <th>Año de escolaridad</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          @if(!studentBrother) {
-                            <td colspan="4" class="text-center">No hay hermanos registrados</td>
-                          } @else {
-                            <td class="text-center">{{ studentBrother.codigo_rude }}</td>
-                            <td class="text-center">{{ studentBrother.nombre }} {{ studentBrother.paterno }} {{ studentBrother.materno }} </td>
-                            <!-- <td colspan="2" class="text-center">Aún sin dato</td> -->
-                          }
-                        </tr>
-                      </tbody>
-                    </nz-table>
+                    <nz-form-item>
+                      <nz-form-label [nzRequired]="true" [nzSpan]="24">Hermanos</nz-form-label>
+                      <nz-form-control
+                        [nzValidateStatus]="form.get('postulantSiblings')!"
+                        nzErrorTip="Debe agregar al menos un hermano"
+                      >
+                        <nz-table
+                          #hermanosTable
+                          [nzData]="postulantSiblingsArray"
+                          nzSize="small"
+                          [nzShowPagination]="false"
+                        >
+                          <thead>
+                            <tr>
+                              <th>Código Rude</th>
+                              <th>Nombre</th>
+                              <th>Nivel de educación</th>
+                              <th>Año de escolaridad</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            @if(postulantSiblingsArray.length === 0) {
+                              <tr>
+                                <td colspan="4" class="text-center">No hay hermanos registrados</td>
+                              </tr>
+                            } @else {
+                              @for(sibling of postulantSiblingsArray; track $index; let i = $index) {
+                                <tr [formGroup]="sibling">
+                                  <td class="text-center">{{ sibling.value.codeRude }}</td>
+                                  <td class="text-center">{{ sibling.value.name }}</td>
+                                  <td class="text-center">{{ sibling.value.level }}</td>
+                                  <td class="text-center">{{ sibling.value.grade }}</td>
+                                </tr>
+                              }
+                            }
+                          </tbody>
+                        </nz-table>
+                      </nz-form-control>
+                    </nz-form-item>
+
                     <button nz-button nzType="dashed" nzSize="small" nzBlock (click)="addBrother(rudeTpl)">
                       <i nz-icon nzType="plus"></i> Agregar hermano
                     </button>
@@ -238,7 +227,7 @@
                 </div>
               </nz-card>
             }
-  
+
             @if(justification === 2) {
               <!-- Sección IV: Dirección del Estudiante -->
               <nz-card nzTitle="DIRECCIÓN ACTUAL DE RESIDENCIA DE LA O EL ESTUDIANTE" [nzBordered]="false" class="section-card">
@@ -270,7 +259,7 @@
                     </nz-form-item>
                   </div>
                 </div>
-  
+
                 <div nz-row nzGutter="16">
                   <div nz-col nzSpan="16">
                     <nz-form-item>
@@ -291,12 +280,9 @@
                 </div>
               </nz-card>
             }
-  
+
             @if(justification === 3) {
               <nz-card nzTitle="DIRECCIÓN ACTUAL DEL TRABAJO DEL PADRE, MADRE Y/O TUTOR" [nzBordered]="false" class="section-card">
-    
-                <!-- <nz-divider nzText="DIRECCIÓN ACTUAL DEL TRABAJO DEL PADRE, MADRE Y/O TUTOR" nzOrientation="center"></nz-divider> -->
-    
                 <div nz-row nzGutter="16">
                   <div nz-col nzSpan="12">
                     <nz-form-item>
@@ -325,7 +311,7 @@
                     </nz-form-item>
                   </div>
                 </div>
-    
+
                 <div nz-row nzGutter="16">
                   <div nz-col nzSpan="12">
                     <nz-form-item>
@@ -344,7 +330,7 @@
                     </nz-form-item>
                   </div>
                 </div>
-    
+
                 <div nz-row nzGutter="16">
                   <div nz-col nzSpan="12">
                     <nz-form-item>
@@ -355,17 +341,9 @@
                     </nz-form-item>
                   </div>
                 </div>
-    
-                <!-- <div nz-row>
-                  <div nz-col nzSpan="24">
-                    <nz-form-item>
-                      <nz-form-label>DIBUJE EL CROQUIS DE UBICACIÓN DEL TRABAJO ACTUAL DEL PADRE, MADRE Y/O TUTOR EN EL REVERSO DE LA HOJA</nz-form-label>
-                    </nz-form-item>
-                  </div>
-                </div> -->
               </nz-card>
             }
-  
+
             <!-- Sección III: Datos del Estudiante -->
             <nz-card nzTitle="III. DATOS DE LA O EL ESTUDIANTE" [nzBordered]="false" class="section-card">
               <div nz-row nzGutter="16">
@@ -407,7 +385,7 @@
                   </nz-form-item>
                 </div>
               </div>
-  
+
               <div nz-row nzGutter="16">
                 <div nz-col nzSpan="16">
                   <nz-form-item>
@@ -437,7 +415,7 @@
                   </nz-form-item>
                 </div>
               </div>
-  
+
               <div nz-row nzGutter="16">
                 <div nz-col nzSpan="8">
                   <nz-form-item>
@@ -456,7 +434,7 @@
                   </nz-form-item>
                 </div>
               </div>
-  
+
               <div nz-row nzGutter="16">
                 <!-- <div nz-col nzSpan="12">
                   <nz-form-item>
@@ -475,8 +453,7 @@
                 </div> -->
               </div>
             </nz-card>
-  
-  
+
             <!-- Sección II: Datos del Padre/Madre/Tutor -->
             <nz-card nzTitle="IV. DATOS DEL PADRE, MADRE O TUTOR(a) DE LA O EL ESTUDIANTE" [nzBordered]="false" class="section-card">
               <div nz-row nzGutter="16">
@@ -518,7 +495,7 @@
                   </nz-form-item>
                 </div>
               </div>
-  
+
               <div nz-row nzGutter="16">
                 <div nz-col nzSpan="16">
                   <nz-form-item>
@@ -576,8 +553,7 @@
                 </div>
               </div>
             </nz-card>
-  
-  
+
             <div nz-row nzJustify="center" class="form-actions">
               <!-- [disabled]="form.invalid" -->
               <button nz-button nzType="primary" nzSize="large" >Pre Inscribir</button>
