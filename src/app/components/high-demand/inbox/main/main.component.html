@@ -61,6 +61,7 @@
     <!-- [nzData]="highDemands" -->
     <thead>
       <tr class="header-row">
+        <th class="header-cell" >Acciones</th>
         <th class="header-cell" >Unidad Educativa</th>
         <th class="header-cell" >SIE</th>
         <th class="header-cell" >Usuario</th>
@@ -68,39 +69,11 @@
         <th class="header-cell" >Detalle</th>
         <th class="header-cell" >Estado inscripcion</th>
         <th class="header-cell" >Estado Flujo</th>
-        <th class="header-cell" >Acciones</th>
       </tr>
     </thead>
     <tbody>
       @for(data of filterTable.data; track data) {
       <tr >
-        <td>{{ data.institution.name }}</td>
-        <td>{{ data.institution.id }}</td>
-        <td>{{ data.user.username }}</td>
-        <td>{{ data.rol.name }}</td>
-        <td>
-          <button
-            nz-button
-            nzType="link"
-            nzSize="small"
-            (click)="verCursos(data)"
-          >
-            {{ data.courses.length }} cursos
-          </button>
-        </td>
-        <td>
-          <nz-tag
-            [nzColor]="data.registrationStatus === 'APROBADO' ? 'success' : data.registrationStatus === 'RECHAZADO' ? 'error' : 'warning'">
-            {{ data.registrationStatus }}
-          </nz-tag>
-        </td>
-        <td>
-          <nz-tag
-            [nzColor]="data.workflowState.id === 1 ? 'success' : 'warning'"
-          >
-            {{ data.workflowState.name }}
-          </nz-tag>
-        </td>
         <td>
           <nz-space nzSize="small">
             @if(data.inbox === false) {
@@ -124,7 +97,7 @@
                   nzType="primary"
                   nzShape="circle"
                   (click)="finalize(data)"
-                  nz-tooltip="Registrar"
+                  nz-tooltip="Publicar"
                   [disabled]="data.registrationStatus === 'RECHAZADO' || data.registrationStatus === 'APROBADO'"
                 >
                   <i nz-icon nzType="check" ></i>
@@ -151,7 +124,7 @@
                   nzSize="small"
                   nzShape="circle"
                   (click)="actionRole.action === 'DERIVAR' ? derive(data, actionRole.nextState) : back(data, actionRole.nextState, motivoTpl)"
-                  [nz-tooltip]="actionRole.action"
+                  [nz-tooltip]="actionRole.action | lowercase"
                   [disabled]="data.registrationStatus === 'RECHAZADO' || data.registrationStatus === 'APROBADO'"
                 >
                   <i nz-icon [nzType]="actionRole.action === 'DERIVAR' ? 'send' : 'reload'"></i>
@@ -165,6 +138,33 @@
               </div>
             </ng-template>
           </nz-space>
+        </td>
+        <td>{{ data.institution.name }}</td>
+        <td>{{ data.institution.id }}</td>
+        <td>{{ data.user.username }}</td>
+        <td>{{ data.rol.name }}</td>
+        <td>
+          <button
+            nz-button
+            nzType="link"
+            nzSize="small"
+            (click)="verCursos(data)"
+          >
+            {{ data.courses.length }} cursos
+          </button>
+        </td>
+        <td>
+          <nz-tag
+            [nzColor]="data.registrationStatus === 'APROBADO' ? 'success' : data.registrationStatus === 'RECHAZADO' ? 'error' : 'warning'">
+            {{ data.registrationStatus }}
+          </nz-tag>
+        </td>
+        <td>
+          <nz-tag
+            [nzColor]="data.workflowState.id === 1 ? 'success' : 'warning'"
+          >
+            {{ data.workflowState.name }}
+          </nz-tag>
         </td>
       </tr>
       }

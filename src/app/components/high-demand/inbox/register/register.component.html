@@ -14,12 +14,11 @@
     <thead>
       <tr class="header-row">
         <th rowspan="2" class="header-cell student-section" nzWidth="50px">N°</th>
-        <th colspan="7" class="header-cell student-section">Datos del Estudiante</th>
-        <th colspan="4" class="header-cell student-section">Datos de la Inscripción</th>
         <th rowspan="2" class="header-cell student-section">Acciones</th>
+        <th colspan="6" class="header-cell student-section">Datos del Estudiante</th>
+        <th colspan="4" class="header-cell student-section">Datos de la Preinscripción</th>
       </tr>
       <tr class="subheader-row">
-        <th class="subheader-cell">Código RUDE</th>
         <th class="subheader-cell">Carnet Identidad</th>
         <th class="subheader-cell">Ap. Paterno</th>
         <th class="subheader-cell">Ap. Materno</th>
@@ -29,24 +28,13 @@
         <th class="subheader-cell">Año escolaridad</th>
         <th class="subheader-cell">Fecha registro</th>
         <th class="subheader-cell">Estado</th>
-        <th class="subheader-cell">Ver Apoderado</th>
+        <th class="subheader-cell expand-cell">Ver Apoderado</th>
       </tr>
     </thead>
     <tbody>
       @for(data of groupingTable.data; track data; let i = $index) {
         <tr class="data-row" [ngClass]="{'row-invalidated': data.state === 'INVALIDADO'}">
           <td class="data-cell number-cell">{{ i+1 }}</td>
-          <td class="data-cell">{{ data.postulant.codeRude ?? 'NUEVO' }}</td>
-          <td class="data-cell">{{ data.postulant.identityCard ?? 'SIN CARNET'}}</td>
-          <td class="data-cell">{{ data.postulant.lastName }}</td>
-          <td class="data-cell">{{ data.postulant.mothersLastName }}</td>
-          <td class="data-cell">{{ data.postulant.name }}</td>
-          <td class="data-cell"><nz-tag [nzColor]="data.postulant.gender === 'M' ? 'blue' : 'pink'">{{ data.postulant.gender }}</nz-tag></td>
-          <td class="data-cell">{{ data.highDemandCourse.level.name }}</td>
-          <td class="data-cell">{{ data.highDemandCourse.grade.name }}</td>
-          <td class="data-cell">{{ data.createdAt }}</td>
-          <td class="data-cell"><nz-tag [nzColor]="data.state === 'INVALIDADO' ? 'red' : 'blue'">{{ data.state }}</nz-tag></td>
-          <td [(nzExpand)]="data.expand"></td>
           <td class="data-cell actions-cell">
             <div class="action-buttons">
               <button
@@ -63,8 +51,18 @@
               </button>
             </div>
           </td>
+          <td class="data-cell">{{ data.postulant.identityCard ?? 'SIN CARNET'}}</td>
+          <td class="data-cell">{{ data.postulant.lastName }}</td>
+          <td class="data-cell">{{ data.postulant.mothersLastName }}</td>
+          <td class="data-cell">{{ data.postulant.name }}</td>
+          <td class="data-cell"><nz-tag [nzColor]="data.postulant.gender === 'M' ? 'blue' : 'pink'">{{ data.postulant.gender }}</nz-tag></td>
+          <td class="data-cell">{{ data.highDemandCourse.level.name }}</td>
+          <td class="data-cell">{{ data.highDemandCourse.grade.name }}</td>
+          <td class="data-cell">{{ data.createdAt | date:'dd/MM/yyyy HH:mm'}}</td>
+          <td class="data-cell"><nz-tag [nzColor]="data.state === 'INVALIDADO' ? 'red' : 'blue'">{{ data.state }}</nz-tag></td>
+          <td [(nzExpand)]="data.expand"  class="action-expand"></td>
         </tr>
-        <tr [nzExpand]="data.expand" >
+        <tr [nzExpand]="data.expand" class="expand-cell">
           <nz-table #innerTable [nzData]="[data.representative]" nzSize="small" [nzShowPagination]="false">
             <thead>
               <tr>

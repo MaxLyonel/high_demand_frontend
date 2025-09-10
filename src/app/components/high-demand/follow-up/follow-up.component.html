@@ -72,6 +72,7 @@
         <thead>
           <tr class="header-row">
             <th class="header-cell" nzWidth="40px">N°</th>
+            <th class="header-cell" nzWidth="100px">Acciones</th>
             <th class="header-cell" nzWidth="200px">Unidad Educativa</th>
             <th class="header-cell" >SIE</th>
             <th class="header-cell" >Responsable</th>
@@ -80,34 +81,12 @@
             <th class="header-cell" >Estado Solicitud</th>
             <th class="header-cell" >Última Actualización</th>
             <th class="header-cell" >Observación</th>
-            <th class="header-cell" nzWidth="100px">Acciones</th>
           </tr>
         </thead>
         <tbody>
           @for(request of trackingTable.data; track request.id; let i = $index; let last = $last) {
             <tr>
               <td>{{ i + 1}}</td>
-              <td>{{ request.educationalInstitutionName }}</td>
-              <td>{{ request.educationalInstitutionId }}</td>
-              <td>{{ request.userName }}</td>
-              <td>
-                <nz-tag
-                  [nzColor]="request.workflowState === 'ENVIADO' ? 'success' : 'warning'"
-                >
-                  {{ request.workflowState }}
-                </nz-tag>
-              </td>
-              <td>{{ request.rol }}</td>
-              <td>
-                <nz-tag [nzColor]="request.registrationStatus === RegistrationStatus.APPROVED ? 'success' :
-                  (request.registrationStatus === RegistrationStatus.REJECTED || request.registrationStatus === RegistrationStatus.CANCELED) ? 'error' :
-                  request.registrationStatus === RegistrationStatus.OBSERVED ? 'warning' : 'processing'"
-                >
-                  {{ request.registrationStatus }}
-                </nz-tag>
-              </td>
-              <td>{{ request.updatedAt | date:'dd/MM/yyyy HH:mm' }}</td>
-              <td>{{ request.observation || 'Sin observación' }}</td>
               <td>
                 <div class="acciones-cell">
                   @if(last && request.workflowState === 'ENVIADO' && request.registrationStatus === 'REGISTRADO') {
@@ -146,6 +125,27 @@
                   }
                 </div>
               </td>
+              <td>{{ request.educationalInstitutionName }}</td>
+              <td>{{ request.educationalInstitutionId }}</td>
+              <td>{{ request.userName }}</td>
+              <td>
+                <nz-tag
+                  [nzColor]="request.workflowState === 'ENVIADO' ? 'success' : 'warning'"
+                >
+                  {{ request.workflowState }}
+                </nz-tag>
+              </td>
+              <td>{{ request.rol }}</td>
+              <td>
+                <nz-tag [nzColor]="request.registrationStatus === RegistrationStatus.APPROVED ? 'success' :
+                  (request.registrationStatus === RegistrationStatus.REJECTED || request.registrationStatus === RegistrationStatus.CANCELED) ? 'error' :
+                  request.registrationStatus === RegistrationStatus.OBSERVED ? 'warning' : 'processing'"
+                >
+                  {{ request.registrationStatus }}
+                </nz-tag>
+              </td>
+              <td>{{ request.updatedAt | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td>{{ request.observation || 'Sin observación' }}</td>
             </tr>
           }
         </tbody>

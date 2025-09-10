@@ -30,7 +30,7 @@
 header {
     text-align: center;
     margin-bottom: 40px;
-    padding: 20px;
+    padding: 15px;
 }
 
 h1 {
@@ -38,6 +38,13 @@ h1 {
     color: @primary-dark;
     margin-bottom: 10px;
     text-shadow: 0 0 10px rgba(@primary-dark, 0.5);
+}
+
+header .logo {
+    display: block;
+    margin: 0 auto 0px; /* centrado + espacio debajo */
+    max-width: 430px;   /* ajusta tamaño máximo */
+    height: auto;
 }
 
 .subtitle {
@@ -75,6 +82,7 @@ h1 {
     display: flex;
     align-items: center;
     gap: 10px;
+    justify-content: center;
 }
 .card p {
     color: #474b48;

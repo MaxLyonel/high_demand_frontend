@@ -323,4 +323,8 @@ export class PostulationComponent implements OnInit {
     });
   }
 
+  deleteSelection(index: any) {
+    this.listCourse.splice(index, 1)
+  }
+
 }

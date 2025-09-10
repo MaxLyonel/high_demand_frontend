@@ -104,6 +104,7 @@
     <thead>
       <tr class="header-row">
         <th class="header-cell" nzWidth="60px">N°</th>
+        <th class="header-cell" nzWidth="80px">Acción</th>
         <th class="header-cell" nzWidth="120px">Ap. Paterno</th>
         <th class="header-cell" nzWidth="120px">Ap. Materno</th>
         <th class="header-cell" nzWidth="150px">Nombres</th>
@@ -112,13 +113,20 @@
         <th class="header-cell" nzWidth="100px">Nivel</th>
         <th class="header-cell" nzWidth="140px">Año escolaridad</th>
         <th class="header-cell" nzWidth="140px">Paralelo</th>
-        <th class="header-cell" nzWidth="80px">Acción</th>
       </tr>
     </thead>
     <tbody>
       @for(postulant of postulantTable.data; track $index) {
         <tr>
           <td>{{ $index + 1 }}</td>
+          <td>
+            <label
+              nz-checkbox
+              [ngModel]="postulant.selected"
+              [nzDisabled]="postulant.state === 'ACEPTADO'"
+              (ngModelChange)="onToggleStudent($event, postulant)"
+            ></label>
+          </td>
           <td>{{ postulant.postulant.lastName }}</td>
           <td>{{ postulant.postulant.mothersLastName }}</td>
           <td>{{ postulant.postulant.name }}</td>
@@ -131,14 +139,6 @@
           <td>{{ postulant.highDemandCourse.level.name }}</td>
           <td>{{ postulant.highDemandCourse.grade.name }}</td>
           <td>{{ postulant.highDemandCourse.parallel.name }}</td>
-          <td>
-            <label
-              nz-checkbox
-              [ngModel]="postulant.selected"
-              [nzDisabled]="postulant.state === 'ACEPTADO'"
-              (ngModelChange)="onToggleStudent($event, postulant)"
-            ></label>
-          </td>
         </tr>
       }
     </tbody>

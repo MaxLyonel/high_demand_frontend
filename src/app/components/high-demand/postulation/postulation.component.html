@@ -181,11 +181,23 @@
                 <nz-list-item class="course-item">
                   <div class="course-content">
                     <nz-list-item-meta [nzDescription]="item.name"></nz-list-item-meta>
-                      <label
+                    <!-- aca un botón -->
+                      <!-- <label
                         nz-checkbox
                         [(ngModel)]="item.checked"
                         (ngModelChange)="onCheckboxChange(item, $event)"
-                      ></label>
+                      ></label> -->
+                      <button
+                        nz-button
+                        nzDanger
+                        nzType="primary"
+                        nzShape="circle"
+                        nzSize="small"
+                        (click)="deleteSelection($index)"
+                        [disabled]="hasSavedCourses || selectedCourses().length === 0"
+                      >
+                        <nz-icon nzType="delete" />
+                      </button>
                   </div>
                 </nz-list-item>
               }
