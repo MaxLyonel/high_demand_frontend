@@ -54,6 +54,7 @@ export default class FormularioInscripcionComponent implements OnInit{
   form: FormGroup;
   today = new Date();
 
+  departments:any = [];
   institutions:any = [];
   originalInstitutions:any = [];
   relationships:any = [];
@@ -270,6 +271,9 @@ export default class FormularioInscripcionComponent implements OnInit{
     this._preRgistration.getCriterias().subscribe((response) => {
       this.criterias = response.data
     })
+    this._preRgistration.getDepartments().subscribe((response) => {
+      this.departments = response.data
+    })
   }
 
   prepareData() {
@@ -421,12 +425,13 @@ export default class FormularioInscripcionComponent implements OnInit{
         const sie = selectedInstitution.educationalInstitutionId
         this._preRgistration.searchStudent(sie, rude).subscribe((response) => {
           const brother = response.data;
+          console.log("hermano obtenido: ", brother)
           if(!brother) return;
           const siblingGroup = this.fb.group({
             codeRude: [brother.codigo_rude, Validators.required],
             name: [`${brother.nombre} ${brother.paterno} ${brother.materno}`],
-            level: [brother?.nivel_educacion || ''],
-            grade: [brother.anio_escolaridad || '']
+            level: [brother?.nivel || ''],
+            grade: [`${brother.grado} ${brother.paralelo}` || '']
           })
           this.postulantSiblingsArray.push(siblingGroup)
           this.form.get('postulantSiblings')?.updateValueAndValidity()

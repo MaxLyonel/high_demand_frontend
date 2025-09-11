@@ -34,5 +34,7 @@ export default interface IManagerPreRegistration {
   getListAccepted(): Observable<any>
   // ** obtener lista de niveles **
   getListLevels(): Observable<any>
+  // ** obtener lista de departamentos **
+  getListDepartments(): Observable<any>;
 
 }

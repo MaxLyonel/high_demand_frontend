@@ -33,6 +33,8 @@ export default interface IPreRegistration {
   // ** exopner funcionalidad para obtener la lista de pre inscripciones aceptadas **
   getListAccpeted(): Observable<any>;
   // ** exponer funcionalidad para obtener la lista de niveles **
-  getLevels(): Observable<any>
+  getLevels(): Observable<any>;
+  // ** exponer funcionalidad para obtener la lista de departamentos **
+  getDepartments(): Observable<any>;
 
 }

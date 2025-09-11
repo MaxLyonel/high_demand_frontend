@@ -161,4 +161,13 @@ export class PreRegistrationAdapterService implements IManagerPreRegistration {
     )
   }
 
+  getListDepartments(): Observable<any> {
+    return this.http.get(`catalogs/list-departments`).pipe(
+      catchError(err => {
+        console.error("Error al obtener departamentos")
+        return throwError(() => err)
+      })
+    )
+  }
+
 }

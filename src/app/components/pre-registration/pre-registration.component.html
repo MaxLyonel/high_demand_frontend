@@ -12,6 +12,23 @@
             <!-- Sección I: Datos de la Unidad Educativa -->
             <nz-card nzTitle="I. DATOS DE LA UNIDAD EDUCATIVA A LA QUE POSTULA" [nzBordered]="false" class="section-card">
               <div nz-row nzGutter="16">
+                <div nz-col nzSpan="8">
+                  <nz-form-item>
+                    <nz-form-label nzRequired>DEPARTAMENTO</nz-form-label>
+                    <nz-form-control>
+                      <nz-select
+                        [nzDisabled]="false"
+                        nzAllowClear
+                        nzShowSearch
+                        nzPlaceHolder="Seleccione el departamento de UE"
+                      >
+                        @for(department of departments; track department) {
+                          <nz-option [nzValue]="department" [nzLabel]="department.place"></nz-option>
+                        }
+                      </nz-select>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
                 <div nz-col nzSpan="12">
                   <nz-form-item>
                     <nz-form-label nzRequired>UNIDAD EDUCATIVA</nz-form-label>
@@ -30,7 +47,7 @@
                     </nz-form-control>
                   </nz-form-item>
                 </div>
-                <div nz-col nzSpan="12">
+                <div nz-col nzSpan="4">
                   <nz-form-item>
                     <nz-form-label>SIE</nz-form-label>
                     <nz-form-control>

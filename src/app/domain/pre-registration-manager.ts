@@ -80,4 +80,9 @@ export default class PreRegistrationManager implements IPreRegistration {
     return result
   }
 
+  getDepartments(): Observable<any> {
+    const result = this._preRegistrationAdapter.getListDepartments()
+    return result
+  }
+
 }
