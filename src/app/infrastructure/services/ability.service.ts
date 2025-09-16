@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Ability } from '@casl/ability';
 import { BehaviorSubject, tap } from 'rxjs';
+import sift from 'sift'
+import { OperativeService } from './operative.service';
 
 export type Actions = 'manage' | 'create' | 'read' | 'update' | 'delete';
 export type Subjects = any | 'all';
@@ -15,7 +17,10 @@ export class AbilityService {
 
   ability$ = this.abilitySubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private operativeService: OperativeService
+  ) {}
 
   loadAbilities(currentUserId: number) {
     return this.http.get<{ rules: any[] }>('user/abilities').pipe(
@@ -49,9 +54,14 @@ export class AbilityService {
     return this.ability;
   }
 
-  /**
-   * Debug para ver por qué can() devuelve true o false
-   */
+  can(action: Actions, subjectObj: any): boolean {
+    const operativeObj = this.operativeService.getOperative()
+    const target = { ...subjectObj, ...operativeObj }
+    const result = this.ability.can(action, target)
+    // this.debugCan('create', target)
+    return result
+  }
+
   debugCan(action: Actions, subject: any) {
     if (!this.ability) {
       console.warn('Ability no cargada aún');
@@ -64,7 +74,6 @@ export class AbilityService {
     console.log('Resultado can():', this.ability.can(action, subject));
     console.log("====================")
 
-    // Usar detectSubjectType de la ability
     const subjectType = this.ability.detectSubjectType!(subject);
 
     const rules = this.ability.rulesFor(action, subjectType);
@@ -74,12 +83,10 @@ export class AbilityService {
     }
 
     rules.forEach((rule, i) => {
-      const matchesConditions = rule.conditions
-        ? Object.entries(rule.conditions).every(
-            ([key, value]) => (subject as any)[key] === value
-          )
-        : true;
-
+      let matchesConditions = true;
+      if(rule.conditions) {
+        matchesConditions = sift(rule.conditions)(subject)
+      }
       console.log(`Regla ${i + 1}:`, rule);
       console.log('¿Condiciones coinciden?', matchesConditions);
     });

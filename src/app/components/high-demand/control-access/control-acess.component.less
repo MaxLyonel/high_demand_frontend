@@ -83,13 +83,15 @@
   border-radius: 6px;
   padding: 12px;
   background: #fafafa;
+  width: 100%;
 }
 
 .condition-row {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 8px;
-  align-items: center;
+  width: 100%;
+  // display: flex;
+  // gap: 8px;
+  // margin-bottom: 8px;
+  // align-items: center;
 }
 
 .action-badge {
@@ -121,4 +123,45 @@
 .selected-role {
   border: 2px solid @primary-light;
   border-radius: 8px; /* opcional */
+}
+
+// ====
+.vertical-label {
+  display: flex;
+  flex-direction: column; /* apila label y control */
+  width: 100%;
+}
+
+.vertical-label .ant-form-item-label {
+  flex: none;         /* evita que empuje el control */
+  text-align: left;   /* alineación */
+  width: 100%;        /* ocupa todo el ancho */
+  margin-bottom: 4px; /* espacio debajo */
+}
+
+.vertical-label .ant-form-item-control {
+  width: 100%;
+}
+// ====
+
+
+.condition-row {
+  margin-bottom: 8px;
+  padding: 8px;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  background: #fafafa;
+}
+
+.condition-row:hover {
+  background: #f0f0f0;
+}
+
+.ant-picker {
+  width: 100%;
+}
+
+/* Estilos para los selects */
+nz-select {
+  width: 100%;
 }

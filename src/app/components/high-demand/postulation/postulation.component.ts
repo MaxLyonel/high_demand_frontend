@@ -327,4 +327,9 @@ export class PostulationComponent implements OnInit {
     this.listCourse.splice(index, 1)
   }
 
+  canPostulation() {
+    const subject = { __typename: 'postulation'}
+    return this.abilities.can('create', subject)
+  }
+
 }

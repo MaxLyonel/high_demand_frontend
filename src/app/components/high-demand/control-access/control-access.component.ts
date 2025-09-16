@@ -19,6 +19,8 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzTypographyModule } from 'ng-zorro-antd/typography';
 import IRoles from '../../../domain/ports/i-roles';
 import IPermission from '../../../domain/ports/i-permission';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 
 interface Action {
   id: number,
@@ -37,6 +39,7 @@ interface Permission {
   active: boolean;
   description: string,
   conditions?: Condition[];
+  type?: string
 }
 
 interface RolPermission {
@@ -49,6 +52,7 @@ interface Condition {
   field: string;
   operator: string;
   value: any;
+  type: string;
 }
 
 interface User {
@@ -69,24 +73,26 @@ interface Role {
     imports: [
     CommonModule,
     FormsModule,
-    NzCardModule,
-    NzIconModule,
+    NzAlertModule,
     NzButtonModule,
-    NzTypographyModule,
-    NzTableModule,
-    NzInputModule,
-    NzTagModule,
+    NzCardModule,
     NzDividerModule,
-    NzModalModule,
+    NzDatePickerModule,
     NzFormModule,
+    NzGridModule,
+    NzIconModule,
+    NzInputModule,
+    NzLayoutModule,
+    NzListModule,
+    NzModalModule,
     NzSelectModule,
     NzSwitchModule,
-    NzAlertModule,
-    NzListModule,
+    NzSwitchModule,
+    NzTableModule,
     NzTableModule,
     NzTabsModule,
-    NzLayoutModule,
-    NzSwitchModule
+    NzTagModule,
+    NzTypographyModule,
   ],
   templateUrl: './control-access.component.html',
   styleUrls: ['./control-acess.component.less']
@@ -102,7 +108,8 @@ export class AccessControlComponent implements OnInit {
     subject: null,
     active: true,
     description: '',
-    conditions: []
+    conditions: [],
+    type: ''
   };
 
   reusedPermission: any;
@@ -227,7 +234,8 @@ export class AccessControlComponent implements OnInit {
       subject: null,
       active: true,
       description: '',
-      conditions: []
+      conditions: [],
+      type: ''
     };
     this.isPermissionModalVisible = true;
   }
@@ -299,7 +307,7 @@ export class AccessControlComponent implements OnInit {
 
   // ** Gestión de condiciones **
   addCondition(): void {
-    this.currentPermission.conditions!.push({ id: null, field: '', operator: '', value: '' });
+    this.currentPermission.conditions!.push({ id: null, field: '', operator: '', value: '', type: '' });
   }
 
   removeCondition(index: number): void {
@@ -355,4 +363,7 @@ export class AccessControlComponent implements OnInit {
     if (!o1 || !o2) return false;
     return o1.id === o2.id; // comparar por id aunque no sean la misma referencia
   }
+
+  // nuevos cambios
+
 }

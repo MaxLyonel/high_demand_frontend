@@ -151,7 +151,9 @@
   (nzOnCancel)="closePermissionModal()"
   (nzOnOk)="savePermission()"
   nzOkText="Guardar"
-  nzCancelText="Cancelar">
+  nzCancelText="Cancelar"
+  [nzWidth]="800"
+>
   <div *nzModalContent class="permiso-form">
     @if(!isEditingPermission){
     <nz-form-item>
@@ -226,23 +228,137 @@
       </div>
 
       <div class="form-row">
-        <nz-form-item>
+        <nz-form-item class="vertical-label">
           <nz-form-label>Condiciones (Opcional)</nz-form-label>
           <nz-form-control>
             <div class="conditions-builder">
               <div *ngFor="let condition of currentPermission.conditions; let i = index" class="condition-row">
-                <nz-input-group nzCompact>
-                  <nz-select [(ngModel)]="condition.field" style="width: 30%" placeholder="Campo">
+
+                <!-- nuevos cambios inicio -->
+                 <div nz-row [nzGutter]="7">
+                  <!-- Campo -->
+                  <nz-col nzSpan="6">
+                    <nz-select
+                      [(ngModel)]="condition.field"
+                      nzPlaceHolder="Campo"
+                    >
+                      <nz-option
+                        *ngFor="let field of availableFields"
+                        [nzValue]="field"
+                        [nzLabel]="field"
+                      ></nz-option>
+                    </nz-select>
+                  </nz-col>
+
+                  <!-- Operador -->
+                  <nz-col nzSpan="3">
+                    <nz-select
+                      [(ngModel)]="condition.operator"
+                      nzPlaceHolder="Operador"
+                    >
+                      <nz-option
+                        *ngFor="let op of availableOperators"
+                        [nzValue]="op"
+                        [nzLabel]="op"
+                      ></nz-option>
+                    </nz-select>
+                  </nz-col>
+
+                  <!-- Selector de Tipo de Condición -->
+                  <nz-col nzSpan="5">
+                    <nz-select
+                      [(ngModel)]="condition.type"
+                      nzPlaceHolder="Tipo de valor"
+                    >
+                      <nz-option nzValue="text" nzLabel="Texto"></nz-option>
+                      <nz-option nzValue="number" nzLabel="Número"></nz-option>
+                      <nz-option nzValue="date" nzLabel="Fecha única"></nz-option>
+                      <nz-option nzValue="dateRange" nzLabel="Rango de fechas"></nz-option>
+                      <nz-option nzValue="list" nzLabel="Lista de valores"></nz-option>
+                      <nz-option nzValue="boolean" nzLabel="Verdadero/Falso"></nz-option>
+                    </nz-select>
+                  </nz-col>
+
+                  <nz-col nzSpan="9">
+                    <!-- TEXTO -->
+                    <input
+                      *ngIf="condition.type === 'text'"
+                      nz-input
+                      [(ngModel)]="condition.value"
+                      placeholder="Ingrese texto"
+                      style="width: 100%">
+
+                    <!-- NÚMERO -->
+                    <input
+                      *ngIf="condition.type === 'number'"
+                      nz-input
+                      type="number"
+                      [(ngModel)]="condition.value"
+                      placeholder="Ingrese número"
+                      style="width: 100%">
+
+                    <!-- FECHA ÚNICA -->
+                    <nz-date-picker
+                      *ngIf="condition.type === 'date'"
+                      [(ngModel)]="condition.value"
+                      [nzShowTime]="true"
+                      nzFormat="yyyy-MM-dd HH:mm:ss.SSS"
+                      style="width: 100%"
+                      placeholder="Seleccione fecha">
+                    </nz-date-picker>
+
+                    <!-- RANGO DE FECHAS -->
+                      <!-- [(ngModel)]="condition.rangeValue" -->
+                    <nz-range-picker
+                      *ngIf="condition.type === 'dateRange'"
+                      [nzShowTime]="true"
+                      nzFormat="yyyy-MM-dd HH:mm:ss.SSS"
+                      style="width: 100%"
+                      placeholder="['Inicio', 'Fin']">
+                    </nz-range-picker>
+
+                    <!-- LISTA DE VALORES -->
+                      <!-- [(ngModel)]="condition.arrayValue" -->
+                    <nz-select
+                      *ngIf="condition.type === 'list'"
+                      nzMode="tags"
+                      placeholder="Agregar valores"
+                      style="width: 100%"
+                      nzPlaceHolder="Valores separados por enter">
+                    </nz-select>
+
+                    <!-- BOOLEANO -->
+                    <nz-select
+                      *ngIf="condition.type === 'boolean'"
+                      [(ngModel)]="condition.value"
+                      style="width: 100%"
+                      placeholder="Seleccione">
+                      <nz-option nzValue="true" nzLabel="Verdadero"></nz-option>
+                      <nz-option nzValue="false" nzLabel="Falso"></nz-option>
+                    </nz-select>
+
+                  </nz-col>
+
+                  <nz-col nzSpan="1">
+                    <button nz-button nzDanger nzType="text" (click)="removeCondition(i)">
+                      <i nz-icon nzType="delete"></i>
+                    </button>
+                  </nz-col>
+
+                 </div>
+
+                <!-- <nz-input-group nzCompact>
+                  <nz-select [(ngModel)]="condition.field" style="width: 30%" nzPlaceHolder="campo">
                     <nz-option *ngFor="let field of availableFields" [nzValue]="field" [nzLabel]="field"></nz-option>
                   </nz-select>
-                  <nz-select [(ngModel)]="condition.operator" style="width: 30%" placeholder="Operador">
+                  <nz-select [(ngModel)]="condition.operator" style="width: 30%" nzPlaceHolder="Operador">
                     <nz-option *ngFor="let op of availableOperators" [nzValue]="op" [nzLabel]="op"></nz-option>
                   </nz-select>
                   <input nz-input [(ngModel)]="condition.value" style="width: 30%" placeholder="Valor">
                   <button nz-button nzDanger (click)="removeCondition(i)">
                     <i nz-icon nzType="delete"></i>
                   </button>
-                </nz-input-group>
+                </nz-input-group> -->
               </div>
               <button nz-button nzType="dashed" (click)="addCondition()" style="width: 100%; margin-top: 8px;">
                 <i nz-icon nzType="plus"></i> Añadir condición
