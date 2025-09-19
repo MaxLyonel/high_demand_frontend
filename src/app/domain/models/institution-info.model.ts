@@ -4,5 +4,8 @@ export interface InstitutionInfo {
   name: string;
   state: string;
   scope: string;
+  dependency: string;
   direction: string;
+  district: string;
+  department: string;
 }

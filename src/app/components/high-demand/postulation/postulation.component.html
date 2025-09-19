@@ -57,18 +57,20 @@
         <nz-descriptions
           nzLayout="vertical"
           nzSize="small"
-          [nzColumn]="4"
+          [nzColumn]="5"
           class="bold-description-labels"
         >
-          <nz-descriptions-item [nzTitle]="nombreTpl" >{{ institution()?.name }}</nz-descriptions-item>
+          <nz-descriptions-item [nzTitle]="nombreTpl" [nzSpan]="2">{{ institution()?.name | uppercase }}</nz-descriptions-item>
           <nz-descriptions-item [nzTitle]="sieTpl">{{ institution()?.id }}</nz-descriptions-item>
           <nz-descriptions-item [nzTitle]="estadoTpl">
             <nz-tag [nzColor]="institution()?.state === 'Abierta' ? 'success' : 'error'">
               {{ institution()?.state | uppercase }}
             </nz-tag>
           </nz-descriptions-item>
-          <nz-descriptions-item [nzTitle]="ambitoTpl">{{ institution()?.scope }}</nz-descriptions-item>
-          <nz-descriptions-item [nzTitle]="dependenciaTpl">{{ institution()?.scope }}</nz-descriptions-item>
+          <nz-descriptions-item [nzTitle]="ambitoTpl">{{ institution()?.scope | uppercase }}</nz-descriptions-item>
+          <nz-descriptions-item [nzTitle]="dependenciaTpl">{{ institution()?.dependency | uppercase }}</nz-descriptions-item>
+          <nz-descriptions-item [nzTitle]="departmentTpl">{{ institution()?.department | uppercase }}</nz-descriptions-item>
+          <nz-descriptions-item [nzTitle]="districtTpl">{{ institution()?.district | uppercase }}</nz-descriptions-item>
           <nz-descriptions-item [nzTitle]="direccionTpl" [nzSpan]="2" style="text-transform: capitalize;">
             {{ institution()?.direction }}
           </nz-descriptions-item>
@@ -80,6 +82,8 @@
 
         <ng-template #ambitoTpl> <b>ÁMBITO</b> </ng-template>
         <ng-template #dependenciaTpl> <b >DEPENDENCIA</b> </ng-template>
+        <ng-template #departmentTpl> <b >DEPARTAMENTO</b> </ng-template>
+        <ng-template #districtTpl> <b >DISTRITO</b> </ng-template>
         <ng-template #direccionTpl> <b>DIRECCIÓN</b> </ng-template>
       </nz-card>
 
