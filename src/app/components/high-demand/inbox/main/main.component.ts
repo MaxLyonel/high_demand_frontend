@@ -21,6 +21,7 @@ import { AppStore } from '../../../../infrastructure/store/app.store';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzListModule } from 'ng-zorro-antd/list';
 import { CommonModule } from '@angular/common';
+import { Observable } from 'rxjs';
 
 interface Institution {
   id: number;
@@ -95,7 +96,7 @@ export class BandejaComponent implements OnInit {
   searchValue = '';
 
   // Tipo de bandeja activa
-  activeTray: 'entrada' | 'recepcion' | 'salida' = 'entrada';
+  activeTray: 'entrada' | 'recepcion'  = 'entrada';
   rolId: number | null = null;
 
   appStore = inject(AppStore);
@@ -127,33 +128,93 @@ export class BandejaComponent implements OnInit {
     );
   }
 
-  loadData(type: string): void {
+  // loadData(type: string): void {
+  //   this.loading = true;
+  //   const { user } = this.appStore.snapshot;
+  //   this.rolId = user.selectedRole.role.id;
+  //   this._highDemand.getActionFromRoles(this.rolId!).subscribe((response) => {
+  //     this.actionRoles = response.data;
+  //   });
+  //   const placeTypeId = user.selectedRole.placeType.id
+  //   this.highDemands = [];
+  //   switch(this.rolId) {
+  //     case 37: // Distrito
+  //     switch (type) {
+  //       case 'entrada':
+  //         setTimeout(() => {
+  //           this._highDemand
+  //             .getListInbox(this.rolId!, 1, placeTypeId)
+  //             .subscribe((response) => {
+  //               this.highDemands = response.data;
+  //             });
+  //           this.loading = false;
+  //         }, 300);
+  //         break;
+  //       case 'recepcion':
+  //         setTimeout(() => {
+  //           this._highDemand
+  //             .getListReceive(this.rolId!, placeTypeId)
+  //             .subscribe((response) => {
+  //               this.highDemands = response.data;
+  //             });
+  //           this.loading = false;
+  //         }, 300);
+  //         break;
+  //     }
+  //     break;
+  //     case 38: // Departamento
+  //     switch (type) {
+  //       case 'entrada':
+  //         setTimeout(() => {
+  //           this._highDemand
+  //             .getListInbox(this.rolId!, 1, placeTypeId)
+  //             .subscribe((response) => {
+  //               this.highDemands = response.data;
+  //             });
+  //           this.loading = false;
+  //         }, 300);
+  //         break;
+  //       case 'recepcion':
+  //         setTimeout(() => {
+  //           this._highDemand
+  //             .getListReceive(this.rolId!, placeTypeId)
+  //             .subscribe((response) => {
+  //               this.highDemands = response.data;
+  //             });
+  //           this.loading = false;
+  //         }, 300);
+  //         break;
+  //     }
+  //     break
+  //   }
+  // }
+
+  loadData(type: 'entrada' | 'recepcion'): void {
     this.loading = true;
-    const { user } = this.appStore.snapshot;
-    this.rolId = user.selectedRole.role.id;
+    const { user } = this.appStore.snapshot
+    this.rolId = user.selectedRole.role.id
+    const placeTypeId = user.selectedRole.placeType.id
+
     this._highDemand.getActionFromRoles(this.rolId!).subscribe((response) => {
-      this.actionRoles = response.data;
-    });
-    this.highDemands = [];
-    switch (type) {
-      case 'entrada':
-        setTimeout(() => {
-          this._highDemand
-            .getListHighDemandByRolState(this.rolId!, 1)
-            .subscribe((response) => {
-              this.highDemands = response.data;
-            });
-          this.loading = false;
-        }, 300);
-        break;
-      case 'recepcion':
-        setTimeout(() => {
-          this._highDemand.getListReceive(this.rolId!).subscribe((response) => {
-            this.highDemands = response.data;
-          });
-          this.loading = false;
-        }, 300);
-        break;
+      this.actionRoles = response.data
+    })
+
+    this.highDemands = []
+
+    const actions: Record<string, () => Observable<any>> = {
+      entrada: () => this._highDemand.getListInbox(this.rolId!, 1, placeTypeId),
+      recepcion: () => this._highDemand.getListReceive(this.rolId!, placeTypeId)
+    };
+
+    if([37, 38].includes(this.rolId!) && actions[type]) {
+      setTimeout(() => {
+        actions[type]().subscribe((response) => {
+          this.highDemands = response.data
+          this.loading = false
+        })
+      }, 300)
+    } else {
+      this.loading = false
     }
   }
 
@@ -167,6 +228,8 @@ export class BandejaComponent implements OnInit {
   // Métodos para acciones
   receive(highDemand: HighDemand): void {
     const { id } = highDemand;
+    const { user } = this.appStore.snapshot
+    const placeTypeId = user.selectedRole.placeType.id
     this.modal.confirm({
       nzTitle: `¿Esta seguro que quiere recepcionar la Alta Damanda?`,
       nzContent: '',
@@ -178,7 +241,7 @@ export class BandejaComponent implements OnInit {
         this._highDemand.receiveHighDemand(id).subscribe((response) => {
           this.message.success(`Recepcionado exitosamente`);
           this._highDemand
-            .getListHighDemandByRolState(this.rolId!, 1)
+            .getListInbox(this.rolId!, 1, placeTypeId)
             .subscribe((response) => {
               this.highDemands = response.data;
             });
@@ -188,6 +251,8 @@ export class BandejaComponent implements OnInit {
   }
 
   derive(highDemand: HighDemand, rolId: number): void {
+    const { user } = this.appStore.snapshot
+    const placeTypeId = user.selectedRole.placeType.id
     this.modal.confirm({
       nzTitle: `¿Derivar la Unidad Educativa de Alta Demanda ${highDemand.institution.name}?`,
       nzContent: 'Por favor revise bien si corresponde',
@@ -202,7 +267,7 @@ export class BandejaComponent implements OnInit {
           this.message.success(
             `Se ha derivado la Alta demanda de ${highDemand.institution.name}`
           );
-          this._highDemand.getListReceive(this.rolId!).subscribe((response) => {
+          this._highDemand.getListReceive(this.rolId!, placeTypeId).subscribe((response) => {
             this.highDemands = response.data;
           });
         });
@@ -212,7 +277,8 @@ export class BandejaComponent implements OnInit {
 
   back(highDemand: HighDemand, rolId: number, tpl: TemplateRef<{}>): void {
     let motivo = ''; // variable para guardar lo que escriba el usuario
-
+    const { user } = this.appStore.snapshot
+    const placeTypeId = user.selectedRole.placeType.id
     this.modal.confirm({
       nzTitle: `¿Devolver la alta demanda de ${highDemand.institution.name} a ${rolId}?`,
       nzContent: tpl,
@@ -235,7 +301,7 @@ export class BandejaComponent implements OnInit {
           this.message.success(
             `Se ha devuelto la Alta demanda de ${highDemand.institution.name}`
           );
-          this._highDemand.getListReceive(this.rolId!).subscribe((response) => {
+          this._highDemand.getListReceive(this.rolId!, placeTypeId).subscribe((response) => {
             this.highDemands = response.data;
           });
         });
@@ -244,6 +310,8 @@ export class BandejaComponent implements OnInit {
   }
 
   finalize(highDemand: HighDemand): void {
+    const { user } = this.appStore.snapshot
+    const placeTypeId = user.selectedRole.placeType.id
     this.modal.confirm({
       nzTitle: `¿Esta seguro de inscribir a la Unidad Educativa ${highDemand.institution.name} como alta demanda?`,
       nzContent: 'Por favor revise bien si corresponde',
@@ -257,7 +325,7 @@ export class BandejaComponent implements OnInit {
           this.message.success(
             `Se ha registrado la Unidad Educativa ${highDemand.institution.name} como alta demanda`
           );
-          this._highDemand.getListReceive(this.rolId!).subscribe((response) => {
+          this._highDemand.getListReceive(this.rolId!, placeTypeId).subscribe((response) => {
             this.highDemands = response.data;
           });
         });
@@ -266,6 +334,8 @@ export class BandejaComponent implements OnInit {
   }
 
   rejected(highDemand: HighDemand): void {
+    const { user } = this.appStore.snapshot
+    const placeTypeId = user.selectedRole.placeType.id
     this.modal.confirm({
       nzTitle: `¿Esta seguro de rechazar a la Unidad Educativa${highDemand.institution.name} como alta demanda?`,
       nzContent: 'Por favor revise bien si corresponde',
@@ -279,7 +349,7 @@ export class BandejaComponent implements OnInit {
           this.message.success(
             `Se ha rechzado la Unidad Educativa ${highDemand.institution.name} como alta demanda`
           );
-          this._highDemand.getListReceive(this.rolId!).subscribe((response) => {
+          this._highDemand.getListReceive(this.rolId!, placeTypeId).subscribe((response) => {
             this.highDemands = response.data;
           });
         });
@@ -309,7 +379,7 @@ export class BandejaComponent implements OnInit {
   }
 
   // Métodos para cambiar entre bandejas
-  changeInbox(type: 'entrada' | 'recepcion' | 'salida'): void {
+  changeInbox(type: 'entrada' | 'recepcion'): void {
     this.activeTray = type;
     this.loadData(type);
     this.message.info(`Mostrando bandeja de ${type}`);

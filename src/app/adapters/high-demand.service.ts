@@ -50,11 +50,12 @@ export class HighDemandAdapterService implements IManagerHighDemand {
     )
   }
 
-  getListHighDemand(rolId: number, stateId: number): Observable<any> {
+  getListInboxHighDemand(rolId: number, stateId: number, placeTypeId: number): Observable<any> {
     const params = new HttpParams()
       .set('rolId', rolId.toString())
       .set('stateId', stateId.toString())
-    return this.http.get(`high-demand/list-by-state-rol`, { params }).pipe(
+      .set('placeTypeId', placeTypeId.toString())
+    return this.http.get(`high-demand/list-inbox`, { params }).pipe(
       catchError(err => {
         console.error('Algo salió mal', err)
         return throwError(() => err)
@@ -84,9 +85,10 @@ export class HighDemandAdapterService implements IManagerHighDemand {
     )
   }
 
-  getListReciveHighDemand(rolId: number): Observable<any> {
+  getListReciveHighDemand(rolId: number, placeTypeId: number): Observable<any> {
     const params = new HttpParams()
       .set('rolId', rolId.toString())
+      .set('placeTypeId', placeTypeId.toString())
     return this.http.get(`high-demand/list-receive`, { params }).pipe(
       catchError(err => {
         console.error('error en el listado de recibidos')

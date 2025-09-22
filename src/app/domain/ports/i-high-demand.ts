@@ -15,8 +15,8 @@ export default interface IHighDemand {
 
   getHighDemandByInstitution(educationalInstitutionId: number): Observable<any>;
   getCoures(highDemandId: number): Observable<any>;
-  getListHighDemandByRolState(rolId: number, stateId: number): Observable<any>;
-  getListReceive(rolId: number): Observable<any>
+  getListInbox(rolId: number, stateId: number, placeTypeId: number): Observable<any>;
+  getListReceive(rolId: number, placeTypeId: number): Observable<any>;
 
   // para la pre inscripción
   getHighDemands(): Observable<any>;

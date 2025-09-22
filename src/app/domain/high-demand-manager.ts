@@ -33,9 +33,22 @@ export default class HighDemandManager implements IHighDemand {
     return result
   }
 
-  getListHighDemandByRolState(rolId: number, stateId: number): Observable<any> {
-    const result = this._highDemandAdapter.getListHighDemand(rolId, stateId)
+  getListInbox(rolId: number, stateId: number, placeTypeId: number): Observable<any> {
+    const result = this._highDemandAdapter.getListInboxHighDemand(rolId, stateId, placeTypeId)
     return result
+  }
+
+  getListReceive(rolId: number, placeTypeId: number): Observable<any> {
+    const result = this._highDemandAdapter.getListReciveHighDemand(rolId, placeTypeId)
+    return result
+  }
+
+  getListInboxDepartment(rolId: number, stateId: number, placeTypeId: number): Observable<any> {
+    throw new Error("método no implementado")
+  }
+
+  getListReceiveDepartment(rolId: number, placeTypeId: number): Observable<any> {
+    throw new Error("método no implementado")
   }
 
   receiveHighDemand(obj: any): Observable<any> {
@@ -45,11 +58,6 @@ export default class HighDemandManager implements IHighDemand {
 
   sendHighDemand(obj: any): Observable<any> {
     const result = this._highDemandAdapter.sendHighDemand(obj)
-    return result
-  }
-
-  getListReceive(rolId: number): Observable<any> {
-    const result = this._highDemandAdapter.getListReciveHighDemand(rolId)
     return result
   }
 

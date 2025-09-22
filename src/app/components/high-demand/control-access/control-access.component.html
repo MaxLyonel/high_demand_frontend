@@ -308,18 +308,18 @@
                     </nz-date-picker>
 
                     <!-- RANGO DE FECHAS -->
-                      <!-- [(ngModel)]="condition.rangeValue" -->
                     <nz-range-picker
                       *ngIf="condition.type === 'dateRange'"
                       [nzShowTime]="true"
+                      [(ngModel)]="condition.value"
                       nzFormat="yyyy-MM-dd HH:mm:ss.SSS"
                       style="width: 100%"
                       placeholder="['Inicio', 'Fin']">
                     </nz-range-picker>
 
                     <!-- LISTA DE VALORES -->
-                      <!-- [(ngModel)]="condition.arrayValue" -->
                     <nz-select
+                      [(ngModel)]="condition.value"
                       *ngIf="condition.type === 'list'"
                       nzMode="tags"
                       placeholder="Agregar valores"
