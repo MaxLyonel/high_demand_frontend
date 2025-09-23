@@ -22,12 +22,14 @@ import { NzResultModule } from 'ng-zorro-antd/result'
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NotificationService } from '../../infrastructure/services/notify.service';
 import { startWith } from 'rxjs';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-formulario-inscripcion',
   templateUrl: './pre-registration.component.html',
   styleUrls: ['./pre-registration.component.less'],
   imports: [
+    CommonModule,
     ReactiveFormsModule,
     NzDatePickerModule,
     FormsModule,
@@ -132,7 +134,7 @@ export default class FormularioInscripcionComponent implements OnInit{
 
       educationalLevel: ['', Validators.required],
       yearOfSchoolign: ['', Validators.required],
-      parallel: ['', Validators.required],
+      // parallel: ['', Validators.required],
       placeDate: [`POTOSI, ${this.today.getDate()} DE ${this.getMonthName(this.today.getMonth())} DE ${this.today.getFullYear()}`]
     });
 
@@ -146,10 +148,10 @@ export default class FormularioInscripcionComponent implements OnInit{
           neighborhoodArea: selected.educationalInstitution.jurisdiction.direction,
           institutionType: selected.educationalInstitution.educationalInstitutionType.description,
           institutionDepartment: selected.educationalInstitution.jurisdiction.localityPlaceType.parent.parent.parent.parent.place,
-          institutionMunicipie: selected.educationalInstitution.jurisdiction.localityPlaceType.parent.parent.parent.place,
+          institutionMunicipie: selected.educationalInstitution.jurisdiction.districtPlaceType.place,
           educationalLevel: '',
           yearOfSchoolign: '',
-          parallel: '',
+          // parallel: '',
         })
       } else {
         this.form.patchValue({
@@ -160,7 +162,7 @@ export default class FormularioInscripcionComponent implements OnInit{
           institutionMunicipie: '',
           educationalLevel: '',
           yearOfSchoolign: '',
-          parallel: '',
+          // parallel: '',
         })
       }
     });
@@ -168,7 +170,8 @@ export default class FormularioInscripcionComponent implements OnInit{
     this.form.get('educationalLevel')?.valueChanges.subscribe(level => {
       if (level) {
         this.grades = level.grades;   // guardamos los grados de ese nivel
-        this.form.patchValue({ yearOfSchoolign: '', parallel: '' }); // reset
+        // this.form.patchValue({ yearOfSchoolign: '', parallel: '' }); // reset
+        this.form.patchValue({ yearOfSchoolign: '' }); // reset
       } else {
         this.grades = [];
         this.parallels = []
@@ -178,7 +181,7 @@ export default class FormularioInscripcionComponent implements OnInit{
     this.form.get('yearOfSchoolign')?.valueChanges.subscribe(grade => {
       if(grade) {
         this.parallels = grade.parallels;
-        this.form.patchValue({ parallel: ''})
+        // this.form.patchValue({ parallel: ''})
       } else {
         this.parallels = []
       }
@@ -259,6 +262,7 @@ export default class FormularioInscripcionComponent implements OnInit{
 
   loadData() {
     this._highDemand.getHighDemands().subscribe((response) => {
+      console.log("res: ", response.data)
       this.highDemands = response.data
       this.institutions = response.data.map((e:any) => e.educationalInstitution)
     })

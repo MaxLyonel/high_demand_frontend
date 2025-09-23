@@ -128,67 +128,6 @@ export class BandejaComponent implements OnInit {
     );
   }
 
-  // loadData(type: string): void {
-  //   this.loading = true;
-  //   const { user } = this.appStore.snapshot;
-  //   this.rolId = user.selectedRole.role.id;
-  //   this._highDemand.getActionFromRoles(this.rolId!).subscribe((response) => {
-  //     this.actionRoles = response.data;
-  //   });
-  //   const placeTypeId = user.selectedRole.placeType.id
-  //   this.highDemands = [];
-  //   switch(this.rolId) {
-  //     case 37: // Distrito
-  //     switch (type) {
-  //       case 'entrada':
-  //         setTimeout(() => {
-  //           this._highDemand
-  //             .getListInbox(this.rolId!, 1, placeTypeId)
-  //             .subscribe((response) => {
-  //               this.highDemands = response.data;
-  //             });
-  //           this.loading = false;
-  //         }, 300);
-  //         break;
-  //       case 'recepcion':
-  //         setTimeout(() => {
-  //           this._highDemand
-  //             .getListReceive(this.rolId!, placeTypeId)
-  //             .subscribe((response) => {
-  //               this.highDemands = response.data;
-  //             });
-  //           this.loading = false;
-  //         }, 300);
-  //         break;
-  //     }
-  //     break;
-  //     case 38: // Departamento
-  //     switch (type) {
-  //       case 'entrada':
-  //         setTimeout(() => {
-  //           this._highDemand
-  //             .getListInbox(this.rolId!, 1, placeTypeId)
-  //             .subscribe((response) => {
-  //               this.highDemands = response.data;
-  //             });
-  //           this.loading = false;
-  //         }, 300);
-  //         break;
-  //       case 'recepcion':
-  //         setTimeout(() => {
-  //           this._highDemand
-  //             .getListReceive(this.rolId!, placeTypeId)
-  //             .subscribe((response) => {
-  //               this.highDemands = response.data;
-  //             });
-  //           this.loading = false;
-  //         }, 300);
-  //         break;
-  //     }
-  //     break
-  //   }
-  // }
-
   loadData(type: 'entrada' | 'recepcion'): void {
     this.loading = true;
     const { user } = this.appStore.snapshot
