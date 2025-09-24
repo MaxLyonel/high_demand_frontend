@@ -99,6 +99,7 @@ export default class FormularioInscripcionComponent implements OnInit{
       guardianMothersLastName: ['', Validators.required],
       guardianName: ['', Validators.required],
       guardianIdentityCard: ['', Validators.required],
+      guardianCellphone: ['', Validators.required],
       guardianRelationship: ['', Validators.required],
       guardianDateBirth: ['', Validators.required],
       guardianAddress: ['', Validators.required],
@@ -226,7 +227,8 @@ export default class FormularioInscripcionComponent implements OnInit{
           name: formValue.guardianName,
           identityCard: formValue.guardianIdentityCard,
           relationship: formValue.guardianRelationship,
-          dateBirth: formValue.guardianDateBirth
+          dateBirth: formValue.guardianDateBirth,
+          cellphone: formValue.guardianCellphone
         },
         guardianWork: {
           address: formValue.guardianAddress,
@@ -236,7 +238,7 @@ export default class FormularioInscripcionComponent implements OnInit{
           addressJob: formValue.guardianAddressJob,
           phoneJob: formValue.guardianPhoneJob
         },
-        courseId: formValue.parallel.courseId,
+        courseId: formValue.yearOfSchoolign.courseId,
         justification: formValue.justification
       }
       this._preRgistration.savePreRegistration(data).subscribe((response) => {
@@ -262,7 +264,6 @@ export default class FormularioInscripcionComponent implements OnInit{
 
   loadData() {
     this._highDemand.getHighDemands().subscribe((response) => {
-      console.log("res: ", response.data)
       this.highDemands = response.data
       this.institutions = response.data.map((e:any) => e.educationalInstitution)
     })
@@ -296,17 +297,18 @@ export default class FormularioInscripcionComponent implements OnInit{
           level.grades[item.grade.id] = {
             id: item.grade.id,
             name: item.grade.name,
+            courseId: item.grade.id,
             parallels: []
           }
         }
-        const grade = level.grades[item.grade.id];
-        // Agregar paralelo
-        grade.parallels.push({
-          id: item.parallel.id,
-          name: item.parallel.name,
-          totalQuota: item.totalQuota,
-          courseId: item.id
-        });
+        // const grade = level.grades[item.grade.id];
+        // // Agregar paralelo
+        // grade.parallels.push({
+        //   id: item.parallel.id,
+        //   name: item.parallel.name,
+        //   totalQuota: item.totalQuota,
+        //   courseId: item.id
+        // });
 
         return acc;
       }, {} as any)
