@@ -23,25 +23,38 @@
       <button nz-button nzType="primary" nzSearch><i nz-icon nzType="search"></i></button>
     </ng-template>
 
-  <!-- <nz-space>
-      <nz-tag
-        *nzSpaceItem
-        nzMode="checkable"
-        [nzChecked]="filterEstado.length > 0"
-        (nzCheckedChange)="filterEstado = $event ? ['Activo'] : []"
-      >
-        Filtro Estado
-      </nz-tag>
-
-      <nz-tag
-        *nzSpaceItem
-        nzMode="checkable"
-        [nzChecked]="filterEstadoFlujo.length > 0"
-        (nzCheckedChange)="filterEstadoFlujo = $event ? ['Aprobado'] : []"
-      >
-        Filtro Flujo
-      </nz-tag>
-  </nz-space> -->
+    <nz-space>
+      @if(activeTray === 'recepcion') {
+        <button
+          *nzSpaceItem
+          nz-button
+          nzType="primary"
+          [nzDanger]="false"
+        >
+          Derivar ({{ setOfCheckedId.size }}) seleccionados
+        </button>
+        <button
+          *nzSpaceItem
+          nz-button
+          nzType="primary"
+          [nzDanger]="true"
+        >
+          Devolver ({{ setOfCheckedId.size }}) seleccionados
+        </button>
+      }
+      @if(activeTray === 'entrada') {
+        <button
+          *nzSpaceItem
+          nz-button
+          nzType="primary"
+          [nzDanger]="false"
+          [disabled]="setOfCheckedId.size === 0"
+          (click)="receiveSelected()"
+        >
+          Recepcionar ({{ setOfCheckedId.size }}) seleccionados
+        </button>
+      }
+    </nz-space>
   </div>
 
   <nz-table
@@ -51,29 +64,41 @@
     [nzTotal]="total"
     [nzPageSize]="pageSize"
     [nzPageIndex]="pageIndex"
-    (nzQueryParams)="onQueryParamsChange($event)"
     nzOuterBordered
     [nzSize]="'small'"
     nzBordered
     nzShowSizeChanger
     class="custom-table"
+    nzShowPagination
+    (nzCurrentPageDataChange)="onCurrentPageDataChange($event)"
+    (nzQueryParams)="onQueryParamsChange($event)"
   >
-    <!-- [nzData]="highDemands" -->
     <thead>
       <tr class="header-row">
+        <th
+          [nzChecked]="checked"
+          [nzIndeterminate]="indeterminate"
+          (nzCheckedChange)="onAllChecked($event)"
+          nzLabel="Seleccionar todo"
+          class="header-cell"
+        ></th>
         <th class="header-cell" >Acciones</th>
         <th class="header-cell" >Unidad Educativa</th>
         <th class="header-cell" >SIE</th>
         <th class="header-cell" >Usuario</th>
         <th class="header-cell" >Rol</th>
         <th class="header-cell" >Detalle</th>
-        <th class="header-cell" >Estado inscripcion</th>
+        <th class="header-cell" >Estado inscripción</th>
         <th class="header-cell" >Estado Flujo</th>
       </tr>
     </thead>
     <tbody>
       @for(data of filterTable.data; track data) {
       <tr >
+        <td
+          [nzChecked]="setOfCheckedId.has(data.id)"
+          (nzCheckedChange)="onItemChecked(data.id, $event)"
+        ></td>
         <td>
           <nz-space nzSize="small">
             @if(data.inbox === false) {

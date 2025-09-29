@@ -51,7 +51,7 @@ export default class HighDemandManager implements IHighDemand {
     throw new Error("método no implementado")
   }
 
-  receiveHighDemand(obj: any): Observable<any> {
+  receiveHighDemands(obj: any): Observable<any> {
     const result = this._highDemandAdapter.receiveHighDemand(obj)
     return result
   }

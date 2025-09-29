@@ -4,8 +4,8 @@ import { Observable } from "rxjs";
 export default interface IHighDemand {
   registerHighDemand(obj: any): Observable<any>;
   sendHighDemand(obj: any): Observable<any>;
+  receiveHighDemands(obj: any): Observable<any>;
   deriveHighDemand(obj: any): Observable<any>;
-  receiveHighDemand(obj: any): Observable<any>;
   approveHighDemand(obj: any): Observable<any>;
   declineHighDeamand(obj: any): Observable<any>;
   // ** exponer la funcionalidad de anular alta demanda **

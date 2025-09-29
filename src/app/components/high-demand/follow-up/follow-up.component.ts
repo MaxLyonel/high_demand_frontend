@@ -272,8 +272,7 @@ export class SeguimientoComponent implements OnInit {
 
   canViewRequest(request: Registration): boolean {
     //! El recurso 'history' (historial) puede ser leido
-    //! siempre y cuando el usuario sea el propietario
-    // this.abilityService.debugCan('read', { __typename: 'history', user_id: request.userId });
+    //! siempre y cuando el usuario (user_id) sea el propietario
     const result =  this.abilityService.getAbility()
       ?.can('read', { __typename: 'history', user_id: request.userId}) || false;
     return result

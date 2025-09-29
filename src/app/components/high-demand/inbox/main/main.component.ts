@@ -107,6 +107,13 @@ export class BandejaComponent implements OnInit {
   courses: any
   highDemandSelected:any
 
+  // Derivación másiva
+  checked = false;
+  indeterminate = false;
+  listOfCurrentPageData: readonly HighDemand[] = [];
+  setOfCheckedId = new Set<number>()
+  setOfCheckedIdDerive = new Set<number>()
+
   constructor(
     private message: NzMessageService,
     private modal: NzModalService,
@@ -170,14 +177,14 @@ export class BandejaComponent implements OnInit {
     const { user } = this.appStore.snapshot
     const placeTypeId = user.selectedRole.placeType.id
     this.modal.confirm({
-      nzTitle: `¿Esta seguro que quiere recepcionar la Alta Damanda?`,
+      nzTitle: `¿Está seguro que quiere recepcionar la Alta Damanda?`,
       nzContent: '',
       nzOkText: 'Sí, recepcionar',
       nzOkType: 'primary',
       nzOkDanger: false,
       nzCancelText: 'Cancelar',
       nzOnOk: () => {
-        this._highDemand.receiveHighDemand(id).subscribe((response) => {
+        this._highDemand.receiveHighDemands([id]).subscribe((response) => {
           this.message.success(`Recepcionado exitosamente`);
           this._highDemand
             .getListInbox(this.rolId!, 1, placeTypeId)
@@ -187,6 +194,59 @@ export class BandejaComponent implements OnInit {
         });
       },
     });
+  }
+
+  receiveSelected(): void {
+    const { user } = this.appStore.snapshot
+    const placeTypeId = user.selectedRole.placeType.id
+    this.modal.confirm({
+      nzTitle: '¿Está seguro que quiere recepcionar las Altas Demandas?',
+      nzContent: '',
+      nzOkText: 'Sí, recepcionar',
+      nzOkType: 'primary',
+      nzOkDanger: false,
+      nzCancelText: 'Cancelar',
+      nzOnOk: () => {
+        const obj = {
+          highDemandIds: [ ...this.setOfCheckedId],
+        }
+        this._highDemand.receiveHighDemands(obj).subscribe((response) => {
+          this.message.success(response.message)
+          this.setOfCheckedId.clear()
+          this._highDemand
+            .getListInbox(this.rolId!, 1, placeTypeId)
+            .subscribe((response) => {
+              this.highDemands = response.data
+            })
+        })
+      }
+    })
+  }
+
+  deriveSelected(rolId: number): void {
+    const { user } = this.appStore.snapshot
+    const placeTypeId = user.selectedRole.placeType.id
+    // const selected = this.highDemands.filter(hd => this.setOfCheckedId.has(hd.id));
+    this.modal.confirm({
+      nzTitle: `¿Derivar las Unidades Educativas de Alta Demanda?`,
+      nzContent: 'Por favor revise bien si corresponde',
+      nzOkText: `Confirmar (${this.setOfCheckedId.size})`,
+      nzCancelText: 'Cancelar',
+      nzOnOk: () => {
+        const obj = {
+          highDemandIds: [...this.setOfCheckedId],
+          rolId: rolId
+        };
+        this._highDemand.deriveHighDemand(obj).subscribe((response) => {
+          this.message.success(
+            response.message
+          );
+          this._highDemand.getListReceive(this.rolId!, placeTypeId).subscribe((response) => {
+            this.highDemands = response.data
+          })
+        })
+      }
+    })
   }
 
   derive(highDemand: HighDemand, rolId: number): void {
@@ -323,4 +383,36 @@ export class BandejaComponent implements OnInit {
     this.loadData(type);
     this.message.info(`Mostrando bandeja de ${type}`);
   }
+
+  // Funciones para derivación másiva
+  updateCheckedSet(id: number, checked: boolean): void {
+    if(checked) {
+      this.setOfCheckedId.add(id)
+    } else {
+      this.setOfCheckedId.delete(id)
+    }
+  }
+
+  refreshCheckedStatus(): void {
+    const listOfEnabledData = this.listOfCurrentPageData;
+    this.checked = listOfEnabledData.every(({id}) => this.setOfCheckedId.has(id))
+    this.indeterminate = listOfEnabledData.some(({id}) => this.setOfCheckedId.has(id)) && !this.checked
+  }
+
+  onItemChecked(id: number, checked: boolean): void {
+    this.updateCheckedSet(id, checked)
+    this.refreshCheckedStatus()
+  }
+
+  onAllChecked(checked: boolean): void {
+    this.listOfCurrentPageData.forEach(({id}) => this.updateCheckedSet(id, checked))
+    this.refreshCheckedStatus()
+  }
+
+  onCurrentPageDataChange(listOfCurrentPageData: readonly HighDemand[]): void {
+    this.listOfCurrentPageData = listOfCurrentPageData
+    this.refreshCheckedStatus()
+  }
+
+
 }

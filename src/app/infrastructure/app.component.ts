@@ -10,8 +10,8 @@ import { HistoryAdapterService } from '../adapters/history.service';
 import { HistoryManager } from '../domain/history-manager';
 import { AppStore } from './store/app.store';
 import { PreRegistrationAdapterService } from '../adapters/pre-registration.service';
-import { RolAdapterService } from '../adapters/rol.sevice';
-import { PermissionAdapterService } from '../adapters/perimssion.sevice';
+import { RolAdapterService } from '../adapters/role.service';
+import { PermissionAdapterService } from '../adapters/permission.service';
 import { OperativeAdapterService } from '../adapters/operative.service';
 
 import UserAuthManager from '../domain/user-auth-manager';

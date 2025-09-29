@@ -63,8 +63,8 @@ export class HighDemandAdapterService implements IManagerHighDemand {
     )
   }
 
-  receiveHighDemand(id: number): Observable<any> {
-    return this.http.get(`high-demand/${id}/receive`, {
+  receiveHighDemand(obj: any): Observable<any> {
+    return this.http.post(`high-demand/receive`, obj, {
       context: new HttpContext().set(IS_USER_ACTION, true)
     }).pipe(
       catchError(err => {
