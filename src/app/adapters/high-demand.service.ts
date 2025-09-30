@@ -55,7 +55,7 @@ export class HighDemandAdapterService implements IManagerHighDemand {
       .set('rolId', rolId.toString())
       .set('stateId', stateId.toString())
       .set('placeTypeId', placeTypeId.toString())
-    return this.http.get(`high-demand/list-inbox`, { params }).pipe(
+    return this.http.get(`main-inbox/list-inbox`, { params }).pipe(
       catchError(err => {
         console.error('Algo salió mal', err)
         return throwError(() => err)
@@ -64,7 +64,7 @@ export class HighDemandAdapterService implements IManagerHighDemand {
   }
 
   receiveHighDemand(obj: any): Observable<any> {
-    return this.http.post(`high-demand/receive`, obj, {
+    return this.http.post(`main-inbox/receive`, obj, {
       context: new HttpContext().set(IS_USER_ACTION, true)
     }).pipe(
       catchError(err => {
@@ -75,7 +75,7 @@ export class HighDemandAdapterService implements IManagerHighDemand {
   }
 
   deriveHighDemand(obj: any): Observable<any> {
-    return this.http.post(`high-demand/derive`, obj, {
+    return this.http.post(`main-inbox/derive`, obj, {
       context: new HttpContext().set(IS_USER_ACTION, true)
     }).pipe(
       catchError(err => {
@@ -89,7 +89,7 @@ export class HighDemandAdapterService implements IManagerHighDemand {
     const params = new HttpParams()
       .set('rolId', rolId.toString())
       .set('placeTypeId', placeTypeId.toString())
-    return this.http.get(`high-demand/list-receive`, { params }).pipe(
+    return this.http.get(`main-inbox/list-receive`, { params }).pipe(
       catchError(err => {
         console.error('error en el listado de recibidos')
         return throwError(() => err)
@@ -98,7 +98,7 @@ export class HighDemandAdapterService implements IManagerHighDemand {
   }
 
   getActionFromRoles(rolId: number): Observable<any> {
-    return this.http.get(`high-demand/action-roles/${rolId}`).pipe(
+    return this.http.get(`main-inbox/action-roles/${rolId}`).pipe(
       catchError(err => {
         console.error('error en el listado de acciones')
         return throwError(() => err)
@@ -107,7 +107,7 @@ export class HighDemandAdapterService implements IManagerHighDemand {
   }
 
   approveHighDemand(obj: any): Observable<any> {
-    return this.http.post(`high-demand/approve`, obj, {
+    return this.http.post(`main-inbox/approve`, obj, {
       context: new HttpContext().set(IS_USER_ACTION, true)
     }).pipe(
       catchError(err => {
@@ -118,7 +118,7 @@ export class HighDemandAdapterService implements IManagerHighDemand {
   }
 
   declineHighDemand(obj: any): Observable<any> {
-    return this.http.post(`high-demand/decline`, obj, {
+    return this.http.post(`main-inbox/decline`, obj, {
       context: new HttpContext().set(IS_USER_ACTION, true)
     }).pipe(
       catchError(err => {
