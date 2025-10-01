@@ -24,24 +24,6 @@
     </ng-template>
 
     <nz-space>
-      @if(activeTray === 'recepcion') {
-        <button
-          *nzSpaceItem
-          nz-button
-          nzType="primary"
-          [nzDanger]="false"
-        >
-          Derivar ({{ setOfCheckedId.size }}) seleccionados
-        </button>
-        <button
-          *nzSpaceItem
-          nz-button
-          nzType="primary"
-          [nzDanger]="true"
-        >
-          Devolver ({{ setOfCheckedId.size }}) seleccionados
-        </button>
-      }
       @if(activeTray === 'entrada') {
         <button
           *nzSpaceItem
@@ -51,8 +33,26 @@
           [disabled]="setOfCheckedId.size === 0"
           (click)="receiveSelected()"
         >
+          <i nz-icon nzType="inbox"></i>
           Recepcionar ({{ setOfCheckedId.size }}) seleccionados
         </button>
+      }
+      @if(activeTray === 'recepcion') {
+        @for (actionRole of actionRoles; track actionRole.id) {
+          @if(actionRole.action == 'DERIVAR') {
+            <button
+              *nzSpaceItem
+              nz-button
+              nzType="primary"
+              [nzDanger]="actionRole.action === 'DERIVAR' ? false : true "
+              [disabled]="setOfCheckedIdDerive.size === 0"
+              (click)="actionRole.action === 'DERIVAR' ? deriveSelected(actionRole.nextState) : undefined"
+            >
+              <i nz-icon [nzType]="actionRole.action === 'DERIVAR' ? 'send' : 'reload'"></i>
+              {{ actionRole.action }} ({{ setOfCheckedIdDerive.size }}) seleccionados
+            </button>
+          }
+        }
       }
     </nz-space>
   </div>
@@ -96,7 +96,7 @@
       @for(data of filterTable.data; track data) {
       <tr >
         <td
-          [nzChecked]="setOfCheckedId.has(data.id)"
+          [nzChecked]="activeTray === 'entrada' ? setOfCheckedId.has(data.id) : setOfCheckedIdDerive.has(data.id)"
           (nzCheckedChange)="onItemChecked(data.id, $event)"
         ></td>
         <td>
@@ -142,18 +142,20 @@
                 </button>
               }
               @for(actionRole of actionRoles; track actionRole.id) {
-                <button
-                  *nzSpaceItem
-                  nz-button
-                  nzType="default"
-                  nzSize="small"
-                  nzShape="circle"
-                  (click)="actionRole.action === 'DERIVAR' ? derive(data, actionRole.nextState) : back(data, actionRole.nextState, motivoTpl)"
-                  [nz-tooltip]="actionRole.action | lowercase"
-                  [disabled]="data.registrationStatus === 'RECHAZADO' || data.registrationStatus === 'APROBADO'"
-                >
-                  <i nz-icon [nzType]="actionRole.action === 'DERIVAR' ? 'send' : 'reload'"></i>
-                </button>
+                @if(actionRole.action !== 'DERIVAR') {
+                  <button
+                    *nzSpaceItem
+                    nz-button
+                    nzType="default"
+                    nzSize="small"
+                    nzShape="circle"
+                    (click)="actionRole.action === 'DERIVAR' ? derive(data, actionRole.nextState) : back(data, actionRole.nextState, motivoTpl)"
+                    [nz-tooltip]="actionRole.action | lowercase"
+                    [disabled]="data.registrationStatus === 'RECHAZADO' || data.registrationStatus === 'APROBADO'"
+                  >
+                    <i nz-icon [nzType]="actionRole.action === 'DERIVAR' ? 'send' : 'reload'"></i>
+                  </button>
+                }
               }
             }
             <ng-template #motivoTpl>

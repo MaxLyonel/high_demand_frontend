@@ -223,24 +223,21 @@ export class BandejaComponent implements OnInit {
     })
   }
 
-  deriveSelected(rolId: number): void {
+  deriveSelected(nextRolId: number): void {
     const { user } = this.appStore.snapshot
     const placeTypeId = user.selectedRole.placeType.id
-    // const selected = this.highDemands.filter(hd => this.setOfCheckedId.has(hd.id));
     this.modal.confirm({
       nzTitle: `¿Derivar las Unidades Educativas de Alta Demanda?`,
       nzContent: 'Por favor revise bien si corresponde',
-      nzOkText: `Confirmar (${this.setOfCheckedId.size})`,
+      nzOkText: `Confirmar (${this.setOfCheckedIdDerive.size})`,
       nzCancelText: 'Cancelar',
       nzOnOk: () => {
         const obj = {
-          highDemandIds: [...this.setOfCheckedId],
-          rolId: rolId
+          highDemandIds: [...this.setOfCheckedIdDerive],
+          rolId: nextRolId
         };
         this._highDemand.deriveHighDemand(obj).subscribe((response) => {
-          this.message.success(
-            response.message
-          );
+          this.message.success(response.message);
           this._highDemand.getListReceive(this.rolId!, placeTypeId).subscribe((response) => {
             this.highDemands = response.data
           })
@@ -259,7 +256,7 @@ export class BandejaComponent implements OnInit {
       nzCancelText: 'Cancelar',
       nzOnOk: () => {
         const obj = {
-          highDemand: highDemand,
+          highDemandIds: [highDemand.id],
           rolId: rolId,
         };
         this._highDemand.deriveHighDemand(obj).subscribe((response) => {
@@ -290,7 +287,7 @@ export class BandejaComponent implements OnInit {
         ) as HTMLInputElement;
         motivo = inputEl?.value || '';
         const obj = {
-          highDemand: highDemand,
+          highDemandIds: [highDemand.id],
           rolId: rolId,
           observation: motivo
         };
@@ -387,16 +384,29 @@ export class BandejaComponent implements OnInit {
   // Funciones para derivación másiva
   updateCheckedSet(id: number, checked: boolean): void {
     if(checked) {
-      this.setOfCheckedId.add(id)
+      if(this.activeTray === 'entrada') {
+        this.setOfCheckedId.add(id)
+      } else {
+        this.setOfCheckedIdDerive.add(id)
+      }
     } else {
-      this.setOfCheckedId.delete(id)
+      if(this.activeTray === 'entrada') {
+        this.setOfCheckedId.delete(id)
+      } else {
+        this.setOfCheckedIdDerive.delete(id)
+      }
     }
   }
 
   refreshCheckedStatus(): void {
     const listOfEnabledData = this.listOfCurrentPageData;
-    this.checked = listOfEnabledData.every(({id}) => this.setOfCheckedId.has(id))
-    this.indeterminate = listOfEnabledData.some(({id}) => this.setOfCheckedId.has(id)) && !this.checked
+    if(this.activeTray === 'entrada') {
+      this.checked = listOfEnabledData.every(({id}) => this.setOfCheckedId.has(id))
+      this.indeterminate = listOfEnabledData.some(({id}) => this.setOfCheckedId.has(id)) && !this.checked
+    } else {
+      this.checked = listOfEnabledData.every(({id}) => this.setOfCheckedIdDerive.has(id))
+      this.indeterminate = listOfEnabledData.some(({id}) => this.setOfCheckedIdDerive.has(id) && !this.checked)
+    }
   }
 
   onItemChecked(id: number, checked: boolean): void {
