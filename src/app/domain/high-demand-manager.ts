@@ -86,8 +86,8 @@ export default class HighDemandManager implements IHighDemand {
     return result
   }
 
-  getHighDemands(): Observable<any> {
-    const result = this._highDemandAdapter.getHighDemands()
+  getHighDemands(departmentId: number): Observable<any> {
+    const result = this._highDemandAdapter.getHighDemands(departmentId)
     return result
   }
 }

@@ -128,8 +128,8 @@ export class HighDemandAdapterService implements IManagerHighDemand {
     )
   }
 
-  getHighDemands(): Observable<any> {
-    return this.http.get(`high-demand/list-high-demands-approved`)
+  getHighDemands(departmentId: number): Observable<any> {
+    return this.http.get(`high-demand/list-high-demands-approved/${departmentId}`)
       .pipe(
         catchError(err => {
           console.error('algo salio mal al obtener altas demandas aprobadas')

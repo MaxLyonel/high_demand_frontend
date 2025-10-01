@@ -19,5 +19,5 @@ export default interface IHighDemand {
   getListReceive(rolId: number, placeTypeId: number): Observable<any>;
 
   // para la pre inscripción
-  getHighDemands(): Observable<any>;
+  getHighDemands(departmentId: number): Observable<any>;
 }

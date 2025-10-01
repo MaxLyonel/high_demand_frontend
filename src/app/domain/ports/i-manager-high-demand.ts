@@ -30,5 +30,5 @@ export default interface IManagerHighDemand {
   updateWorkflowState(obj: any): Observable<any>;
 
   // ** obtener Altas Demandas para la pre-inscripción **
-  getHighDemands(): Observable<any>;
+  getHighDemands(departmentId: number): Observable<any>;
 }

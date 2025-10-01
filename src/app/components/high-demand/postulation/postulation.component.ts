@@ -231,7 +231,7 @@ export class PostulationComponent implements OnInit {
   showConfirmRegistrationHighDemand(): void { // Modal cuando se registra la institución como alta demanda
     this.confirmModal = this.modal.confirm({
       nzTitle: 'Registrar la Unidad Educativa como Alta Demanda',
-      nzContent: 'Revise antes de confirmar',
+      nzContent: 'Una vez confirmada la acción, no será posible realizar modificaciones. Por favor, verifique toda la información antes de proceder',
       nzOnOk: () => {
         this.sendHighDemand()
       }

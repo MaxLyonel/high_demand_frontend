@@ -17,6 +17,7 @@
                     <nz-form-label nzRequired>DEPARTAMENTO</nz-form-label>
                     <nz-form-control>
                       <nz-select
+                        formControlName="departmentId"
                         [nzDisabled]="false"
                         nzAllowClear
                         nzShowSearch
@@ -271,7 +272,7 @@
                     <nz-form-item>
                       <nz-form-label nzRequired>Zona / Villa</nz-form-label>
                       <nz-form-control>
-                        <input nz-input formControlName="postulantAreaResidence" value="ZONA CENTRAL" readonly>
+                        <input nz-input formControlName="postulantAreaResidence">
                       </nz-form-control>
                     </nz-form-item>
                   </div>
@@ -369,8 +370,8 @@
                     <nz-form-label nzRequired>NACIONALIDAD</nz-form-label>
                     <nz-form-control>
                       <nz-radio-group formControlName="postulantNationality">
-                        <label nz-radio nzValue="Nacional">Nacional</label>
-                        <label nz-radio nzValue="Extranjero">Extranjero</label>
+                        <label nz-radio [nzValue]="1">Nacional</label>
+                        <label nz-radio [nzValue]="2">Extranjero</label>
                       </nz-radio-group>
                     </nz-form-control>
                   </nz-form-item>

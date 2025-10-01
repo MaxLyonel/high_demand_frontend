@@ -84,6 +84,7 @@ export default class FormularioInscripcionComponent implements OnInit{
   ) {
     this.form = this.fb.group({
       // Sección I: Datos de la Unidad Educativa
+      departmentId: ['', Validators.required],
       institutionName: ['', Validators.required],
       institutionId: [''],
       institutionType: [''],
@@ -111,7 +112,7 @@ export default class FormularioInscripcionComponent implements OnInit{
       guardianPhoneJob: [''],
 
       // Sección III: Datos del Estudiante
-      postulantNationality: ['Nacional', Validators.required],
+      postulantNationality: [1, Validators.required],
       postulantLastName: ['', Validators.required],
       postulantMothersLastName: ['', Validators.required],
       postulantName: ['', Validators.required],
@@ -123,7 +124,7 @@ export default class FormularioInscripcionComponent implements OnInit{
 
       // Sección IV: Dirección del Estudiante
       postulantMunicipalityResidence: [''],
-      postulantAreaResidence: ['ZONA CENTRAL'],
+      postulantAreaResidence: [''],
       postulantAddressResidence: [''],
       postulantTelephoneResidence: [''],
 
@@ -228,10 +229,10 @@ export default class FormularioInscripcionComponent implements OnInit{
           identityCard: formValue.guardianIdentityCard,
           relationship: formValue.guardianRelationship,
           dateBirth: formValue.guardianDateBirth,
-          cellphone: formValue.guardianCellphone
+          cellphone: formValue.guardianCellphone,
+          address: formValue.guardianAddress,
         },
         guardianWork: {
-          address: formValue.guardianAddress,
           placeName: formValue.guardianPlaceNameWork,
           municipality: formValue.guardianMunicipalityWork,
           area: formValue.guardianAreaWork,
@@ -239,7 +240,8 @@ export default class FormularioInscripcionComponent implements OnInit{
           phoneJob: formValue.guardianPhoneJob
         },
         courseId: formValue.yearOfSchoolign.courseId,
-        justification: formValue.justification
+        justification: formValue.justification,
+        postulantSiblings: formValue.postulantSiblings
       }
       this._preRgistration.savePreRegistration(data).subscribe((response) => {
         this.result.set(true)
@@ -260,13 +262,10 @@ export default class FormularioInscripcionComponent implements OnInit{
   ngOnInit(): void {
     this.loadData()
     this.dynamicValidations()
+    this.observables()
   }
 
   loadData() {
-    this._highDemand.getHighDemands().subscribe((response) => {
-      this.highDemands = response.data
-      this.institutions = response.data.map((e:any) => e.educationalInstitution)
-    })
     this._preRgistration.getRelationships().subscribe((response) => {
       this.relationships = response.data
     })
@@ -379,6 +378,31 @@ export default class FormularioInscripcionComponent implements OnInit{
       guardianPhoneJob?.updateValueAndValidity();
 
     })
+  }
+
+  observables() {
+    this.form.get('departmentId')?.valueChanges.subscribe((department) => {
+      this.cleanInstitutionData()
+      if(department) {
+        this._highDemand.getHighDemands(department.id).subscribe((response) => {
+          this.highDemands = response.data
+          this.institutions = response.data.map((e:any) => e.educationalInstitution)
+        })
+      }
+    })
+  }
+
+  cleanInstitutionData() {
+    this.form.get('institutionName')?.reset(null)
+    this.form.get('institutionId')?.reset(null)
+    this.form.get('institutionType')?.reset(null)
+    this.form.get('institutionDependency')?.reset(null)
+    this.form.get('institutionDepartment')?.reset(null)
+    this.form.get('institutionMunicipie')?.reset(null)
+    this.form.get('neighborhoodArea')?.reset(null)
+    this.form.get('educationalLevel')?.reset(null)
+    this.form.get('yearOfSchoolign')?.reset(null)
+    this.institutions = []
   }
 
   showInvalidFields(formGroup: FormGroup) {
