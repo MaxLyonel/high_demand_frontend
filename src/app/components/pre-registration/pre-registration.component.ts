@@ -216,7 +216,7 @@ export default class FormularioInscripcionComponent implements OnInit{
           nationality: formValue.postulantNationality
         },
         postulantResidence: {
-          muncipality: formValue.postulantMunicipalityResidence,
+          municipality: formValue.postulantMunicipalityResidence,
           area: formValue.postulantAreaResidence,
           address: formValue.postulantAddressResidence,
           telephone: formValue.postulantTelephoneResidence
