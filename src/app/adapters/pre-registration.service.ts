@@ -170,8 +170,8 @@ export class PreRegistrationAdapterService implements IManagerPreRegistration {
     )
   }
 
-  donwloadPreRegistration(formData: any): Observable<Blob> {
-    return this.http.post(`/`, formData, {
+  download(postulantId: number): Observable<Blob> {
+    return this.http.get(`pre-registration/print/${postulantId}`, {
       responseType: 'blob'
     })
   }

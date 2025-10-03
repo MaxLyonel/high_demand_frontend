@@ -74,6 +74,7 @@ export default class FormularioInscripcionComponent implements OnInit{
   studentBrother: any
 
   result = signal<boolean>(false)
+  preRegistration: any
 
   constructor(
     private fb: FormBuilder,
@@ -244,6 +245,7 @@ export default class FormularioInscripcionComponent implements OnInit{
         postulantSiblings: formValue.postulantSiblings
       }
       this._preRgistration.savePreRegistration(data).subscribe((response) => {
+        this.preRegistration = response.data
         this.result.set(true)
       })
     } else {
@@ -482,5 +484,18 @@ export default class FormularioInscripcionComponent implements OnInit{
   back() {
     this.form.reset()
     window.location.reload();
+  }
+
+  download() {
+    const { postulant } = this.preRegistration
+    this._preRgistration.download(postulant.id).subscribe((blob: Blob) => {
+      const fileURL = window.URL.createObjectURL(blob)
+      window.open(fileURL)
+      const a  = document.createElement('a')
+      a.href = fileURL;
+      a.download = `formulario-inscripcion.pdf`
+      a.click()
+      window.URL.revokeObjectURL(fileURL)
+    })
   }
 }

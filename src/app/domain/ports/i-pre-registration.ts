@@ -38,6 +38,6 @@ export default interface IPreRegistration {
   getDepartments(): Observable<any>;
 
   // ** exponer funcionalidad para descargar la preinscripción **
-  // downloadPreRegistration(formData: any): Observable<any>;
+  download(postulantId: number): Observable<any>;
 
 }
