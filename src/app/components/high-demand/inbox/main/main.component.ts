@@ -1,11 +1,10 @@
 import { Component, inject, Inject, OnInit, TemplateRef } from '@angular/core';
 import {
   NzTableQueryParams,
-  NzTableComponent,
   NzTableModule,
 } from 'ng-zorro-antd/table';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalLegacyAPI, NzModalService, NzModalContentDirective, NzModalModule } from 'ng-zorro-antd/modal';
+import { NzModalService, NzModalContentDirective, NzModalModule } from 'ng-zorro-antd/modal';
 import { NzCardComponent } from 'ng-zorro-antd/card';
 import { NzRadioComponent, NzRadioGroupComponent } from 'ng-zorro-antd/radio';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -219,6 +218,8 @@ export class BandejaComponent implements OnInit {
               this.highDemands = response.data
             })
         })
+        this.activeTray = 'recepcion'
+        this.changeInbox('recepcion');
       }
     })
   }
