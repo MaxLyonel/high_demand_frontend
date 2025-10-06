@@ -1,6 +1,6 @@
 import { HttpEvent, HttpHandlerFn, HttpRequest, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { catchError, Observable, tap, throwError } from 'rxjs';
-import { environment } from '../../../environments/enviornment';
+import { environment } from '../../../environments/environment';
 import { inject } from '@angular/core';
 import { LocalStorageService } from '../services/local-storage.service';
 import { NotificationService } from '../services/notify.service';
