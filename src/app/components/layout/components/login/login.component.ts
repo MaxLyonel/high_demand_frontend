@@ -16,6 +16,7 @@ import { Rol } from '../../../../domain/models/rol.model';
 import { AppStore } from '../../../../infrastructure/store/app.store';
 import { UserDataService } from '../../../../infrastructure/services/user-data.service';
 import { AbilityService } from '../../../../infrastructure/services/ability.service';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 
 
 @Component({
@@ -25,6 +26,7 @@ import { AbilityService } from '../../../../infrastructure/services/ability.serv
     NzFormModule,
     NzGridModule,
     NzInputModule,
+    NzIconModule,
     NzModalModule,
     ReactiveFormsModule
   ],
@@ -35,6 +37,7 @@ import { AbilityService } from '../../../../infrastructure/services/ability.serv
 export class LoginComponent {
   loginForm: FormGroup;
   isLoginLoading = false;
+  passwordVisible = false;
 
   private fb               = inject(FormBuilder);
   private modal            = inject(NzModalService)

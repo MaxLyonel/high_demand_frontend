@@ -22,12 +22,20 @@
 
       <nz-form-item>
         <nz-form-control [nzErrorTip]="passwordErrorTpl">
-          <input
-            nz-input
-            formControlName="password"
-            placeholder="Contraseña"
-            type="password"
-          />
+          <nz-input-group [nzSuffix]="suffixTemplate">
+            <input
+              nz-input
+              formControlName="password"
+              placeholder="Contraseña"
+              [type]="passwordVisible ? 'text' : 'password'"
+            />
+          </nz-input-group>
+          <ng-template #suffixTemplate>
+            <nz-icon
+              [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+              (click)="passwordVisible = !passwordVisible"
+            />
+          </ng-template>
           <ng-template #passwordErrorTpl let-control>
             La contraseña es requerida
           </ng-template>

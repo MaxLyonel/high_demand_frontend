@@ -276,8 +276,14 @@ export class BandejaComponent implements OnInit {
     let motivo = ''; // variable para guardar lo que escriba el usuario
     const { user } = this.appStore.snapshot
     const placeTypeId = user.selectedRole.placeType.id
+    let rolName = ''
+    if(rolId == 9) {
+      rolName = 'Director Unidad Educativa'
+    } else if(rolId == 37){
+      rolName = 'Director Distrital'
+    }
     this.modal.confirm({
-      nzTitle: `¿Devolver la alta demanda de ${highDemand.institution.name} a ${rolId}?`,
+      nzTitle: `¿Devolver la Alta Demanda de ${highDemand.institution.name} a rol ${rolName}?`,
       nzContent: tpl,
       nzOkText: 'Confirmar',
       nzOkDanger: true,
@@ -296,7 +302,7 @@ export class BandejaComponent implements OnInit {
         this._highDemand.deriveHighDemand(obj).subscribe(() => {
           this.motivo = ''
           this.message.success(
-            `Se ha devuelto la Alta demanda de ${highDemand.institution.name}`
+            `Se ha devuelto la Alta Demanda de ${highDemand.institution.name}`
           );
           this._highDemand.getListReceive(this.rolId!, placeTypeId).subscribe((response) => {
             this.highDemands = response.data;
@@ -310,7 +316,7 @@ export class BandejaComponent implements OnInit {
     const { user } = this.appStore.snapshot
     const placeTypeId = user.selectedRole.placeType.id
     this.modal.confirm({
-      nzTitle: `¿Esta seguro de inscribir a la Unidad Educativa ${highDemand.institution.name} como alta demanda?`,
+      nzTitle: `¿Está seguro de inscribir a la Unidad Educativa ${highDemand.institution.name} como Alta Demanda?`,
       nzContent: 'Por favor revise bien si corresponde',
       nzOkText: 'Confirmar',
       nzCancelText: 'Cancelar',
@@ -320,7 +326,7 @@ export class BandejaComponent implements OnInit {
         };
         this._highDemand.approveHighDemand(obj).subscribe((response) => {
           this.message.success(
-            `Se ha registrado la Unidad Educativa ${highDemand.institution.name} como alta demanda`
+            `Se ha registrado la Unidad Educativa ${highDemand.institution.name} como Alta Demanda`
           );
           this._highDemand.getListReceive(this.rolId!, placeTypeId).subscribe((response) => {
             this.highDemands = response.data;
@@ -334,7 +340,7 @@ export class BandejaComponent implements OnInit {
     const { user } = this.appStore.snapshot
     const placeTypeId = user.selectedRole.placeType.id
     this.modal.confirm({
-      nzTitle: `¿Esta seguro de rechazar a la Unidad Educativa${highDemand.institution.name} como alta demanda?`,
+      nzTitle: `¿Está seguro de rechazar a la Unidad Educativa ${highDemand.institution.name} como Alta Demanda?`,
       nzContent: 'Por favor revise bien si corresponde',
       nzOkText: 'Confirmar',
       nzCancelText: 'Cancelar',
@@ -344,7 +350,7 @@ export class BandejaComponent implements OnInit {
         };
         this._highDemand.declineHighDeamand(obj).subscribe((response) => {
           this.message.success(
-            `Se ha rechzado la Unidad Educativa ${highDemand.institution.name} como alta demanda`
+            `Se ha rechzado la Unidad Educativa ${highDemand.institution.name} como Alta Demanda`
           );
           this._highDemand.getListReceive(this.rolId!, placeTypeId).subscribe((response) => {
             this.highDemands = response.data;
