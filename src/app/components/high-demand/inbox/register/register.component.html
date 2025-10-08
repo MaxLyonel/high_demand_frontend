@@ -94,8 +94,18 @@
     nzTitle="Formulario de pre inscripción"
     (nzOnCancel)="closeModal()"
     [nzFooter]="modalFooter"
+    [nzWidth]="800"
   >
     <ng-container *nzModalContent>
+      <div class="pdf-container" *ngIf="pdfUrl">
+        <iframe
+          [src]="pdfUrl"
+          width="100%"
+          height="600px"
+          style="border:none;"
+        ></iframe>
+      </div>
+      <div *ngIf="!pdfUrl">Cargando PDF....</div>
     </ng-container>
     <ng-template #modalFooter>
       <button

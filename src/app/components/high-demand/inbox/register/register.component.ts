@@ -1,4 +1,4 @@
-import { Component, importProvidersFrom, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { NzButtonComponent } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzTableModule } from 'ng-zorro-antd/table';
@@ -10,6 +10,7 @@ import IHighDemand from '../../../../domain/ports/i-high-demand';
 import { switchMap, finalize } from 'rxjs';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { CommonModule } from '@angular/common';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 
 interface Postulant {
@@ -56,8 +57,8 @@ interface PreRegistration {
     NzButtonComponent,
     NzTagComponent,
     NzTypographyModule,
-    NzModalModule
-  ],
+    NzModalModule,
+],
   selector: 'register-inbox',
   templateUrl: './register.component.html',
   styleUrl: './register.component.less'
@@ -71,10 +72,13 @@ export class RegisterInbox implements OnInit {
   selectedPostulant: any
   sie: any
 
+  pdfUrl: SafeResourceUrl | null = null;
+
   constructor(
     private readonly appStore: AppStore,
     @Inject('IPreRegistration') private _preRegistration: IPreRegistration,
-    @Inject('IHighDemand') private _highDemand: IHighDemand
+    @Inject('IHighDemand') private _highDemand: IHighDemand,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
@@ -126,13 +130,20 @@ export class RegisterInbox implements OnInit {
     this.isDocumentVisible = false
   }
 
-  onToogle(postulant: any) {
-    this.selectedPostulant = postulant
+  onToogle(preRegistration: any) {
+    this.selectedPostulant = preRegistration
     this.isDocumentVisible = true
+
+    const postulantId = preRegistration.postulant.id
+    this._preRegistration.download(postulantId).subscribe((blob: Blob) => {
+      const url = URL.createObjectURL(blob);
+      this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    })
   }
 
   closeModal() {
     this.isDocumentVisible = false
+    this.pdfUrl = null
   }
 
 }
