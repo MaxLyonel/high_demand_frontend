@@ -195,7 +195,7 @@
                       >
                         <nz-table
                           #hermanosTable
-                          [nzData]="postulantSiblingsArray"
+                          [nzData]="postulantSiblings.value || []"
                           nzSize="small"
                           [nzShowPagination]="false"
                         >
@@ -208,17 +208,17 @@
                             </tr>
                           </thead>
                           <tbody>
-                            @if(postulantSiblingsArray.length === 0) {
+                            @if(postulantSiblings.length === 0) {
                               <tr>
                                 <td colspan="4" class="text-center">No hay hermanos registrados</td>
                               </tr>
                             } @else {
-                              @for(sibling of postulantSiblingsArray; track $index; let i = $index) {
+                              @for(sibling of postulantSiblings.value; track $index; let i = $index) {
                                 <tr [formGroup]="sibling">
-                                  <td class="text-center">{{ sibling.value.codeRude }}</td>
-                                  <td class="text-center">{{ sibling.value.name }}</td>
-                                  <td class="text-center">{{ sibling.value.level }}</td>
-                                  <td class="text-center">{{ sibling.value.grade }}</td>
+                                  <td class="text-center">{{ sibling.codeRude }}</td>
+                                  <td class="text-center">{{ sibling.name }}</td>
+                                  <td class="text-center">{{ sibling.level }}</td>
+                                  <td class="text-center">{{ sibling.grade }}</td>
                                 </tr>
                               }
                             }

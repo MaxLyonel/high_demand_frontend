@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, signal, TemplateRef } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit, signal, TemplateRef } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -457,7 +457,6 @@ export default class FormularioInscripcionComponent implements OnInit{
         const sie = selectedInstitution.educationalInstitutionId
         this._preRgistration.searchStudent(sie, rude).subscribe((response) => {
           const brother = response.data;
-          console.log("hermano obtenido: ", brother)
           if(!brother) return;
           const siblingGroup = this.fb.group({
             codeRude: [brother.codigo_rude, Validators.required],
@@ -465,15 +464,15 @@ export default class FormularioInscripcionComponent implements OnInit{
             level: [brother?.nivel || ''],
             grade: [`${brother.grado} ${brother.paralelo}` || '']
           })
-          this.postulantSiblingsArray.push(siblingGroup)
+          this.postulantSiblings.push(siblingGroup)
           this.form.get('postulantSiblings')?.updateValueAndValidity()
         })
       }
     });
   }
 
-  get postulantSiblingsArray(): FormGroup[] {
-    return (this.form.get('postulantSiblings') as FormArray<FormGroup>).controls;
+  get postulantSiblings(): FormArray {
+    return this.form.get('postulantSiblings') as FormArray
   }
 
   // getters y setters
