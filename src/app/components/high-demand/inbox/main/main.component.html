@@ -46,7 +46,7 @@
               nzType="primary"
               [nzDanger]="actionRole.action === 'DERIVAR' ? false : true "
               [disabled]="setOfCheckedIdDerive.size === 0"
-              (click)="actionRole.action === 'DERIVAR' ? deriveSelected(actionRole.nextState) : undefined"
+              (click)="actionRole.action === 'DERIVAR' ? deriveSelected(actionRole.nextState, citeTpl) : undefined"
             >
               <i nz-icon [nzType]="actionRole.action === 'DERIVAR' ? 'send' : 'reload'"></i>
               {{ actionRole.action }} ({{ setOfCheckedIdDerive.size }}) seleccionados
@@ -54,6 +54,12 @@
           }
         }
       }
+      <ng-template #citeTpl>
+        <div>
+          <label>Ingrese el CITE:</label>
+          <input id="cite" nz-input [(ngModel)]="cite">
+        </div>
+      </ng-template>
     </nz-space>
   </div>
 

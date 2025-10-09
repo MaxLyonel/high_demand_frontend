@@ -101,6 +101,7 @@ export class BandejaComponent implements OnInit {
   appStore = inject(AppStore);
   actionRoles: Array<any> = [];
   motivo: any
+  cite: any
 
   isSeeVisibleCourse: boolean = false
   courses: any
@@ -224,23 +225,41 @@ export class BandejaComponent implements OnInit {
     })
   }
 
-  deriveSelected(nextRolId: number): void {
+  deriveSelected(nextRolId: number, tpl: TemplateRef<{}>): void {
+    let cite = ''
     const { user } = this.appStore.snapshot
     const placeTypeId = user.selectedRole.placeType.id
-    this.modal.confirm({
+    const modalRef = this.modal.confirm({
       nzTitle: `¿Derivar las Unidades Educativas de Alta Demanda?`,
-      nzContent: 'Por favor revise bien si corresponde',
+      nzContent: tpl,
       nzOkText: `Confirmar (${this.setOfCheckedIdDerive.size})`,
       nzCancelText: 'Cancelar',
+      nzOkDisabled: true,
       nzOnOk: () => {
+        const inputEl = document.getElementById(
+          'cite'
+        ) as HTMLInputElement
+        cite = inputEl?.value?.trim() || '';
         const obj = {
           highDemandIds: [...this.setOfCheckedIdDerive],
-          rolId: nextRolId
+          rolId: nextRolId,
+          observation: cite
         };
         this._highDemand.deriveHighDemand(obj).subscribe((response) => {
           this.message.success(response.message);
           this._highDemand.getListReceive(this.rolId!, placeTypeId).subscribe((response) => {
             this.highDemands = response.data
+          })
+        })
+      }
+    });
+    setTimeout(() => {
+      const inputEl = document.getElementById('cite') as HTMLInputElement;
+      if(inputEl) {
+        inputEl.addEventListener('input', (e: any) => {
+          const value = e.target.value?.trim();
+          modalRef.updateConfig({
+            nzOkDisabled: !value
           })
         })
       }
@@ -252,7 +271,7 @@ export class BandejaComponent implements OnInit {
     const placeTypeId = user.selectedRole.placeType.id
     this.modal.confirm({
       nzTitle: `¿Derivar la Unidad Educativa de Alta Demanda ${highDemand.institution.name}?`,
-      nzContent: 'Por favor revise bien si corresponde',
+      nzContent: 'Por favor revise si corresponde',
       nzOkText: 'Confirmar',
       nzCancelText: 'Cancelar',
       nzOnOk: () => {
