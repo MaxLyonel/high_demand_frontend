@@ -49,7 +49,7 @@ export class UserDataService {
         this.router.navigate(['/alta-demanda/main-inbox'])
         break;
       case 50:
-        this.router.navigate(['/alta-demanda/dashboard'])
+        this.router.navigate(['/alta-demanda/admin'])
     }
   }
 }

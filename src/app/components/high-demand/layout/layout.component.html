@@ -21,11 +21,11 @@
         @if(canManageAdmin$ | async){
         <li nz-submenu nzOpen nzTitle="Dashboard" nzIcon="dashboard">
             <ul>
-              <!-- <li nz-menu-item nzMatchRouter>
-                <a routerLink="/alta-demanda/control-acceso">Admintrar Acceso</a>
-              </li> -->
               <li nz-menu-item nzMatchRouter>
-                <a routerLink="/alta-demanda/dashboard">Administrar acceso</a>
+                <a routerLink="/alta-demanda/dashboard">Dashboard</a>
+              </li>
+              <li nz-menu-item nzMatchRouter>
+                <a routerLink="/alta-demanda/admin">Administrar acceso</a>
               </li>
             </ul>
         </li>
@@ -74,7 +74,7 @@
         <li nz-submenu nzOpen nzTitle="Administración" nzIcon="setting">
           <ul>
             <li nz-menu-item nzMatchRouter>
-              <a routerLink="/alta-demanda/admin">Configuración</a>
+              <a routerLink="/alta-demanda/config">Configuración</a>
             </li>
           </ul>
         </li>
