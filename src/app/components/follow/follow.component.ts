@@ -117,10 +117,6 @@ export default class PreInscriptionTrackingComponent {
           this.searchResults = []
         } else {
           const mapped = response.data.map((item: any) => this.mapToPreInscription(item));
-          // 👇 si quieres guardar solo el primero
-          // this.searchResults = mapped.length ? mapped[0] : null;
-
-          // 👇 si prefieres manejarlo como lista en vez de único resultado
           this.searchResults = mapped;
         }
 
@@ -143,14 +139,12 @@ export default class PreInscriptionTrackingComponent {
   private mapToPreInscription(apiResponse: any): PreInscription {
     return {
       id: apiResponse.id,
-      applicationCode: `PI-${new Date(apiResponse.createdAt).getFullYear()}-${String(apiResponse.id).padStart(6, '0')}`,
+      applicationCode: apiResponse.code,
       applicantName: `${apiResponse.postulant.name} ${apiResponse.postulant.lastName} ${apiResponse.postulant.mothersLastName}`.trim(),
-      applicationDate: new Date(apiResponse.createdAt).toLocaleDateString('es-BO', {
-        day: '2-digit', month: 'long', year: 'numeric'
-      }),
+      applicationDate: this.formatDateTime(apiResponse.createdAt || '', false),
       institutionName: apiResponse.highDemandCourse?.highDemandRegistration?.educationalInstitution?.name ?? '',
-      educationalLevel: apiResponse.highDemandCourse?.level?.name, // puedes mapear el id → string
-      course: `${apiResponse.highDemandCourse?.grade?.name} ${apiResponse.highDemandCourse?.parallel?.name}`, // puedes juntar grado + paralelo
+      educationalLevel: apiResponse.highDemandCourse?.level?.name,
+      course: `${apiResponse.highDemandCourse?.grade?.name}`,
       justification: apiResponse.criteria?.description ?? '',
       status: apiResponse.state,
       statusClass: this.mapStatusClass(apiResponse.state),
@@ -167,5 +161,25 @@ export default class PreInscriptionTrackingComponent {
       case 'REGISTRADO': return 'status-procesando';
       default: return 'status-default';
     }
+  }
+
+  private formatDateTime(isoString: string, withoutTime: boolean): string {
+    if (!isoString) return '';
+    const date = new Date(isoString);
+
+    const day = date.getDate();
+    const month = date.toLocaleString('es-ES', { month: 'long' });
+    const year = date.getFullYear();
+
+    let hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+
+    const ampm = hours >= 12 ? 'pm' : 'am';
+    hours = hours % 12;
+    if (hours === 0) hours = 12;
+
+    if(withoutTime) {
+      return `${day} de ${month} de ${year}`;
+    } else return `${day} de ${month} de ${year}, ${hours}:${minutes} ${ampm}`;
   }
 }

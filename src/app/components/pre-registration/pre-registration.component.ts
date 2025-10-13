@@ -217,7 +217,8 @@ export default class FormularioInscripcionComponent implements OnInit{
           gender: formValue.postulantGender,
           dateBirth: formValue.postulantDateBirth,
           placeBirth: formValue.postulantPlaceBirth,
-          nationality: formValue.postulantNationality
+          nationality: formValue.postulantNationality,
+          codeRude: formValue.rudeCodeSearch
         },
         postulantResidence: {
           municipality: formValue.postulantMunicipalityResidence,
@@ -343,8 +344,21 @@ export default class FormularioInscripcionComponent implements OnInit{
       const postulantSiblings = this.form.get('postulantSiblings')
       if(value === 1) {
         postulantSiblings?.setValidators([Validators.required, Validators.minLength(1)])
+        // vivienda
+        postulantMunicipalityResidence?.reset()
+        postulantAreaResidence?.reset()
+        postulantAddressResidence?.reset()
+        postulantTelephoneResidence?.reset()
+        // trabajo
+        guardianPlaceNameWork?.reset()
+        guardianMunicipalityWork?.reset()
+        guardianAreaWork?.reset()
+        guardianAddressJob?.reset()
+        guardianPhoneJob?.reset()
       } else {
         postulantSiblings?.clearValidators()
+        const postulantSiblings2 = this.form.get('postulantSiblings') as FormArray;
+        postulantSiblings2?.clear();
       }
       postulantSiblings?.updateValueAndValidity()
 
@@ -353,11 +367,25 @@ export default class FormularioInscripcionComponent implements OnInit{
         postulantAreaResidence?.setValidators([Validators.required])
         postulantAddressResidence?.setValidators([Validators.required])
         postulantTelephoneResidence?.setValidators([Validators.required])
+        // borrar valores de trabajo
+        guardianPlaceNameWork?.reset()
+        guardianMunicipalityWork?.reset()
+        guardianAreaWork?.reset()
+        guardianAddressJob?.reset()
+        guardianPhoneJob?.reset()
+        // hermanos
+        const postulantSiblings2 = this.form.get('postulantSiblings') as FormArray;
+        postulantSiblings2?.clear();
       } else {
         postulantMunicipalityResidence?.clearValidators()
         postulantAreaResidence?.clearValidators()
         postulantAddressResidence?.clearValidators()
         postulantTelephoneResidence?.clearValidators()
+        // vivienda
+        postulantMunicipalityResidence?.reset()
+        postulantAreaResidence?.reset()
+        postulantAddressResidence?.reset()
+        postulantTelephoneResidence?.reset()
       }
       postulantMunicipalityResidence?.updateValueAndValidity();
       postulantAreaResidence?.updateValueAndValidity();
@@ -370,12 +398,23 @@ export default class FormularioInscripcionComponent implements OnInit{
         guardianAreaWork?.setValidators([Validators.required])
         guardianAddressJob?.setValidators([Validators.required])
         guardianPhoneJob?.setValidators([Validators.required])
+        const postulantSiblings2 = this.form.get('postulantSiblings') as FormArray;
+        postulantSiblings2?.clear();
+        postulantMunicipalityResidence?.reset()
+        postulantAreaResidence?.reset()
+        postulantAddressResidence?.reset()
+        postulantTelephoneResidence?.reset()
       } else {
         guardianPlaceNameWork?.clearValidators()
         guardianMunicipalityWork?.clearValidators()
         guardianAreaWork?.clearValidators()
         guardianAddressJob?.clearValidators()
         guardianPhoneJob?.clearValidators()
+        guardianPlaceNameWork?.reset()
+        guardianMunicipalityWork?.reset()
+        guardianAreaWork?.reset()
+        guardianAddressJob?.reset()
+        guardianPhoneJob?.reset()
       }
       guardianPlaceNameWork?.updateValueAndValidity();
       guardianMunicipalityWork?.updateValueAndValidity();
@@ -445,6 +484,10 @@ export default class FormularioInscripcionComponent implements OnInit{
   }
 
   addBrother(tpl: TemplateRef<{}>): void {
+    if(this.postulantSiblings.length === 3) {
+      alert("solo puede introducir 3 hermanos(as)")
+      return;
+    }
     let rude = '';
     this.confirmModal = this.modal.confirm({
       nzTitle: 'Busar al hermano(a)',
