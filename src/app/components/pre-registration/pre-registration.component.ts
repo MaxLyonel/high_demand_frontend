@@ -76,6 +76,8 @@ export default class FormularioInscripcionComponent implements OnInit{
   result = signal<boolean>(false)
   preRegistration: any
 
+  rudeCodeSearch: string = '';
+
   constructor(
     private fb: FormBuilder,
     private modal: NzModalService,
@@ -113,6 +115,8 @@ export default class FormularioInscripcionComponent implements OnInit{
       guardianPhoneJob: [''],
 
       // Sección III: Datos del Estudiante
+      withCodeRude: [false],
+      rudeCodeSearch: [''],
       postulantNationality: [1, Validators.required],
       postulantLastName: ['', Validators.required],
       postulantMothersLastName: ['', Validators.required],
@@ -480,6 +484,10 @@ export default class FormularioInscripcionComponent implements OnInit{
     return this.form.get('justification')?.value;
   }
 
+  get withCodeRude(): boolean {
+    return this.form.get('withCodeRude')?.value;
+  }
+
   back() {
     this.form.reset()
     window.location.reload();
@@ -495,6 +503,43 @@ export default class FormularioInscripcionComponent implements OnInit{
       a.download = `formulario-inscripcion.pdf`
       a.click()
       window.URL.revokeObjectURL(fileURL)
+    })
+  }
+
+  searchCodeRude() {
+    this.form.get('rudeCodeSearch')?.valueChanges.pipe(
+      startWith(this.form.get('rudeCodeSearch')?.value)
+    ).subscribe((value) => {
+      if(value !== '') {
+        this._preRgistration.getInfoByCodeRude(value).subscribe((response) => {
+          if(Object.keys(response.data).length > 0) {
+            this.form.patchValue({
+              postulantLastName: response?.data?.paterno,
+              postulantMothersLastName: response?.data?.materno,
+              postulantName: response?.data?.nombre,
+              postulantIdentityCard: response?.data?.carnet_identidad,
+              postulantComplement: response?.data?.complemento,
+              postulantGender: response?.data?.genero === 'FEMENINO' ? 'F' : 'M',
+              postulantDateBirth: new Date(response?.data?.fecha_nacimiento),
+              postulantPlaceBirth: response?.data?.lugar
+            })
+          }
+        })
+      }
+    })
+  }
+
+  clearRudeCode() {
+    this.form.get('rudeCodeSearch')?.reset('');
+    this.form.patchValue({
+      postulantLastName: '',
+      postulantMothersLastName: '',
+      postulantName: '',
+      postulantIdentityCard: '',
+      postulantComplement: '',
+      postulantGender: '',
+      postulantDateBirth: '',
+      postulantPlaceBirth: ''
     })
   }
 }

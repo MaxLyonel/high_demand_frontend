@@ -36,6 +36,8 @@ export default interface IManagerPreRegistration {
   getListLevels(): Observable<any>
   // ** obtener lista de departamentos **
   getListDepartments(): Observable<any>;
+  // ** obtener información de estudiante por Código Rude **
+  getInfoByCodeRude(codeRude: string): Observable<any>;
 
   // ** descargar la preinscripción **
   download(postulantId: number): Observable<any>;

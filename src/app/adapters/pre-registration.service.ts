@@ -60,6 +60,17 @@ export class PreRegistrationAdapterService implements IManagerPreRegistration {
 
   }
 
+  getInfoByCodeRude(codeRude: string): Observable<any> {
+    return this.http.get(`catalogs/search-student/${codeRude}`, {
+      context: new HttpContext().set(IS_USER_ACTION, true)
+    }).pipe(
+      catchError(err => {
+        console.error("algo salió mal en buscar estudiante")
+        return throwError(() => err)
+      })
+    )
+  }
+
   savePreRegistration(obj: any): Observable<any> {
     return this.http.post(`pre-registration/create`, obj, {
       context: new HttpContext().set(IS_USER_ACTION, true)

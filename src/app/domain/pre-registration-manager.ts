@@ -89,4 +89,8 @@ export default class PreRegistrationManager implements IPreRegistration {
     return this._preRegistrationAdapter.download(postulantId)
   }
 
+  getInfoByCodeRude(codeRude: string): Observable<any> {
+    return this._preRegistrationAdapter.getInfoByCodeRude(codeRude)
+  }
+
 }

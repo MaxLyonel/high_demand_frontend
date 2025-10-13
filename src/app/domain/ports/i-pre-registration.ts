@@ -36,6 +36,8 @@ export default interface IPreRegistration {
   getLevels(): Observable<any>;
   // ** exponer funcionalidad para obtener la lista de departamentos **
   getDepartments(): Observable<any>;
+  // ** exponer la funcionalidad de buscar información por Código Rude **
+  getInfoByCodeRude(codeRude: string): Observable<any>;
 
   // ** exponer funcionalidad para descargar la preinscripción **
   download(postulantId: number): Observable<any>;
