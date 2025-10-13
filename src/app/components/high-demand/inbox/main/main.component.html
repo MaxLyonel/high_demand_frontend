@@ -119,6 +119,17 @@
               >
                 <i nz-icon nzType="inbox"></i>
               </button> -->
+              <button
+                *nzSpaceItem
+                nz-button
+                nzType="primary"
+                nzSize="small"
+                nzShape="circle"
+                nz-tooltip="Ver declaración"
+                (click)="onToogle(data)"
+              >
+                <i nz-icon nzType="file-pdf"></i>
+              </button>
             } @else {
               @if(rolId === 38) {
                 <button
@@ -204,6 +215,24 @@
 
     </tbody>
   </nz-table>
+
+  <nz-modal
+    [(nzVisible)]="isDocumentVisible"
+    nzTitle="Formulario Registro y Validación Unidad Educativa"
+    (nzOnCancel)="closeModal()"
+    [nzWidth]="800"
+  >
+    <ng-container *nzModalContent>
+      <div class="pdf-container" *ngIf="pdfUrl">
+        <iframe
+          [src]="pdfUrl"
+          width="100%"
+          height="600px"
+          style="border:none;"
+        ></iframe>
+      </div>
+    </ng-container>
+  </nz-modal>
 
   <nz-modal
     nzTitle="Cursos de la Unidad Educativa"

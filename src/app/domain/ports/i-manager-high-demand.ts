@@ -31,4 +31,7 @@ export default interface IManagerHighDemand {
 
   // ** obtener Altas Demandas para la pre-inscripción **
   getHighDemands(departmentId: number): Observable<any>;
+
+  // ** descargar la Alta Demanda **
+  download(highDemandId: number): Observable<any>;
 }

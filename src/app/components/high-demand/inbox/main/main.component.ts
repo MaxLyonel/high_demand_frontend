@@ -21,6 +21,7 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzListModule } from 'ng-zorro-antd/list';
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 interface Institution {
   id: number;
@@ -114,10 +115,15 @@ export class BandejaComponent implements OnInit {
   setOfCheckedId = new Set<number>()
   setOfCheckedIdDerive = new Set<number>()
 
+  // download
+  isDocumentVisible = false
+  pdfUrl: SafeResourceUrl | null = null
+
   constructor(
     private message: NzMessageService,
     private modal: NzModalService,
-    @Inject('IHighDemand') private _highDemand: IHighDemand
+    @Inject('IHighDemand') private _highDemand: IHighDemand,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
@@ -448,6 +454,21 @@ export class BandejaComponent implements OnInit {
   onCurrentPageDataChange(listOfCurrentPageData: readonly HighDemand[]): void {
     this.listOfCurrentPageData = listOfCurrentPageData
     this.refreshCheckedStatus()
+  }
+
+  onToogle(highDemand: any) {
+    this.isDocumentVisible = true
+
+    const highDemandId = highDemand.id
+    this._highDemand.download(highDemandId).subscribe((blob: Blob) => {
+      const url = URL.createObjectURL(blob)
+      this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    })
+  }
+
+  closeModal() {
+    this.isDocumentVisible = false
+    this.pdfUrl = null
   }
 
 

@@ -149,4 +149,10 @@ export class HighDemandAdapterService implements IManagerHighDemand {
     )
   }
 
+  download(highDemandId: number): Observable<any> {
+    return this.http.get(`high-demand/print/${highDemandId}`, {
+      responseType: 'blob'
+    })
+  }
+
 }

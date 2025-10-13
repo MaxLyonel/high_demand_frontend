@@ -20,4 +20,6 @@ export default interface IHighDemand {
 
   // para la pre inscripción
   getHighDemands(departmentId: number): Observable<any>;
+
+  download(highDemandId: number): Observable<any>;
 }

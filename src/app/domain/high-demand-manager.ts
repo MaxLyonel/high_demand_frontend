@@ -90,4 +90,8 @@ export default class HighDemandManager implements IHighDemand {
     const result = this._highDemandAdapter.getHighDemands(departmentId)
     return result
   }
+
+  download(highDemandId: number): Observable<Blob> {
+    return this._highDemandAdapter.download(highDemandId)
+  }
 }
