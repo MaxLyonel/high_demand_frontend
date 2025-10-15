@@ -53,6 +53,16 @@
             </button>
           }
         }
+        <button
+          *nzSpaceItem
+          nz-button
+          nzType="primary"
+          [disabled]="false"
+          (click)="getHighDemands()"
+        >
+          <i nz-icon nzType="file-pdf"></i>
+          GENERAR REPORTE
+        </button>
       }
       <ng-template #citeTpl>
         <div>
@@ -220,6 +230,7 @@
     [(nzVisible)]="isDocumentVisible"
     nzTitle="Formulario Registro y Validación Unidad Educativa"
     (nzOnCancel)="closeModal()"
+    (nzOnOk)="closeModal()"
     [nzWidth]="800"
   >
     <ng-container *nzModalContent>
@@ -229,6 +240,25 @@
           width="100%"
           height="600px"
           style="border:none;"
+        ></iframe>
+      </div>
+    </ng-container>
+  </nz-modal>
+
+  <nz-modal
+    [(nzVisible)]="isReportVisible"
+    nzTitle="Reporte de registro y validación distrital"
+    (nzOnCancel)="closeReport()"
+    (nzOnOk)="closeReport()"
+    [nzWidth]="800"
+  >
+    <ng-container *nzModalContent>
+      <div class="pdf-container" *ngIf="reportPdfUrl">
+        <iframe
+          [src]="reportPdfUrl"
+          width="100%"
+          height="600px"
+          style="border: none;"
         ></iframe>
       </div>
     </ng-container>

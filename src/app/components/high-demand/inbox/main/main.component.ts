@@ -22,6 +22,7 @@ import { NzListModule } from 'ng-zorro-antd/list';
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import IHistory from '../../../../domain/ports/i-history';
 
 interface Institution {
   id: number;
@@ -117,13 +118,16 @@ export class BandejaComponent implements OnInit {
 
   // download
   isDocumentVisible = false
+  isReportVisible = false
   pdfUrl: SafeResourceUrl | null = null
+  reportPdfUrl: SafeResourceUrl | null = null
 
   constructor(
     private message: NzMessageService,
     private modal: NzModalService,
     @Inject('IHighDemand') private _highDemand: IHighDemand,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    @Inject('IHistory') private _history: IHistory
   ) {}
 
   ngOnInit(): void {
@@ -471,5 +475,25 @@ export class BandejaComponent implements OnInit {
     this.pdfUrl = null
   }
 
+  getHighDemands() {
+    this.isReportVisible = true
+    const { user } = this.appStore.snapshot
+    const { selectedRole } = user
+    const { placeType, role } = selectedRole
+    if(role.id == 37) {
+      this._history.downloadReportDistrict(placeType.id).subscribe((blob: Blob) => {
+        const url = URL.createObjectURL(blob)
+        this.reportPdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url)
+      })
+    } else if(role.id == 38) {
+      alert("aqui reporte")
+    }
+
+  }
+
+  closeReport() {
+    this.isReportVisible = false
+    this.reportPdfUrl = null
+  }
 
 }

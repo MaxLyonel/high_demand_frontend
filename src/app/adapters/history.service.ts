@@ -17,4 +17,10 @@ export class HistoryAdapterService implements IManagerHistory {
   getGeneralHistories(): Observable<History[]> {
     return this.http.get<any>(`history/list-histories`)
   }
+
+  downloadReportDistrict(districtId: number): Observable<any> {
+    return this.http.get(`history/list-high-demands-by-district/${districtId}`, {
+      responseType: 'blob'
+    })
+  }
 }

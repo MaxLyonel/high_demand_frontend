@@ -20,4 +20,9 @@ export class HistoryManager implements IHistory {
     const histories = this._historyAdapter.getGeneralHistories()
     return histories
   }
+
+  downloadReportDistrict(districtId: number): Observable<any> {
+    const highDemands = this._historyAdapter.downloadReportDistrict(districtId)
+    return highDemands
+  }
 }
