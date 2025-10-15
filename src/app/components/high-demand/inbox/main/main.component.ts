@@ -227,6 +227,7 @@ export class BandejaComponent implements OnInit {
             .getListInbox(this.rolId!, 1, placeTypeId)
             .subscribe((response) => {
               this.highDemands = response.data
+              this.setOfCheckedIdDerive.clear();
             })
         })
         this.activeTray = 'recepcion'
@@ -259,6 +260,7 @@ export class BandejaComponent implements OnInit {
           this.message.success(response.message);
           this._highDemand.getListReceive(this.rolId!, placeTypeId).subscribe((response) => {
             this.highDemands = response.data
+            this.setOfCheckedIdDerive.clear();
           })
         })
       }
@@ -480,13 +482,16 @@ export class BandejaComponent implements OnInit {
     const { user } = this.appStore.snapshot
     const { selectedRole } = user
     const { placeType, role } = selectedRole
-    if(role.id == 37) {
+    if(role.id == 37) { // distrital
       this._history.downloadReportDistrict(placeType.id).subscribe((blob: Blob) => {
         const url = URL.createObjectURL(blob)
         this.reportPdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url)
       })
-    } else if(role.id == 38) {
-      alert("aqui reporte")
+    } else if(role.id == 38) { // departamental
+      this._history.downloadReportDepartment(placeType.id).subscribe((blob: Blob) => {
+        const url = URL.createObjectURL(blob)
+        this.reportPdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url)
+      })
     }
 
   }

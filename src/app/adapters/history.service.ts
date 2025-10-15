@@ -23,4 +23,10 @@ export class HistoryAdapterService implements IManagerHistory {
       responseType: 'blob'
     })
   }
+
+  donwloadReportDepartment(departmentId: number): Observable<any> {
+    return this.http.get(`history/list-high-demands-by-department/${departmentId}`, {
+      responseType: 'blob'
+    })
+  }
 }

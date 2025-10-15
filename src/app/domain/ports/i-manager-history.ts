@@ -7,4 +7,5 @@ export default interface IManagerHistory {
   getHistories(highDemandRegistationId: number): Observable<History[]>
   getGeneralHistories(): Observable<History[]>;
   downloadReportDistrict(districtId: number): Observable<any>;
+  donwloadReportDepartment(departmentId: number): Observable<any>;
 }

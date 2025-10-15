@@ -25,4 +25,9 @@ export class HistoryManager implements IHistory {
     const highDemands = this._historyAdapter.downloadReportDistrict(districtId)
     return highDemands
   }
+
+  downloadReportDepartment(departmentId: number): Observable<any> {
+    const highDemands = this._historyAdapter.donwloadReportDepartment(departmentId)
+    return highDemands
+  }
 }
