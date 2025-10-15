@@ -33,8 +33,8 @@ export default class HighDemandManager implements IHighDemand {
     return result
   }
 
-  getListInbox(rolId: number, stateId: number, placeTypeId: number): Observable<any> {
-    const result = this._highDemandAdapter.getListInboxHighDemand(rolId, stateId, placeTypeId)
+  getListInbox(rolId: number, placeTypeId: number): Observable<any> {
+    const result = this._highDemandAdapter.getListInboxHighDemand(rolId, placeTypeId)
     return result
   }
 
@@ -68,6 +68,11 @@ export default class HighDemandManager implements IHighDemand {
 
   deriveHighDemand(obj: any): Observable<any> {
     const result = this._highDemandAdapter.deriveHighDemand(obj)
+    return result
+  }
+
+  returnHighDemand(obj: any): Observable<any> {
+    const result = this._highDemandAdapter.returnHighDemand(obj)
     return result
   }
 

@@ -158,7 +158,7 @@ export class BandejaComponent implements OnInit {
     this.highDemands = []
 
     const actions: Record<string, () => Observable<any>> = {
-      entrada: () => this._highDemand.getListInbox(this.rolId!, 1, placeTypeId),
+      entrada: () => this._highDemand.getListInbox(this.rolId!, placeTypeId),
       recepcion: () => this._highDemand.getListReceive(this.rolId!, placeTypeId)
     };
 
@@ -197,7 +197,7 @@ export class BandejaComponent implements OnInit {
         this._highDemand.receiveHighDemands([id]).subscribe((response) => {
           this.message.success(`Recepcionado exitosamente`);
           this._highDemand
-            .getListInbox(this.rolId!, 1, placeTypeId)
+            .getListInbox(this.rolId!, placeTypeId)
             .subscribe((response) => {
               this.highDemands = response.data;
             });
@@ -224,7 +224,7 @@ export class BandejaComponent implements OnInit {
           this.message.success(response.message)
           this.setOfCheckedId.clear()
           this._highDemand
-            .getListInbox(this.rolId!, 1, placeTypeId)
+            .getListInbox(this.rolId!, placeTypeId)
             .subscribe((response) => {
               this.highDemands = response.data
               this.setOfCheckedIdDerive.clear();
@@ -308,13 +308,19 @@ export class BandejaComponent implements OnInit {
     const { user } = this.appStore.snapshot
     const placeTypeId = user.selectedRole.placeType.id
     let rolName = ''
+    let title = ''
+    let message = ''
     if(rolId == 9) {
       rolName = 'Director Unidad Educativa'
+      title = `¿Rechazar la Alta Demanda de ${highDemand.institution.name}`
+      message = `Se ha rechazado la Alta Demanda de ${highDemand.institution.name}`
     } else if(rolId == 37){
       rolName = 'Director Distrital'
+      title = `¿Devolver la Alta Demanda de ${highDemand.institution.name} a rol ${rolName}?`
+      message = `Se ha devuelto la Alta Demanda de ${highDemand.institution.name}`
     }
     this.modal.confirm({
-      nzTitle: `¿Devolver la Alta Demanda de ${highDemand.institution.name} a rol ${rolName}?`,
+      nzTitle: title,
       nzContent: tpl,
       nzOkText: 'Confirmar',
       nzOkDanger: true,
@@ -330,11 +336,9 @@ export class BandejaComponent implements OnInit {
           observation: motivo
         };
 
-        this._highDemand.deriveHighDemand(obj).subscribe(() => {
+        this._highDemand.returnHighDemand(obj).subscribe(() => {
           this.motivo = ''
-          this.message.success(
-            `Se ha devuelto la Alta Demanda de ${highDemand.institution.name}`
-          );
+          this.message.success(message);
           this._highDemand.getListReceive(this.rolId!, placeTypeId).subscribe((response) => {
             this.highDemands = response.data;
           });
@@ -381,7 +385,7 @@ export class BandejaComponent implements OnInit {
         };
         this._highDemand.declineHighDeamand(obj).subscribe((response) => {
           this.message.success(
-            `Se ha rechzado la Unidad Educativa ${highDemand.institution.name} como Alta Demanda`
+            `Se ha rechazado la Unidad Educativa ${highDemand.institution.name} como Alta Demanda`
           );
           this._highDemand.getListReceive(this.rolId!, placeTypeId).subscribe((response) => {
             this.highDemands = response.data;

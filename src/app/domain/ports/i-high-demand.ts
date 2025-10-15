@@ -6,6 +6,7 @@ export default interface IHighDemand {
   sendHighDemand(obj: any): Observable<any>;
   receiveHighDemands(obj: any): Observable<any>;
   deriveHighDemand(obj: any): Observable<any>;
+  returnHighDemand(obj: any): Observable<any>;
   approveHighDemand(obj: any): Observable<any>;
   declineHighDeamand(obj: any): Observable<any>;
   // ** exponer la funcionalidad de anular alta demanda **
@@ -15,7 +16,7 @@ export default interface IHighDemand {
 
   getHighDemandByInstitution(educationalInstitutionId: number): Observable<any>;
   getCoures(highDemandId: number): Observable<any>;
-  getListInbox(rolId: number, stateId: number, placeTypeId: number): Observable<any>;
+  getListInbox(rolId: number, placeTypeId: number): Observable<any>;
   getListReceive(rolId: number, placeTypeId: number): Observable<any>;
 
   // para la pre inscripción

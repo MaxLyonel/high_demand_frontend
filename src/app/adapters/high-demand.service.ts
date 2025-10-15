@@ -50,10 +50,9 @@ export class HighDemandAdapterService implements IManagerHighDemand {
     )
   }
 
-  getListInboxHighDemand(rolId: number, stateId: number, placeTypeId: number): Observable<any> {
+  getListInboxHighDemand(rolId: number,  placeTypeId: number): Observable<any> {
     const params = new HttpParams()
       .set('rolId', rolId.toString())
-      .set('stateId', stateId.toString())
       .set('placeTypeId', placeTypeId.toString())
     return this.http.get(`main-inbox/list-inbox`, { params }).pipe(
       catchError(err => {
@@ -80,6 +79,17 @@ export class HighDemandAdapterService implements IManagerHighDemand {
     }).pipe(
       catchError(err => {
         console.error('algo salio mal en la derivacion')
+        return throwError(() => err)
+      })
+    )
+  }
+
+  returnHighDemand(obj: any): Observable<any> {
+    return this.http.post(`main-inbox/return`, obj, {
+      context: new HttpContext().set(IS_USER_ACTION, true)
+    }).pipe(
+      catchError(err => {
+        console.error('algo salio mal en la devolución')
         return throwError(() => err)
       })
     )

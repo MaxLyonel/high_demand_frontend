@@ -12,6 +12,8 @@ export default interface IManagerHighDemand {
   receiveHighDemand(obj: any): Observable<any>;
   // ** derivar alta demanda **
   deriveHighDemand(obj: any): Observable<any>;
+  // ** devolver alta demanda **
+  returnHighDemand(obj: any): Observable<any>;
   // ** aprobar alta demanda **
   approveHighDemand(obj: any): Observable<any>;
   // ** rechazar alta demanda **
@@ -19,7 +21,7 @@ export default interface IManagerHighDemand {
   // ** anular alta demanda **
   cancelHighDemand(obj: any): Observable<any>;
   // ** listar altas demandas en inbox
-  getListInboxHighDemand(rolId: number, stateId: number, placeTypeId: number): Observable<any>;
+  getListInboxHighDemand(rolId: number, placeTypeId: number): Observable<any>;
   // ** listar altas demandas recibidos
   getListReciveHighDemand(rolId: number, placeTypeId: number): Observable<any>;
   // ** obtener acciones del rol **
