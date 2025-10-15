@@ -1,14 +1,9 @@
-
-// Variables de color
 @primary-color: #0D9488;
-@primary-light: #14B8A6;
 @border-color: #E2E8F0;
 @card-shadow: 0 1px 2px -2px rgba(0, 0, 0, 0.16), 0 3px 6px 0 rgba(0, 0, 0, 0.12), 0 5px 12px 4px rgba(0, 0, 0, 0.09);
-@screen-md: 991px;
 
 .config-card {
   border: 1px solid fade(@primary-color, 60%);
-  // box-shadow: @card-shadow;
   border-radius: 8px;
 
   .ant-card-head {
@@ -17,23 +12,101 @@
   }
 }
 
-.ant-timeline {
-  padding: 20px;
+.phases-horizontal {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
 
-  .ant-timeline-item-head-blue {
-    border-color: @primary-color;
-    color: @primary-color;
-  }
-}
+  .phase-card {
+    border: 1px solid @border-color;
+    border-radius: 8px;
+    padding: 20px;
+    transition: all 0.3s ease;
+    background: white;
 
-.phase-card {
-  border: 1px solid @border-color;
-  border-radius: 4px;
-  margin-bottom: 16px;
+    &:hover {
+      box-shadow: @card-shadow;
+      transform: translateY(-2px);
+    }
 
-  .ant-card-head {
-    background-color: fade(@primary-color, 5%);
-    border-bottom: 1px solid @border-color;
+    &.phase-special {
+      border-left: 4px solid #0D9488;
+      background: #d9f1ef;
+    }
+
+    .phase-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 16px;
+
+      .phase-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 15px;
+
+        &.blue { background: #0D9488; }
+        &.green { background: #0D9488; }
+        &.orange { background: #0D9488; }
+        &.purple { background: #0D9488; }
+        &.red { background: #0D9488; }
+      }
+
+      .phase-info {
+        flex: 1;
+
+        .phase-title {
+          margin: 0 0 4px 0;
+          font-weight: 600;
+          color: #262626;
+        }
+
+        .phase-description {
+          margin: 0 0 8px 0;
+          font-size: 12px;
+          color: #595959;
+        }
+      }
+    }
+
+    .phase-dates {
+      .date-range-section,
+      .single-date-section {
+        nz-form-item {
+          margin-bottom: 12px;
+        }
+      }
+
+      .date-display {
+        margin-top: 12px;
+        padding: 12px;
+        background: #fafafa;
+        border-radius: 4px;
+
+        .date-item {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 12px;
+          color: #595959;
+          margin-bottom: 4px;
+
+          i {
+            font-size: 12px;
+          }
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+      }
+    }
   }
 }
 
@@ -58,21 +131,22 @@
 }
 
 // Estilos responsivos
-@media (max-width: @screen-md) {
-  .config-card {
-    margin: 8px;
+@media (max-width: 768px) {
+  .phases-horizontal {
+    grid-template-columns: 1fr;
   }
-  
+
   .form-actions {
     flex-direction: column;
-    
+
     button {
       width: 100%;
       margin-bottom: 8px;
-      
+
       &:last-child {
         margin-bottom: 0;
       }
     }
   }
 }
+

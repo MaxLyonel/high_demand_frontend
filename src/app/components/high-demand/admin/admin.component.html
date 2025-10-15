@@ -1,199 +1,111 @@
 <nz-card nzTitle="CONFIGURACIÓN DE FECHAS OPERATIVAS" [nzBordered]="true" class="config-card">
-  <nz-alert *ngIf="canManageConfig" nzType="info" nzMessage="Modo edición activado" class="mb-4"></nz-alert>
-  <nz-alert *ngIf="!canManageConfig" nzType="warning" nzMessage="Solo lectura - No tienes permisos para editar" class="mb-4"></nz-alert>
 
-  <form nz-form [formGroup]="configForm" (ngSubmit)="submitForm()">
-    <nz-timeline>
-      <!-- Fase 1: Postulación UE -->
-      <nz-timeline-item nzColor="blue">
-        <nz-card nzTitle="FASE 1: POSTULACIÓN UNIDADES EDUCATIVAS" [nzBordered]="true">
-          <!-- <h5 nz-typography class="section-title">SEGUIMIENTO DE SOLICITUDES</h5> -->
-          <div nz-row [nzGutter]="16">
-            <div nz-col [nzSpan]="12">
-              <nz-form-item>
-                <nz-form-label nzFor="datePosUEIni">Fecha Inicio</nz-form-label>
-                <nz-form-control>
-                  <nz-date-picker
-                    formControlName="datePosUEIni"
-                    nzShowTime
-                    nzFormat="yyyy-MM-dd HH:mm"
-                    style="width: 100%"
-                  ></nz-date-picker>
-                    <!-- [nzDisabled]="!canManageConfig" -->
-                </nz-form-control>
-              </nz-form-item>
-            </div>
-            <div nz-col [nzSpan]="12">
-              <nz-form-item>
-                <nz-form-label nzFor="datePosUEEnd">Fecha Fin</nz-form-label>
-                <nz-form-control>
-                  <nz-date-picker
-                    formControlName="datePosUEEnd"
-                    nzShowTime
-                    nzFormat="yyyy-MM-dd HH:mm"
-                    style="width: 100%"
-                  ></nz-date-picker>
-                    <!-- [nzDisabled]="!canManageConfig" -->
-                </nz-form-control>
-              </nz-form-item>
+  <form nz-form [formGroup]="configForm" (ngSubmit)="submitForm()" nzLayout="vertical">
+    <!-- Fases en disposición horizontal -->
+    <div class="phases-horizontal">
+      <div
+        *ngFor="let phase of phases"
+        class="phase-card"
+        [class.phase-special]="phase.id === 'lottery'">
+
+        <div class="phase-header">
+          <div class="phase-icon" [style.background]="getPhaseColor(phase.color)">
+            <i nz-icon [nzType]="phase.icon"></i>
+          </div>
+          <div class="phase-info">
+            <h4 class="phase-title">{{ phase.title }}</h4>
+            <p class="phase-description">{{ phase.description }}</p>
+            <nz-tag [nzColor]="getStatusColor(phase.status || 'default')">
+              {{ getStatusText(phase.status || 'default') }}
+            </nz-tag>
+          </div>
+        </div>
+
+        <div class="phase-dates">
+          <!-- Para fases normales (con rango de fechas) -->
+          <div *ngIf="phase.id !== 'lottery'" class="date-range-section">
+            <nz-form-item>
+              <nz-form-label>Rango de Fechas</nz-form-label>
+              <nz-form-control>
+                <nz-range-picker
+                  [nzShowTime]="true"
+                  [nzFormat]="'dd/MM/yyyy HH:mm'"
+                  [nzDisabledDate]="getDisabledDateForPhase(phase.id)"
+                  [(ngModel)]="selectedDateRanges[phase.id]"
+                  (ngModelChange)="onDateRangeChange($event, phase)"
+                  [ngModelOptions]="{standalone: true}"
+                  style="width: 100%">
+                </nz-range-picker>
+              </nz-form-control>
+            </nz-form-item>
+
+            <div class="date-display" *ngIf="getPhaseDateRange(phase).length === 2">
+              <div class="date-item">
+                <i nz-icon nzType="calendar" nzTheme="outline"></i>
+                <span>Inicio: {{ formatDate(getPhaseDateRange(phase)[0]) }}</span>
+              </div>
+              <div class="date-item">
+                <i nz-icon nzType="calendar" nzTheme="outline"></i>
+                <span>Fin: {{ formatDate(getPhaseDateRange(phase)[1]) }}</span>
+              </div>
             </div>
           </div>
-        </nz-card>
-      </nz-timeline-item>
 
-      <!-- Fase 2: Revisión Distrital -->
-      <nz-timeline-item nzColor="blue">
-        <nz-card nzTitle="FASE 2: REVISIÓN DISTRITAL" [nzBordered]="true">
-          <div nz-row [nzGutter]="16">
-            <div nz-col [nzSpan]="12">
-              <nz-form-item>
-                <nz-form-label nzFor="dateRevDisIni">Fecha Inicio</nz-form-label>
-                <nz-form-control>
-                  <nz-date-picker
-                    formControlName="dateRevDisIni"
-                    nzShowTime
-                    nzFormat="yyyy-MM-dd HH:mm"
-                    style="width: 100%"
-                  ></nz-date-picker>
-                    <!-- [nzDisabled]="!canManageConfig" -->
-                </nz-form-control>
-              </nz-form-item>
-            </div>
-            <div nz-col [nzSpan]="12">
-              <nz-form-item>
-                <nz-form-label nzFor="dateRevDisEnd">Fecha Fin</nz-form-label>
-                <nz-form-control>
-                  <nz-date-picker
-                    formControlName="dateRevDisEnd"
-                    nzShowTime
-                    nzFormat="yyyy-MM-dd HH:mm"
-                    style="width: 100%"
-                  ></nz-date-picker>
-                </nz-form-control>
-                    <!-- [nzDisabled]="!canManageConfig" -->
-              </nz-form-item>
+          <!-- Para el sorteo (fecha única) -->
+          <div *ngIf="phase.id === 'lottery'" class="single-date-section">
+            <nz-form-item>
+              <nz-form-label>Fecha y Hora del Sorteo</nz-form-label>
+              <nz-form-control>
+                <nz-range-picker
+                  [nzShowTime]="true"
+                  nzFormat="dd/MM/yyyy HH:mm"
+                  [(ngModel)]="selectedLotteryDate[phase.id]"
+                  [nzDisabledDate]="getDisabledDateForPhase(phase.id)"
+                  (ngModelChange)="onLotteryDateChange($event, phase)"
+                  [ngModelOptions]="{standalone: true}"
+                  style="width: 100%">
+                </nz-range-picker>
+              </nz-form-control>
+            </nz-form-item>
+            <div class="date-display" *ngIf="getPhaseDateRange(phase).length === 2">
+              <div class="date-item">
+                <i nz-icon nzType="gift" nzTheme="outline"></i>
+                <span>Inicio: {{ formatDate(getPhaseDateRange(phase)[0]) }}</span>
+              </div>
+              <div class="date-item">
+                <i nz-icon nzType="calendar" nzTheme="outline"></i>
+                <span>Fin: {{ formatDate(getPhaseDateRange(phase)[1]) }}</span>
+              </div>
             </div>
           </div>
-        </nz-card>
-      </nz-timeline-item>
+        </div>
+      </div>
+    </div>
 
-      <!-- Fase 3: Revisión Departamental -->
-      <nz-timeline-item nzColor="blue">
-        <nz-card nzTitle="FASE 3: REVISIÓN DEPARTAMENTAL" [nzBordered]="true">
-          <div nz-row [nzGutter]="16">
-            <div nz-col [nzSpan]="12">
-              <nz-form-item>
-                <nz-form-label nzFor="dateRevDepIni">Fecha Inicio</nz-form-label>
-                <nz-form-control>
-                  <nz-date-picker
-                    formControlName="dateRevDepIni"
-                    nzShowTime
-                    nzFormat="yyyy-MM-dd HH:mm"
-                    style="width: 100%"
-                  ></nz-date-picker>
-                    <!-- [nzDisabled]="!canManageConfig" -->
-                </nz-form-control>
-              </nz-form-item>
-            </div>
-            <div nz-col [nzSpan]="12">
-              <nz-form-item>
-                <nz-form-label nzFor="dateRevDepEnd">Fecha Fin</nz-form-label>
-                <nz-form-control>
-                  <nz-date-picker
-                    formControlName="dateRevDepEnd"
-                    nzShowTime
-                    nzFormat="yyyy-MM-dd HH:mm"
-                    style="width: 100%"
-                  ></nz-date-picker>
-                    <!-- [nzDisabled]="!canManageConfig" -->
-                </nz-form-control>
-              </nz-form-item>
-            </div>
-          </div>
-        </nz-card>
-      </nz-timeline-item>
-
-      <!-- Fase 4: Operativo -->
-      <nz-timeline-item nzColor="blue">
-        <nz-card nzTitle="FASE 4: OPERATIVO" [nzBordered]="true">
-          <div nz-row [nzGutter]="16">
-            <div nz-col [nzSpan]="12">
-              <nz-form-item>
-                <nz-form-label nzFor="dateOpeIni">Fecha Inicio</nz-form-label>
-                <nz-form-control>
-                  <nz-date-picker
-                    formControlName="dateOpeIni"
-                    nzShowTime
-                    nzFormat="yyyy-MM-dd HH:mm"
-                    style="width: 100%"
-                  ></nz-date-picker>
-                    <!-- [nzDisabled]="!canManageConfig" -->
-                </nz-form-control>
-              </nz-form-item>
-            </div>
-            <nz-col [nzSpan]="12">
-              <nz-form-item>
-                <nz-form-label nzFor="dateOpeEnd">Fecha Fin</nz-form-label>
-                <nz-form-control>
-                  <nz-date-picker
-                    formControlName="dateOpeEnd"
-                    nzShowTime
-                    nzFormat="yyyy-MM-dd HH:mm"
-                    style="width: 100%"
-                  ></nz-date-picker>
-                    <!-- [nzDisabled]="!canManageConfig" -->
-                </nz-form-control>
-              </nz-form-item>
-            </nz-col>
-          </div>
-        </nz-card>
-      </nz-timeline-item>
-
-      <!-- Fecha de Sorteo -->
-      <nz-timeline-item nzColor="green">
-        <nz-card nzTitle="SORTEO" [nzBordered]="true">
-          <div nz-row [nzGutter]="16">
-            <nz-col [nzSpan]="24">
-              <nz-form-item>
-                <nz-form-label nzFor="dateLottery">Fecha y Hora</nz-form-label>
-                <nz-form-control>
-                  <nz-date-picker
-                    formControlName="dateLottery"
-                    nzShowTime
-                    nzFormat="yyyy-MM-dd HH:mm"
-                    style="width: 100%"
-                  ></nz-date-picker>
-                    <!-- [nzDisabled]="!canManageConfig" -->
-                </nz-form-control>
-              </nz-form-item>
-            </nz-col>
-          </div>
-        </nz-card>
-      </nz-timeline-item>
-    </nz-timeline>
-
+    <!-- Acciones del formulario -->
     <div class="form-actions">
       <button
         nz-button
         nzType="primary"
         [nzLoading]="isLoading"
         [disabled]="!configForm.valid || !canManageConfig"
-      >
+        type="submit">
         Guardar Configuración
       </button>
-      <button
+      <!-- <button
         nz-button
         nzType="default"
         class="ml-2"
         (click)="resetForm()"
         [disabled]="!canManageConfig"
-      >
+        type="button">
         Restablecer
-      </button>
+      </button> -->
     </div>
   </form>
 </nz-card>
 
+<!-- Modal de confirmación -->
 <nz-modal
   [(nzVisible)]="isVisibleModal"
   nzTitle="Confirmación"
