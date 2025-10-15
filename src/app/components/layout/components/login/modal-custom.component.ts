@@ -7,6 +7,8 @@ import { NzListModule } from 'ng-zorro-antd/list';
 import { NzRadioModule } from "ng-zorro-antd/radio";
 import { NzTypographyModule } from "ng-zorro-antd/typography";
 import { FormsModule } from '@angular/forms';
+import * as iconv from 'iconv-lite'
+import { Buffer } from 'buffer'
 
 @Component({
   selector: 'nz-modal-custom-component',
@@ -25,7 +27,7 @@ export class NzModalCustomComponent {
   @Input() subtitle?: string;
 
   readonly #modal = inject(NzModalRef);
-  readonly nzModalData: { roles: Rol[] } = inject(NZ_MODAL_DATA);
+  readonly nzModalData: { roles: any[] } = inject(NZ_MODAL_DATA);
 
   selectedRoleId: any;
 
@@ -34,5 +36,10 @@ export class NzModalCustomComponent {
       r => r.id === this.selectedRoleId
     );
     this.#modal.destroy(rolSeleccionado);
+  }
+
+  decode(word: string) {
+    const buffer = Buffer.from(word, 'latin1')
+    return iconv.decode(buffer, 'utf-8')
   }
 }

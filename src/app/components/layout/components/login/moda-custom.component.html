@@ -7,7 +7,7 @@
     style="display: flex; flex-direction: column; flex-wrap: wrap; width: 100%;"
   >
     @for(rol of nzModalData.roles; track rol;) {
-      <label nz-radio-button  [nzValue]="rol.id" style="flex: 1 1 auto; text-align: center;">{{rol.name}}</label>
+      <label nz-radio-button  [nzValue]="rol.id" style="flex: 1 1 auto; text-align: center;">{{decode(rol.role.name)}}</label>
     }
   </nz-radio-group>
   <div style="margin-top: 16px; text-align: right;">
