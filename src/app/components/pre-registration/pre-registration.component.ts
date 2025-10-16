@@ -146,9 +146,9 @@ export default class FormularioInscripcionComponent implements OnInit{
     });
 
     this.form.get('institutionName')?.valueChanges.subscribe(selected => {
-      this.courses = selected.courses
-      this.educationalLevels = this.prepareData()
       if(selected) {
+        this.courses = selected.courses
+        this.educationalLevels = this.prepareData()
         this.form.patchValue({
           institutionId: selected.educationalInstitution.id,
           institutionDependency: selected.educationalInstitution.dependencyType.dependency,
@@ -175,6 +175,7 @@ export default class FormularioInscripcionComponent implements OnInit{
     });
 
     this.form.get('educationalLevel')?.valueChanges.subscribe(level => {
+      console.log("level: ", level)
       if (level) {
         this.grades = level.grades;   // guardamos los grados de ese nivel
         // this.form.patchValue({ yearOfSchoolign: '', parallel: '' }); // reset
@@ -186,6 +187,7 @@ export default class FormularioInscripcionComponent implements OnInit{
     });
 
     this.form.get('yearOfSchoolign')?.valueChanges.subscribe(grade => {
+      // aqui debería recabar el id del curso
       if(grade) {
         this.parallels = grade.parallels;
         // this.form.patchValue({ parallel: ''})
@@ -198,6 +200,7 @@ export default class FormularioInscripcionComponent implements OnInit{
   onSubmit(): void {
     if (this.form.valid) {
       const formValue = this.form.value
+      console.log("curso seleccionado: ", formValue)
       const data = {
         institution: {
           institutionName: formValue.institutionName,
@@ -298,12 +301,13 @@ export default class FormularioInscripcionComponent implements OnInit{
           }
         }
         const level = acc[item.level.id]
+        console.log("AGRUPADANDO:::: ")
         // Agrupar por grado dentro del nivel
         if(!level.grades[item.grade.id]) {
           level.grades[item.grade.id] = {
             id: item.grade.id,
             name: item.grade.name,
-            courseId: item.grade.id,
+            courseId: item.id,
             parallels: []
           }
         }

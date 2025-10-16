@@ -99,71 +99,71 @@ export class DashboardComponent implements OnInit {
       charts: [
         {
           id: 'ue-aprobadas-registradas',
-          title: 'UE Aprobadas vs Registradas',
+          title: 'Unidades Educativas registradas como Alta Demanda',
           type: 'bar',
           data: {
-            labels: ['Aprobadas', 'Registradas', 'Alta Demanda', 'Rechazadas'],
+            labels: ['La Paz', 'Chuquisaca', 'Beni'],
             datasets: [{
               label: 'Cantidad',
-              data: [856, 1248, 932, 124],
+              data: [856, 1248, 124],
               backgroundColor: [
                 this.colors.success,
+                // this.colors.primary,
                 this.colors.primary,
-                this.colors.warning,
                 this.colors.danger
               ]
             }]
           }
         },
-        {
-          id: 'tipo-institucion',
-          title: 'Tipo de Institución - Alta Demanda',
-          type: 'doughnut',
-          data: {
-            labels: ['Fiscales', 'Privadas', 'Convenio'],
-            datasets: [{
-              data: [645, 187, 100],
-              backgroundColor: [
-                this.colors.primary,
-                this.colors.secondary,
-                this.colors.accent
-              ]
-            }]
-          }
-        },
-        {
-          id: 'frecuencia-registros',
-          title: 'Frecuencia de Registros por Día',
-          type: 'line',
-          data: {
-            labels: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15'],
-            datasets: [{
-              label: 'Registros',
-              data: [45, 62, 78, 91, 105, 120, 135, 148, 162, 175, 188, 200, 215, 230, 248],
-              borderColor: this.colors.primary,
-              backgroundColor: 'rgba(13, 148, 136, 0.1)',
-              tension: 0.3,
-              fill: true
-            }]
-          }
-        },
-        {
-          id: 'estado-alta-demanda',
-          title: 'Estado de Altas Demandas',
-          type: 'pie',
-          data: {
-            labels: ['Aprobadas', 'Rechazadas', 'En Revisión', 'Pendientes'],
-            datasets: [{
-              data: [645, 124, 163, 316],
-              backgroundColor: [
-                this.colors.success,
-                this.colors.danger,
-                this.colors.warning,
-                this.colors.primaryLight
-              ]
-            }]
-          }
-        }
+        // {
+        //   id: 'tipo-institucion',
+        //   title: 'Tipo de Institución - Alta Demanda',
+        //   type: 'doughnut',
+        //   data: {
+        //     labels: ['Fiscales', 'Privadas', 'Convenio'],
+        //     datasets: [{
+        //       data: [645, 187, 100],
+        //       backgroundColor: [
+        //         this.colors.primary,
+        //         this.colors.secondary,
+        //         this.colors.accent
+        //       ]
+        //     }]
+        //   }
+        // },
+        // {
+        //   id: 'frecuencia-registros',
+        //   title: 'Frecuencia de Registros por Día',
+        //   type: 'line',
+        //   data: {
+        //     labels: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15'],
+        //     datasets: [{
+        //       label: 'Registros',
+        //       data: [45, 62, 78, 91, 105, 120, 135, 148, 162, 175, 188, 200, 215, 230, 248],
+        //       borderColor: this.colors.primary,
+        //       backgroundColor: 'rgba(13, 148, 136, 0.1)',
+        //       tension: 0.3,
+        //       fill: true
+        //     }]
+        //   }
+        // },
+        // {
+        //   id: 'estado-alta-demanda',
+        //   title: 'Estado de Altas Demandas',
+        //   type: 'pie',
+        //   data: {
+        //     labels: ['Aprobadas', 'Rechazadas', 'En Revisión', 'Pendientes'],
+        //     datasets: [{
+        //       data: [645, 124, 163, 316],
+        //       backgroundColor: [
+        //         this.colors.success,
+        //         this.colors.danger,
+        //         this.colors.warning,
+        //         this.colors.primaryLight
+        //       ]
+        //     }]
+        //   }
+        // }
       ]
     },
     'revision-distrital': {
@@ -211,6 +211,37 @@ export class DashboardComponent implements OnInit {
                 this.colors.warning
               ]
             }]
+          }
+        },
+        {
+          id: 'barra-horizontal',
+          title: 'Barras horizontales',
+          type: 'bar',
+          data: {
+            labels: ['2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026'],
+            datasets: [{
+              label: 'Frecuencia de registros',
+              data: [120, 180, 250, 310, 290, 450, 720, 820],
+              backgroundColor: 'linear-gradient(90deg, #00c6ff 0%, #0072ff 100%)',
+              borderRadius: 10
+            }]
+          },
+          options: {
+            indexAxis: 'y', // 🔹 Esto hace las barras horizontales
+            responsive: true,
+            plugins: {
+              legend: { display: false },
+              title: {
+                display: true,
+                text: 'Frecuencia de registros por año'
+              }
+            },
+            scales: {
+              x: {
+                beginAtZero: true,
+                ticks: { stepSize: 100 }
+              }
+            }
           }
         }
       ]
@@ -478,9 +509,7 @@ export class DashboardComponent implements OnInit {
 
     this.activeStage = stageId;
     this.currentStageData = stage;
-    // this.updateStageUI(stage);
     this.renderCharts(stage);
-    // this.updateActiveElements(stageId);
   }
 
   isTimelineItemActive(stage: string): boolean {
@@ -493,8 +522,6 @@ export class DashboardComponent implements OnInit {
 
   getStageStatusClass(stage: string): string {
     return this.currentStageData?.statusClass || 'active'
-    // const stageData = this.stageData[stage];
-    // return stageData ? stageData.statusClass : '';
   }
 
   getChangeClass(positive: boolean): string {
@@ -599,16 +626,5 @@ export class DashboardComponent implements OnInit {
 
   private initDashboard() {
     this.changeStage('postulacion-ue')
-  }
-
-   // Actualizar interfaz de la etapa
-  private updateStageUI(stage: any) {
-    // Esta función actualiza elementos del DOM específicos
-    // En Angular, esto se maneja mejor con data binding
-  }
-
-  // Actualizar elementos activos
-  private updateActiveElements(activeStageId: string) {
-    // En Angular, esto se maneja con [class.active] en el template
   }
 }
