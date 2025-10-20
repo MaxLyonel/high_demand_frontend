@@ -168,7 +168,7 @@
                     nz-button
                     nzType="primary"
                     class="register-btn"
-                    [disabled]="(inputValue === 0 || inputValue === null || hasSavedCourses) ? true : false"
+                    [disabled]="disabledButtonRegisterCourse()"
                     (click)="showConfirmRegistrationQuota()"
                   >
                     REGISTRAR
@@ -180,31 +180,36 @@
           <!-- Sección de cursos seleccionados -->
           <div nz-col [nzSpan]="9">
             <h5 nz-typography class="section-title">CURSOS SELECCIONADOS</h5>
-            <nz-list class="course-list" [nzLoading]="initLoading" nzItemLayout="horizontal">
-              @for (item of listCourse; track $index) {
+            <nz-list
+              class="course-list"
+              [nzLoading]="initLoading"
+              nzItemLayout="horizontal"
+              [nzDataSource]="listCourse"
+              [nzRenderItem]="item"
+            >
+              <ng-template #item let-item let-i="index">
                 <nz-list-item class="course-item">
                   <div class="course-content">
                     <nz-list-item-meta [nzDescription]="item.name"></nz-list-item-meta>
-                    <!-- aca un botón -->
-                      <!-- <label
-                        nz-checkbox
-                        [(ngModel)]="item.checked"
-                        (ngModelChange)="onCheckboxChange(item, $event)"
-                      ></label> -->
-                      <button
-                        nz-button
-                        nzDanger
-                        nzType="primary"
-                        nzShape="circle"
-                        nzSize="small"
-                        (click)="deleteSelection($index)"
-                        [disabled]="hasSavedCourses || selectedCourses().length === 0"
-                      >
-                        <nz-icon nzType="delete" />
-                      </button>
+                    <button
+                      nz-button
+                      nzDanger
+                      nzType="primary"
+                      nzShape="circle"
+                      nzSize="small"
+                      (click)="deleteSelection(i)"
+                      [disabled]="haveCoursesSaved || selectedCourses().length === 0"
+                    >
+                      <nz-icon nzType="delete"></nz-icon>
+                    </button>
                   </div>
                 </nz-list-item>
-              }
+              </ng-template>
+              <ng-template #nzEmpty>
+                <div class="empty-list-message" style="text-align: center; padding: 20px;">
+                  No hay cursos agregados aún
+                </div>
+              </ng-template>
             </nz-list>
               <div class="action-buttons">
                 <button
@@ -213,21 +218,10 @@
                   class="mr-2"
                   (click)="showConfirmRegistrationHighDemand()"
                   class="flex-button"
-                  [disabled]="hasSavedCourses || selectedCourses().length === 0"
+                  [disabled]="haveCoursesSaved || selectedCourses().length === 0"
                 >
                   <i nz-icon nzType="check-circle"></i> CONSOLIDAR
                 </button>
-                @if(canPostulation()){
-                <button
-                  nz-button
-                  nzType="default"
-                  (click)="saveCourses()"
-                  class="flex-button"
-                  [disabled]="(listCourse.length === 0 || selectedCourses().length === 0) ? true : false"
-                >
-                  <i nz-icon nzType="save"></i> GUARDAR
-                </button>
-                }
               </div>
           </div>
         </div>

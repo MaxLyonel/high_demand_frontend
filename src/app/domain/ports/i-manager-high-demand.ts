@@ -36,4 +36,6 @@ export default interface IManagerHighDemand {
 
   // ** descargar la Alta Demanda **
   download(highDemandId: number): Observable<any>;
+
+  deleteHighDemandCourse(highDemandCourseId: number): Observable<any>;
 }

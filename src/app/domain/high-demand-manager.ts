@@ -99,4 +99,9 @@ export default class HighDemandManager implements IHighDemand {
   download(highDemandId: number): Observable<Blob> {
     return this._highDemandAdapter.download(highDemandId)
   }
+
+  deleteHighDemandCourse(highDemandCourseId: number): Observable<any> {
+    const result = this._highDemandAdapter.deleteHighDemandCourse(highDemandCourseId)
+    return result
+  }
 }

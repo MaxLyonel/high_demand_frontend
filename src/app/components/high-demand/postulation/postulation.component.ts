@@ -29,6 +29,7 @@ import { AppStore } from '../../../infrastructure/store/app.store';
 import { AbilityService } from "../../../infrastructure/services/ability.service";
 import { User } from "../../../domain/models/user.model";
 import IManagerInstitution from "../../../domain/ports/i-manager-institution";
+import { NotificationService } from "../../../infrastructure/services/notify.service";
 
 
 interface CourseList {
@@ -73,10 +74,12 @@ export class PostulationComponent implements OnInit {
   router              = inject(Router)
   appStore            = inject(AppStore)
   abilities           = inject(AbilityService)
+  notificationService = inject(NotificationService);
 
   // signals
   selectedCourses = signal<Array<Omit<CourseList, 'name' | 'checked'>>>([])
   listCourse: Array<CourseList> = [];
+  courseKeys = new Set<string>();
 
   // --- variables receptoras ---
   levels!: any
@@ -102,174 +105,24 @@ export class PostulationComponent implements OnInit {
   isLoading: boolean = false;
   errorMessage: string = '';
 
+  haveCoursesSaved: boolean = false
+
   constructor(
     @Inject('ICourseList')   private _courses    : ICourseList,
     @Inject('IHighDemand')   private _highDemand : IHighDemand,
     @Inject('IManagerInstitution') private _institution: IManagerInstitution
   ) {}
 
-  get hasSavedCourses() {
-    return this.appStore.getHighDemandCoursesSaved();
-  }
-
   ngOnInit(): void {
     this.initLoading = true;
     this.user = this.appStore.snapshot.user
     const { institutionInfo } = this.appStore.snapshot
-    if (!institutionInfo) {
-      return;
-    }
-
+    if (!institutionInfo) { return; }
     const { id: institutionId } = institutionInfo
     this.getFullInfo(institutionId)
-
   }
 
   // ============= FUNCIONES PRINCIPALES ==========
-  saveCourses() { // Registrar institución con sus cursos como alta demanda
-    const { id: educationalInstitutionId } = this.institution();
-    const { user } = this.appStore.snapshot
-    const { userId, selectedRole } = user
-    const rolAllowed = selectedRole.role.id
-
-    const highDemand = {
-      educationalInstitutionId,
-      userId,
-      rolId: rolAllowed
-    };
-
-    const courses = this.selectedCourses().map((item: any) => ({
-      levelId: item.levelId,
-      gradeId: item.gradeId,
-      parallelId: item.parallelId,
-      totalQuota: item.quota
-    }));
-
-    const requestData = {
-      highDemand,
-      courses
-    };
-
-    // Enviar al servicio
-    this._highDemand.registerHighDemand(requestData).subscribe({
-      next: (response: any) => {
-        this.highDemand = response.data
-      },
-      error: (err) => {
-        console.error('Error al registrar:', err);
-      }
-    });
-  }
-
-  sendHighDemand() {
-    const { user } = this.appStore.snapshot
-    this._highDemand.sendHighDemand(this.highDemand).subscribe({
-      next: (response: any) => {
-        this.router.navigate(['/alta-demanda/follow-up'])
-      },
-      error: (err) => {
-        console.error("Error al enviar alta demanda")
-      }
-    })
-  }
-
-  addCourseForRegister() { // Agregar cursos a la lista
-    const { level, grade, parallel } = this.getStructure(this.selectedLevelId!, this.selectedGradeId!, this.selectedParallelId!)
-    this.initLoading = true
-    this.listCourse.push({
-      checked: true,
-      name: `${level.name} ${grade.name} ${parallel.name} - cupo:${this.inputValue}`,
-      quota: this.inputValue!,
-      levelId: this.selectedLevelId!,
-      gradeId: this.selectedGradeId!,
-      parallelId: this.selectedParallelId!
-    })
-    this.inputValue = null
-    this.selectedCourses.set(this.listCourse)
-    setTimeout(() => {
-      this.initLoading = false
-    }, 300)
-  }
-
-  // ============= FUNCIONES DE INTERFAZ DE USUARIO ===============
-  onLevelSelected(levelId: number) { // Cuando se selecciona el nivel
-    const level = this.levels.find((l:any) => l.id === levelId)
-    this.gradesToShow = level ? level.grades : []
-  }
-
-  onGradeSelected(gradeId: number) { // Cuando se selecciona el grado
-    const grade = this.gradesToShow.find((g:any) => g.id === gradeId)
-    this.parallelsToShow = grade ? grade.parallels : []
-  }
-
-  onCheckboxChange(item: any, isChecked: boolean) { // Cuando se cambia el estadod el Checkbox
-    item.checked = isChecked;
-    this.selectedCourses.set(this.listCourse.filter(c => c.checked))
-  }
-
-  // ================== FUNCIONES AUXILIARES =======================
-  getStructure(levelId: number, gradeId: number, parallelId: number) {
-    const level = this.levels.find((e: any) => e.id == levelId)
-    const grade = level.grades.find((e: any) => e.id == gradeId)
-    const parallel = grade.parallels.find((e: any) => e.id == parallelId)
-    return {
-      level,
-      grade,
-      parallel
-    }
-  }
-
-  //  ========================= MODALES ============================
-  showConfirmRegistrationQuota(): void { // Modal cuando se registra el cursos y la cuota
-    this.confirmModal = this.modal.confirm({
-      nzTitle: 'Registrar la cantidad de cupos',
-      nzContent: 'Asegurese de registrar la cantidad correcta de cupos',
-      nzOnOk: () => this.addCourseForRegister()
-    });
-  }
-
-  showConfirmRegistrationHighDemand(): void { // Modal cuando se registra la institución como alta demanda
-    this.confirmModal = this.modal.confirm({
-      nzTitle: 'Registrar la Unidad Educativa como Alta Demanda',
-      nzContent: 'Una vez confirmada la acción, no será posible realizar modificaciones. Por favor, verifique toda la información antes de proceder',
-      nzOnOk: () => {
-        this.sendHighDemand()
-      }
-    })
-  }
-  //  ====================== FIN MODALES ============================
-
-  canCreatePostulation = () => {
-    if (!this.user) {
-      return false;
-    }
-    const caslUser = {
-      id: this.user.userId, // CASL espera "id"
-      ...this.user
-    };
-
-    // this.abilities.debugCan('manage', 'postulation');
-    return this.abilities.getAbility()?.can('create', 'postulation' ) ?? false;
-  }
-
-  searchInstitution(): void {
-    if (!this.sieCode.trim()) {
-      this.errorMessage = 'Por favor ingrese un código SIE válido';
-      return;
-    }
-    this.isLoading = true;
-    this.errorMessage = '';
-    this.institution.set(null);
-    this.getFullInfo(Number(this.sieCode))
-
-  }
-
-  clearSearch(): void {
-    this.sieCode = '';
-    this.institution.set(null);
-    this.errorMessage = '';
-  }
-
   getFullInfo(sie: number) {
     this._institution.getInfo(sie).pipe(
       tap(institution => {
@@ -313,8 +166,15 @@ export class PostulationComponent implements OnInit {
           gradeId: course.gradeId,
           parallelId: course.parallelId
         }));
-        this.showApplication.set(true);
+        this.courseKeys = new Set(
+          this.listCourse.map(c =>
+            `${c.levelId}-${c.gradeId}-${c.parallelId}`
+          )
+        );
+        if(this.listCourse.length) this.haveCoursesSaved = true
+        else this.haveCoursesSaved = false
         this.selectedCourses.set(this.listCourse);
+        this.showApplication.set(true);
       },
       error: (err) => {
         this.showApplication.set(false);
@@ -323,8 +183,164 @@ export class PostulationComponent implements OnInit {
     });
   }
 
+  submitHighDemand() { // Registrar institución con sus cursos como alta demanda
+    const { id: educationalInstitutionId } = this.institution();
+    const { user } = this.appStore.snapshot
+    const { userId, selectedRole } = user
+    const rolAllowed = selectedRole.role.id
+
+    const highDemand = {
+      educationalInstitutionId,
+      userId,
+      rolId: rolAllowed
+    };
+
+    const courses = this.selectedCourses().map((item: any) => ({
+      levelId: item.levelId,
+      gradeId: item.gradeId,
+      parallelId: item.parallelId,
+      totalQuota: item.quota
+    }));
+
+    const requestData = {
+      highDemand,
+      courses
+    };
+
+    this._highDemand.registerHighDemand(requestData).subscribe({
+      next: (response: any) => {
+        this.highDemand = response.data
+        this.router.navigate(['/alta-demanda/follow-up'])
+      },
+      error: (err) => {
+        console.error('Error durante el  flujo de alta demanda: ', err)
+      }
+    })
+  }
+
+  // ============= FUNCIONES DE INTERFAZ DE USUARIO ===============
+  addCourseForRegister() { // Agregar cursos a la lista
+    const { level, grade, parallel } = this.getStructure(this.selectedLevelId!, this.selectedGradeId!, this.selectedParallelId!)
+    const key = `${this.selectedLevelId}-${this.selectedGradeId}-${this.selectedParallelId}`
+    if(this.courseKeys.has(key)) {
+      this.notificationService.showMessage(
+        'El curso ya fue agregado',
+        'Solicitud inválida',
+        'warning'
+      )
+      return;
+    }
+    this.initLoading = true
+    this.listCourse.push({
+      checked: true,
+      name: `${level.name} ${grade.name} ${parallel.name} - cupo:${this.inputValue}`,
+      quota: this.inputValue!,
+      levelId: this.selectedLevelId!,
+      gradeId: this.selectedGradeId!,
+      parallelId: this.selectedParallelId!
+    })
+    this.courseKeys.add(key)
+    this.selectedCourses.set(this.listCourse)
+    // Limpiar valores del formulario
+    this.inputValue = null
+    this.selectedLevelId = null;
+    this.selectedGradeId = null;
+    this.selectedParallelId = null;
+    this.gradesToShow = [];
+    this.parallelsToShow = [];
+
+    setTimeout(() => {
+      this.initLoading = false
+    }, 300)
+  }
+
+  onLevelSelected(levelId: number) { // Cuando se selecciona el nivel
+    this.inputValue = null;
+    this.selectedGradeId = null
+    this.selectedParallelId = null
+    this.gradesToShow = []
+    this.parallelsToShow = []
+    const level = this.levels.find((l:any) => l.id === levelId)
+    this.gradesToShow = level ? level.grades : []
+  }
+
+  onGradeSelected(gradeId: number) { // Cuando se selecciona el grado
+    this.inputValue = null;
+    this.selectedParallelId = null
+    this.parallelsToShow = []
+    const grade = this.gradesToShow.find((g:any) => g.id === gradeId)
+    this.parallelsToShow = grade ? grade.parallels : []
+  }
+
+  //  ========================= MODALES ============================
+  showConfirmRegistrationQuota(): void { // Modal cuando se registra el cursos y la cuota
+    this.confirmModal = this.modal.confirm({
+      nzTitle: 'Registrar la cantidad de cupos',
+      nzContent: 'Asegurese de registrar la cantidad correcta de cupos',
+      nzOnOk: () => this.addCourseForRegister()
+    });
+  }
+
+  showConfirmRegistrationHighDemand(): void { // Modal cuando se registra la institución como alta demanda
+    this.confirmModal = this.modal.confirm({
+      nzTitle: '¿Finalizar la postulación de la Unidad Educativa?',
+      nzContent: 'Favor aproximarse al distrito correspondiente para ratificar su solicitud',
+      nzOnOk: () => {
+        this.submitHighDemand()
+      }
+    })
+  }
+  //  ====================== FIN MODALES ============================
+
+   // ================== FUNCIONES AUXILIARES =======================
+  getStructure(levelId: number, gradeId: number, parallelId: number) {
+    const level = this.levels.find((e: any) => e.id == levelId)
+    const grade = level.grades.find((e: any) => e.id == gradeId)
+    const parallel = grade.parallels.find((e: any) => e.id == parallelId)
+    return {
+      level,
+      grade,
+      parallel
+    }
+  }
+
+  canCreatePostulation = () => {
+    if (!this.user) {
+      return false;
+    }
+    const caslUser = {
+      id: this.user.userId, // CASL espera "id"
+      ...this.user
+    };
+
+    // this.abilities.debugCan('manage', 'postulation');
+    return this.abilities.getAbility()?.can('create', 'postulation' ) ?? false;
+  }
+
+  searchInstitution(): void {
+    if (!this.sieCode.trim()) {
+      this.errorMessage = 'Por favor ingrese un código SIE válido';
+      return;
+    }
+    this.isLoading = true;
+    this.errorMessage = '';
+    this.institution.set(null);
+    this.getFullInfo(Number(this.sieCode))
+  }
+
+  clearSearch(): void {
+    this.sieCode = '';
+    this.institution.set(null);
+    this.errorMessage = '';
+  }
+
   deleteSelection(index: any) {
+    const course = this.listCourse[index]
+    if(!course) return
+    const key = `${course.levelId}-${course.gradeId}-${course.parallelId}`
     this.listCourse.splice(index, 1)
+    this.courseKeys.delete(key)
+    this.selectedCourses.set(this.listCourse)
   }
 
   canPostulation() {
@@ -332,4 +348,17 @@ export class PostulationComponent implements OnInit {
     return this.abilities.can('create', subject)
   }
 
+  disabledButtonRegisterCourse(){
+    if(
+      this.inputValue === null ||
+      this.inputValue === 0 ||
+      this.inputValue > 40 ||
+      this.haveCoursesSaved ||
+      this.selectedLevelId === null ||
+      this.selectedGradeId === null ||
+      this.selectedParallelId === null
+    ) {
+      return true
+    } else return false
+  }
 }

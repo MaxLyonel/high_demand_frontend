@@ -23,4 +23,6 @@ export default interface IHighDemand {
   getHighDemands(departmentId: number): Observable<any>;
 
   download(highDemandId: number): Observable<any>;
+
+  deleteHighDemandCourse(highDemandCourseId: number): Observable<any>;
 }

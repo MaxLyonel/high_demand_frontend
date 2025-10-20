@@ -165,4 +165,15 @@ export class HighDemandAdapterService implements IManagerHighDemand {
     })
   }
 
+  deleteHighDemandCourse(highDemandCourseId: number): Observable<any> {
+    return this.http.delete(`high-demand-course/delete/${highDemandCourseId}`, {
+      context: new HttpContext().set(IS_USER_ACTION, true)
+    }).pipe(
+      catchError(err => {
+        console.error('algo salio mal en la eliminación de un curso de alta demanda')
+        return throwError(() => err)
+      })
+    )
+  }
+
 }
