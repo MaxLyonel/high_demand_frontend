@@ -22,6 +22,7 @@ import PreRegistrationManager from '../domain/pre-registration-manager';
 import RolManager from '../domain/rol-manager';
 import PermissionManager from '../domain/permission-manager';
 import OperativeManager from '../domain/operative-manager';
+import { SocketService } from './services/socket.service';
 
 @Component({
   selector: 'app-root',
@@ -64,16 +65,33 @@ export class AppComponent implements OnInit {
     private appStore = inject(AppStore)
     private cdr = inject(ChangeDetectorRef)
 
-    constructor(private abilityService: AbilityService) {}
+    constructor(
+      private abilityService: AbilityService,
+      private socketService: SocketService
+    ) {}
 
     ngOnInit(): void {
       const { user } = this.appStore.snapshot
       if(user) {
         this.abilityService.loadAbilities(user.userId).subscribe(() => {
           const ability = this.abilityService.getAbility()
-          console.log("habilidades --> ", ability.rules)
+          // console.log("habilidades --> ", ability.rules)
           this.cdr.detectChanges();
         });
       }
+
+      this.socketService.onPermissionChanged().subscribe(data => {
+        if (!data) return; // ignorar null
+        const roleIdChanged = data.roleId;
+        const currentUserRoles = this.appStore.snapshot.user?.roles.map((r:any) => r.role.id) || [];
+
+        if (currentUserRoles.includes(roleIdChanged)) {
+          this.abilityService.loadAbilities(this.appStore.snapshot.user.userId).subscribe(() => {
+            const ability = this.abilityService.getAbility();
+            this.cdr.detectChanges();
+          });
+        }
+      });
+
     }
 }

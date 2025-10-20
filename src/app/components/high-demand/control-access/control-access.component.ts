@@ -21,6 +21,8 @@ import IRoles from '../../../domain/ports/i-roles';
 import IPermission from '../../../domain/ports/i-permission';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { SocketService } from '../../../infrastructure/services/socket.service';
+import { AppStore } from '../../../infrastructure/store/app.store';
 
 interface Action {
   id: number,
@@ -142,7 +144,9 @@ export class AccessControlComponent implements OnInit {
 
   constructor(
     @Inject('IRoles') private _rol: IRoles,
-    @Inject('IPermission') private _permission: IPermission
+    @Inject('IPermission') private _permission: IPermission,
+    private socketService: SocketService,
+    private appStore: AppStore
   ) {}
 
   ngOnInit(): void {
@@ -255,15 +259,18 @@ export class AccessControlComponent implements OnInit {
   }
 
   savePermission(): void {
+    const { user } = this.appStore.snapshot
     if (this.isEditingPermission) {
       // Actualizar permiso existente
       const newObj = {
+        userId: user.userId,
         rol: this.selectedRole,
         ...this.currentPermission
       }
       this._permission.updatePermission(newObj).subscribe({
         next: response => {
-          console.log("Edición de permiso exitoso: ", response)
+          // 🔔 Emitir evento de cambio de permiso
+          this.socketService.emitPermissionChange(this.currentPermission.id?.toString()!);
         }
       })
       const index = this.permissions.findIndex(p => p.id === this.currentPermission.id);
@@ -278,9 +285,10 @@ export class AccessControlComponent implements OnInit {
       }
       const newId = Math.max(...this.permissions.map(p => p.id || 0)) + 1;
       const newObj = {
+        userId: user.userId,
         rol: this.selectedRole,
         ...this.currentPermission,
-        conditions: this.currentPermission.conditions || [] // 🔑 forzar plural
+        conditions: this.currentPermission.conditions || []
       }
       this._permission.createPermission(newObj).subscribe({
         next: response => {
@@ -361,9 +369,7 @@ export class AccessControlComponent implements OnInit {
 
   compareObjects(o1: any, o2: any): boolean {
     if (!o1 || !o2) return false;
-    return o1.id === o2.id; // comparar por id aunque no sean la misma referencia
+    return o1.id === o2.id;
   }
-
-  // nuevos cambios
 
 }
