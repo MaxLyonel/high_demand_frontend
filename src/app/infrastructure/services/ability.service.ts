@@ -55,11 +55,13 @@ export class AbilityService {
   }
 
   can(action: Actions, subjectObj: any): boolean {
-    const operativeObj = this.operativeService.getOperative()
-    const target = { ...subjectObj, ...operativeObj }
-    const result = this.ability.can(action, target)
-    // this.debugCan('create', target)
-    return result
+    if (!this.ability) {
+      return false;
+    }
+
+    const operativeObj = this.operativeService.getOperative();
+    const target = { ...subjectObj, ...operativeObj };
+    return this.ability.can(action, target);
   }
 
   debugCan(action: Actions, subject: any) {

@@ -304,19 +304,6 @@ export class PostulationComponent implements OnInit {
     }
   }
 
-  canCreatePostulation = () => {
-    if (!this.user) {
-      return false;
-    }
-    const caslUser = {
-      id: this.user.userId, // CASL espera "id"
-      ...this.user
-    };
-
-    // this.abilities.debugCan('manage', 'postulation');
-    return this.abilities.getAbility()?.can('create', 'postulation' ) ?? false;
-  }
-
   searchInstitution(): void {
     if (!this.sieCode.trim()) {
       this.errorMessage = 'Por favor ingrese un código SIE válido';
@@ -343,11 +330,6 @@ export class PostulationComponent implements OnInit {
     this.selectedCourses.set(this.listCourse)
   }
 
-  canPostulation() {
-    const subject = { __typename: 'postulation'}
-    return this.abilities.can('create', subject)
-  }
-
   disabledButtonRegisterCourse(){
     if(
       this.inputValue === null ||
@@ -360,5 +342,21 @@ export class PostulationComponent implements OnInit {
     ) {
       return true
     } else return false
+  }
+
+  // ====================== PERMISOS DEL ROL ======================
+  canCreatePostulation() {
+    const subject = { __typename: 'postulation'}
+    return this.abilities.can('create', subject)
+  }
+
+  canUpdatePostulation() {
+    const subject = { __typename: 'postulation'}
+    return this.abilities.can('update', subject)
+  }
+
+  canReadPostulation() {
+    const subject = { __typename: 'postulation'}
+    return this.abilities.can('read', subject)
   }
 }

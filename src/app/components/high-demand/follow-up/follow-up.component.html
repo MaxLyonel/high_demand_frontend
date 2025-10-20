@@ -89,7 +89,7 @@
               <td>{{ i + 1}}</td>
               <td>
                 <div class="acciones-cell">
-                  @if(last && request.workflowState === 'ENVIADO' && request.registrationStatus === 'REGISTRADO') {
+                  <!-- @if(last && request.workflowState === 'ENVIADO' && request.registrationStatus === 'REGISTRADO') { -->
                     <button
                       nz-button
                       nzType="link"
@@ -122,7 +122,7 @@
                         <i nz-icon nzType="close-circle"></i>
                       </button>
                     }
-                  }
+                  <!-- } -->
                 </div>
               </td>
               <td>{{ request.educationalInstitutionName }}</td>
@@ -191,7 +191,7 @@
         <nz-descriptions-item nzTitle="Última Actualización">{{ solicitudSeleccionada?.updatedAt | date:'dd/MM/yyyy HH:mm' }}</nz-descriptions-item>
       </nz-descriptions>
 
-      <!-- <nz-divider nzText="Documentos"></nz-divider>
+      <nz-divider nzText="Documentos"></nz-divider>
       <nz-list [nzDataSource]="[]" nzBordered>
         <nz-list-item *ngFor="let doc of [{ nombre: 'algo', tipo: 'otro'}]">
           <nz-list-item-meta
@@ -204,7 +204,7 @@
             <i nz-icon nzType="download"></i>
           </button>
         </nz-list-item>
-      </nz-list> -->
+      </nz-list>
     </ng-container>
 
     <ng-template #modalFooter>

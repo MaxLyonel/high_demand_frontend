@@ -5,6 +5,7 @@ import { inject } from '@angular/core';
 import { LocalStorageService } from '../services/local-storage.service';
 import { NotificationService } from '../services/notify.service';
 import { IS_USER_ACTION } from '../constants/constants';
+import { AppStore } from '../store/app.store';
 
 export function apiBaseInterceptor(
   req: HttpRequest<unknown>,
@@ -13,9 +14,14 @@ export function apiBaseInterceptor(
 
   const localStorageService = inject(LocalStorageService);
   const notificationService = inject(NotificationService);
+  const appStore = inject(AppStore)
 
-  const apiReq = req.clone({
-    headers: req.headers.append(
+  const { user, institutionInfo } = appStore.snapshot
+  const selectedRoleId = user?.selectedRole?.role?.id
+  const institutionInfoId = institutionInfo?.id
+
+  let apiReq = req.clone({
+    headers: req.headers.set(
       'Authorization',
       `Bearer ${localStorageService.getToken()}`
     ),
@@ -23,6 +29,18 @@ export function apiBaseInterceptor(
       ? req.url
       : `${environment.apiUrl}/${req.url}`
   });
+
+  if(selectedRoleId) {
+    apiReq = apiReq.clone({
+      headers: apiReq.headers.set('x-selected-role-id', selectedRoleId.toString())
+    })
+  }
+
+  if(institutionInfoId) {
+    apiReq = apiReq.clone({
+      headers: apiReq.headers.set('x-institution-id', institutionInfoId.toString())
+    })
+  }
 
   return next(apiReq).pipe(
     tap(event => {

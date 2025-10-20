@@ -60,7 +60,7 @@ export default class LayoutComponent implements OnInit{
   );
 
   canReadPostulation$ = this.abilities.ability$.pipe(
-    map(ability => ability?.can('create', 'postulation') ?? false)
+    map(ability => ability?.can('read', 'postulation') ?? false)
   );
 
   canReadInbox$ = this.abilities.ability$.pipe(
@@ -89,11 +89,10 @@ export default class LayoutComponent implements OnInit{
     this.role = user.selectedRole
     const buffer = Buffer.from(user.selectedRole.role.name, 'latin1')
     this.roleName = iconv.decode(buffer, 'utf-8')
-    this.cdr.detectChanges()
-
     this.abilities.loadAbilities(user.id).subscribe(() => {
       const ability = this.abilities.getAbility();
       // console.log('Abilities cargadas:', ability?.rules);
+      this.cdr.detectChanges()
     });
   }
 

@@ -153,24 +153,41 @@ export class SeguimientoComponent implements OnInit {
     });
   }
 
+  // loadData(): void {
+  //   const { user } = this.appStore.snapshot
+  //   this.user = user
+  //   this.selectedRole = user.selectedRole
+  //   this.loading = true;
+  //   this.abilityService.loadAbilities(user.userId).pipe(
+  //     switchMap(() => this._history.showGeneralList())
+  //   ).subscribe({
+  //     next: (response:any) => {
+  //       const filtered = response.data.filter((r: Registration) => this.canViewRequest(r))
+  //       this.registration.set([...filtered]);
+  //       this.historial = [...filtered];
+  //       this.loading = false;
+  //     },
+  //     error: (err) => {
+  //       this.loading = false
+  //     }
+  //   })
+  // }
+
   loadData(): void {
-    const { user } = this.appStore.snapshot
-    this.user = user
-    this.selectedRole = user.selectedRole
+    const { user } = this.appStore.snapshot;
+    this.user = user;
+    this.selectedRole = user.selectedRole;
     this.loading = true;
-    this.abilityService.loadAbilities(user.userId).pipe(
-      switchMap(() => this._history.showGeneralList())
-    ).subscribe({
-      next: (response:any) => {
-        const filtered = response.data.filter((r: Registration) => this.canViewRequest(r))
-        this.registration.set([...filtered]);
-        this.historial = [...filtered];
+    this._history.showGeneralList().subscribe({
+      next: (response: any) => {
+        this.registration.set([...response.data]);
+        this.historial = [...response.data];
         this.loading = false;
       },
       error: (err) => {
-        this.loading = false
+        this.loading = false;
       }
-    })
+    });
   }
 
   onQueryParamsChange(params: any): void {
@@ -247,11 +264,12 @@ export class SeguimientoComponent implements OnInit {
   onFechaChange(value: Date | null): void {
     this.filterFecha.set(value)
   }
+
   onWorkflowStatusChange(value: string | null): void {
     this.filterStatusWorkflow.set(value)
   }
 
-  // ** ACCESOS **
+  // **  ============== ACCESOS ===================== **
   canViewAllRequests(): boolean {
     //! El recurso 'follow' (seguimiento) puede ser administrado
     //! siempre y cuando el Rol del usuario sea 'VER'
@@ -259,9 +277,8 @@ export class SeguimientoComponent implements OnInit {
   }
 
   canAnnularRequest(request: Registration): boolean {
-    const result = this.abilityService.getAbility()
-      ?.can('delete', { __typename: 'history', user_id: request.userId }) || false
-    return result
+    const subject = { __typename: 'postulation', user_id: request.userId }
+    return this.abilityService.can('delete', subject)
   }
 
   canDownloadRequest(request: Registration): boolean {
@@ -273,9 +290,17 @@ export class SeguimientoComponent implements OnInit {
   canViewRequest(request: Registration): boolean {
     //! El recurso 'history' (historial) puede ser leido
     //! siempre y cuando el usuario (user_id) sea el propietario
+    console.log("userId", request)
     const result =  this.abilityService.getAbility()
       ?.can('read', { __typename: 'history', user_id: request.userId}) || false;
     return result
+  }
+
+  canSeeOnlyRequest(request: Registration): boolean {
+    if(request.rolId !== 37) { // Es distrital
+      const subject = { __typename: 'history', educationalInstitutionId: request.educationalInstitutionId }
+      return this.abilityService.can('read', subject)
+    } else return false
   }
 
 }

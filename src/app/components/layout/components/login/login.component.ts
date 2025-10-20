@@ -63,7 +63,6 @@ export class LoginComponent {
       this.auth.performLogin({ username, password }).subscribe({
         next: () => {
           const { user } = this.appStore.snapshot
-          this.abilityService.loadAbilities(user.userId).subscribe();
           if(user.roles.length > 1 ) {
             const modal = this.modal.create<NzModalCustomComponent, { roles: Rol[] }>({
               nzTitle: 'Selecciona un rol',

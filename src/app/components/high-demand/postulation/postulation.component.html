@@ -1,5 +1,5 @@
 <nz-space nzDirection="vertical" nzSize="large">
-  @if(canCreatePostulation()){
+  @if(canReadPostulation()){
     @if(!institution()) {
       <nz-card class="info-card">
         <h5 nz-typography class="section-title">
@@ -218,7 +218,10 @@
                   class="mr-2"
                   (click)="showConfirmRegistrationHighDemand()"
                   class="flex-button"
-                  [disabled]="haveCoursesSaved || selectedCourses().length === 0"
+                  [disabled]="
+                    !(canCreatePostulation() || canUpdatePostulation()) ||
+                    haveCoursesSaved ||
+                    selectedCourses().length === 0"
                 >
                   <i nz-icon nzType="check-circle"></i> CONSOLIDAR
                 </button>
