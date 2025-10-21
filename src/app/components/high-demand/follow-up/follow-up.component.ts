@@ -273,7 +273,7 @@ export class SeguimientoComponent implements OnInit {
   canViewAllRequests(): boolean {
     //! El recurso 'follow' (seguimiento) puede ser administrado
     //! siempre y cuando el Rol del usuario sea 'VER'
-    return this.abilityService.getAbility()?.can('read', { __typename: 'history', rol_id: this.selectedRole?.id.toString()}) || false;
+    return this.abilityService.getAbility()?.can('manage', { __typename: 'history' }) || false;
   }
 
   canAnnularRequest(request: Registration): boolean {

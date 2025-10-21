@@ -157,9 +157,9 @@
         <div class="historial-scroll">
           <nz-timeline>
             <nz-timeline-item *ngFor="let evento of historial">
-              <p>{{ evento.updatedAt | date:'dd/MM/yyyy HH:mm' }}</p>
-              <p>{{ evento.registrationStatus }}</p>
-              <p>{{ evento.workflowState }} - {{ evento.userName }}</p>
+              <p>Realizado en: {{ evento.updatedAt | date:'dd/MM/yyyy HH:mm' }}</p>
+              <p style="margin-bottom: 5px;">Estado del flujo: <nz-tag nzColor="success"> {{ evento.registrationStatus }}</nz-tag></p>
+              <p style="margin-bottom: 5px;">Estado de la postulación: <nz-tag>{{ evento.workflowState }} por: {{ evento.userName }}</nz-tag></p>
               <p class="comentario">
                 <i nz-icon nzType="message" nzTheme="fill"></i> {{ evento.observation  || 'Sin observación'}}
               </p>
