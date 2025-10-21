@@ -5,7 +5,7 @@ import { BehaviorSubject, tap } from 'rxjs';
 import sift from 'sift'
 import { OperativeService } from './operative.service';
 
-export type Actions = 'manage' | 'create' | 'read' | 'update' | 'delete';
+export type Actions = 'manage' | 'create' | 'read' | 'update' | 'delete' | 'receive' | 'derive';
 export type Subjects = any | 'all';
 
 export type AppAbility = Ability<[Actions, Subjects]>;

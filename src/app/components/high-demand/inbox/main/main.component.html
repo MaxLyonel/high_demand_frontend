@@ -30,7 +30,7 @@
           nz-button
           nzType="primary"
           [nzDanger]="false"
-          [disabled]="setOfCheckedId.size === 0"
+          [disabled]="!canReceive() || setOfCheckedId.size === 0"
           (click)="receiveSelected()"
         >
           <i nz-icon nzType="inbox"></i>
@@ -45,7 +45,7 @@
               nz-button
               nzType="primary"
               [nzDanger]="actionRole.action === 'DERIVAR' ? false : true "
-              [disabled]="setOfCheckedIdDerive.size === 0"
+              [disabled]="!canDerive() || setOfCheckedIdDerive.size === 0"
               (click)="actionRole.action === 'DERIVAR' ? deriveSelected(actionRole.nextState, citeTpl) : undefined"
             >
               <i nz-icon [nzType]="actionRole.action === 'DERIVAR' ? 'send' : 'reload'"></i>

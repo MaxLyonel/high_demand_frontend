@@ -16,6 +16,10 @@ export class SocketService {
     this.socket.on('permission:changed', (data) => {
       this.permissionChanged$.next(data);
     });
+    this.socket.on('permission:expired', (data) => {
+      console.log("evento obtenido: ", data)
+      this.permissionChanged$.next(data)
+    })
   }
 
     // Para que cualquier componente pueda suscribirse

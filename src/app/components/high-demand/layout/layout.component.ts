@@ -9,8 +9,8 @@ import { NzMenuModule } from "ng-zorro-antd/menu";
 import { AuthAdapterService } from "../../../adapters/auth-api.service";
 import { AppStore } from "../../../infrastructure/store/app.store";
 import { NzTypographyModule } from "ng-zorro-antd/typography";
-import { AbilityService } from "../../../infrastructure/services/ability.service";
-import { map, tap } from "rxjs";
+import { AbilityService, AppAbility } from "../../../infrastructure/services/ability.service";
+import { filter, map, tap } from "rxjs";
 import { CommonModule } from "@angular/common";
 import * as iconv from 'iconv-lite'
 import { Buffer } from 'buffer'
@@ -56,30 +56,37 @@ export default class LayoutComponent implements OnInit{
 
     // Flags reactivas usando el observable de ability
   canManageAdmin$ = this.abilities.ability$.pipe(
+    filter(ability => !!ability),
     map(ability => ability?.can('manage', 'admin') ?? false)
-  );
+  )
 
   canReadPostulation$ = this.abilities.ability$.pipe(
+    filter((ability): ability is AppAbility => !!ability),
     map(ability => ability?.can('read', 'postulation') ?? false)
-  );
+  )
 
   canReadInbox$ = this.abilities.ability$.pipe(
+    filter(ability => !!ability),
     map(ability => ability?.can('read', 'inbox') ?? false)
   );
 
   canReadInboxRegister$ = this.abilities.ability$.pipe(
+    filter(ability => !!ability),
     map(ability => ability?.can('read', 'inbox-register'))
   )
 
   canReadInboxSelection$ = this.abilities.ability$.pipe(
+    filter(ability => !!ability),
     map(ability => ability?.can('read', 'inbox-selection'))
   )
 
   canReadFollow$ = this.abilities.ability$.pipe(
+    filter(ability => !!ability),
     map(ability => ability?.can('read', 'history') ?? false)
   );
 
   canManageConfig$ = this.abilities.ability$.pipe(
+    filter(ability => !!ability),
     map(ability => ability?.can('manage', 'config'))
   )
 
@@ -91,14 +98,12 @@ export default class LayoutComponent implements OnInit{
     this.roleName = iconv.decode(buffer, 'utf-8')
     this.abilities.loadAbilities(user.id).subscribe(() => {
       const ability = this.abilities.getAbility();
-      // console.log('Abilities cargadas:', ability?.rules);
       this.cdr.detectChanges()
     });
   }
 
   goToProfile() {
     this.visibleProfile = true
-    // this.router.navigate(['/perfil']);
   }
 
   logout() {

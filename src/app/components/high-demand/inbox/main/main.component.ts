@@ -23,6 +23,7 @@ import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import IHistory from '../../../../domain/ports/i-history';
+import { AbilityService } from '../../../../infrastructure/services/ability.service';
 
 interface Institution {
   id: number;
@@ -127,7 +128,8 @@ export class BandejaComponent implements OnInit {
     private modal: NzModalService,
     @Inject('IHighDemand') private _highDemand: IHighDemand,
     private sanitizer: DomSanitizer,
-    @Inject('IHistory') private _history: IHistory
+    @Inject('IHistory') private _history: IHistory,
+    public ability: AbilityService
   ) {}
 
   ngOnInit(): void {
@@ -503,6 +505,15 @@ export class BandejaComponent implements OnInit {
   closeReport() {
     this.isReportVisible = false
     this.reportPdfUrl = null
+  }
+
+  // ** ===================== ACCESOS ====================== **
+  canReceive() {
+    return this.ability.can('receive', 'HighDemandRegistration')
+  }
+
+  canDerive() {
+    return this.ability.can('derive', 'HighDemandRegistration')
   }
 
 }
