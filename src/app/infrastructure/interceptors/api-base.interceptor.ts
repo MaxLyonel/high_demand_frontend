@@ -18,7 +18,8 @@ export function apiBaseInterceptor(
 
   const { user, institutionInfo } = appStore.snapshot
   const selectedRoleId = user?.selectedRole?.role?.id
-  const institutionInfoId = institutionInfo?.id
+  const institutionId = institutionInfo?.id
+  const placeTypeId = user?.selectedRole?.placeType?.id
 
   let apiReq = req.clone({
     headers: req.headers.set(
@@ -36,9 +37,15 @@ export function apiBaseInterceptor(
     })
   }
 
-  if(institutionInfoId) {
+  if(institutionId) {
     apiReq = apiReq.clone({
-      headers: apiReq.headers.set('x-institution-id', institutionInfoId.toString())
+      headers: apiReq.headers.set('x-institution-id', institutionId.toString())
+    })
+  }
+
+  if(placeTypeId) {
+    apiReq = apiReq.clone({
+      headers: apiReq.headers.set('x-place-type-id', placeTypeId.toString())
     })
   }
 
