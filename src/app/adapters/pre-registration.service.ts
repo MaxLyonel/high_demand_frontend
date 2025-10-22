@@ -187,4 +187,13 @@ export class PreRegistrationAdapterService implements IManagerPreRegistration {
     })
   }
 
+  getDistrictByDepartment(departmentId: number): Observable<any> {
+    return this.http.get(`catalogs/list-districts-by-departement/${departmentId}`).pipe(
+      catchError(err => {
+        console.error("Error al obtener el catálogo de criterio")
+        return throwError(() => err)
+      })
+    )
+  }
+
 }

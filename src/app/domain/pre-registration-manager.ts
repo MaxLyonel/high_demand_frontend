@@ -93,4 +93,8 @@ export default class PreRegistrationManager implements IPreRegistration {
     return this._preRegistrationAdapter.getInfoByCodeRude(codeRude)
   }
 
+  getDistrictByDeparment(deparmentId: number): Observable<any> {
+    return this._preRegistrationAdapter.getDistrictByDepartment(deparmentId)
+  }
+
 }

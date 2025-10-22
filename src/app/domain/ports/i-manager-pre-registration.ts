@@ -9,6 +9,9 @@ export default interface IManagerPreRegistration {
   getRelationships(): Observable<any>;
   // ** obtener catálogo de municipios **
   getMunicipies(): Observable<any>;
+  // ** obtener catálogo de distritos por departamento **
+  getDistrictByDepartment(departmentId: number): Observable<any>;
+
   // ** buscar un estudiante por su código rude **
   searchStudent(sie: number, codeRude: string): Observable<any>;
 

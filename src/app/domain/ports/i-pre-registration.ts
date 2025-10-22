@@ -7,6 +7,9 @@ export default interface IPreRegistration {
   getRelationships(): Observable<any>;
   // ** exponer funcionalidad de obtener catálogo de municipios **
   getMunicipies(): Observable<any>;
+  // ** exponer funcionalidad de obtener catálogo de distritos por departamento **
+  getDistrictByDeparment(deparmentId: number): Observable<any>;
+
   // ** exponer funcionalidad para buscar un estudiante por rude **
   searchStudent(sie: number, codeRude: string): Observable<any>;
 

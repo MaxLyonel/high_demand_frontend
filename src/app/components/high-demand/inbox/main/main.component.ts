@@ -24,6 +24,8 @@ import { Observable } from 'rxjs';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import IHistory from '../../../../domain/ports/i-history';
 import { AbilityService } from '../../../../infrastructure/services/ability.service';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import IPreRegistration from '../../../../domain/ports/i-pre-registration';
 
 interface Institution {
   id: number;
@@ -77,6 +79,7 @@ interface HighDemand {
     NzToolTipModule,
     NzModalModule,
     NzListModule,
+    NzSelectModule,
     NzModalContentDirective
 ],
   providers: [NzModalService],
@@ -123,13 +126,18 @@ export class BandejaComponent implements OnInit {
   pdfUrl: SafeResourceUrl | null = null
   reportPdfUrl: SafeResourceUrl | null = null
 
+  // Para selección de distrito
+  selectedDistrict = null;
+  districtByDepartment: Array<{id: number, place: string}> = []
+
   constructor(
+    public ability: AbilityService,
+    private sanitizer: DomSanitizer,
     private message: NzMessageService,
     private modal: NzModalService,
     @Inject('IHighDemand') private _highDemand: IHighDemand,
-    private sanitizer: DomSanitizer,
     @Inject('IHistory') private _history: IHistory,
-    public ability: AbilityService
+    @Inject('IPreRegistration') private _preRegistration: IPreRegistration
   ) {}
 
   ngOnInit(): void {
@@ -153,26 +161,33 @@ export class BandejaComponent implements OnInit {
     this.rolId = user.selectedRole.role.id
     const placeTypeId = user.selectedRole.placeType.id
 
+    this._preRegistration.getDistrictByDeparment(placeTypeId).subscribe((response) => {
+      this.districtByDepartment = response.data
+    })
+
     this._highDemand.getActionFromRoles(this.rolId!).subscribe((response) => {
       this.actionRoles = response.data
     })
 
     this.highDemands = []
+    this.loading = false;
 
-    const actions: Record<string, () => Observable<any>> = {
-      entrada: () => this._highDemand.getListInbox(this.rolId!, placeTypeId),
-      recepcion: () => this._highDemand.getListReceive(this.rolId!, placeTypeId)
-    };
+    if(this.rolId === 37) {
+      const actions: Record<string, () => Observable<any>> = {
+        entrada: () => this._highDemand.getListInbox(this.rolId!, placeTypeId),
+        recepcion: () => this._highDemand.getListReceive(this.rolId!, placeTypeId)
+      };
 
-    if([37, 38].includes(this.rolId!) && actions[type]) {
-      setTimeout(() => {
-        actions[type]().subscribe((response) => {
-          this.highDemands = response.data
-          this.loading = false
-        })
-      }, 300)
-    } else {
-      this.loading = false
+      if([37, 38].includes(this.rolId!) && actions[type]) {
+        setTimeout(() => {
+          actions[type]().subscribe((response) => {
+            this.highDemands = response.data
+            this.loading = false
+          })
+        }, 300)
+      } else {
+        this.loading = false
+      }
     }
   }
 
@@ -421,6 +436,7 @@ export class BandejaComponent implements OnInit {
   // Métodos para cambiar entre bandejas
   changeInbox(type: 'entrada' | 'recepcion'): void {
     this.activeTray = type;
+    this.selectedDistrict = null;
     this.loadData(type);
     this.message.info(`Mostrando bandeja de ${type}`);
   }
@@ -505,6 +521,28 @@ export class BandejaComponent implements OnInit {
   closeReport() {
     this.isReportVisible = false
     this.reportPdfUrl = null
+  }
+
+  onDistrictChange(district: any) {
+    if(district === null) {
+      this.highDemands = [];
+    }
+
+    const actions: Record<string, () => Observable<any>> = {
+      entrada: () => this._highDemand.getListInbox(this.rolId!, district),
+      recepcion: () => this._highDemand.getListReceive(this.rolId!, district)
+    };
+
+    if([37, 38].includes(this.rolId!) && actions[this.activeTray]) {
+      setTimeout(() => {
+        actions[this.activeTray]().subscribe((response) => {
+          this.highDemands = response.data
+          this.loading = false
+        })
+      }, 300)
+    } else {
+      this.loading = false
+    }
   }
 
   // ** ===================== ACCESOS ====================== **
