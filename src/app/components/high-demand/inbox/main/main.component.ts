@@ -547,11 +547,13 @@ export class BandejaComponent implements OnInit {
 
   // ** ===================== ACCESOS ====================== **
   canReceive() {
-    return this.ability.can('receive', 'HighDemandRegistration')
+    const subject = { __typename: 'HighDemandRegistration'}
+    return this.ability.can('receive', subject)
   }
 
   canDerive() {
-    return this.ability.can('derive', 'HighDemandRegistration')
+    const subject = { __typename: 'HighDemandRegistration'}
+    return this.ability.can('derive', subject)
   }
 
 }
