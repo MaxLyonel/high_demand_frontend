@@ -46,9 +46,9 @@
           nz-button
           nzType="primary"
           [nzDanger]="false"
+          [disabled]="!canReceive() || setOfCheckedId.size === 0"
           (click)="receiveSelected()"
         >
-          <!-- [disabled]="!canReceive() || setOfCheckedId.size === 0" -->
           <i nz-icon nzType="inbox"></i>
           Recepcionar ({{ setOfCheckedId.size }}) seleccionados
         </button>
@@ -61,9 +61,9 @@
               nz-button
               nzType="primary"
               [nzDanger]="actionRole.action === 'DERIVAR' ? false : true "
+              [disabled]="!canDerive() || setOfCheckedIdDerive.size === 0"
               (click)="actionRole.action === 'DERIVAR' ? deriveSelected(actionRole.nextState, citeTpl) : undefined"
             >
-              <!-- [disabled]="!canDerive() || setOfCheckedIdDerive.size === 0" -->
               <i nz-icon [nzType]="actionRole.action === 'DERIVAR' ? 'send' : 'reload'"></i>
               {{ actionRole.action }} ({{ setOfCheckedIdDerive.size }}) seleccionados
             </button>
