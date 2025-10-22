@@ -18,15 +18,19 @@
     <!-- Contenedor con scroll para el menú -->
     <div class="sidebar-menu-container">
       <ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
-        @if(canManageAdmin$ | async){
+        @if(canReadDashboard$ | async){
         <li nz-submenu nzOpen nzTitle="Dashboard" nzIcon="dashboard">
             <ul>
-              <li nz-menu-item nzMatchRouter>
-                <a routerLink="/alta-demanda/dashboard">Dashboard</a>
-              </li>
-              <li nz-menu-item nzMatchRouter>
-                <a routerLink="/alta-demanda/admin">Administrar acceso</a>
-              </li>
+              @if(canReadDashboard$ | async){
+                <li nz-menu-item nzMatchRouter>
+                  <a routerLink="/alta-demanda/dashboard">Dashboard</a>
+                </li>
+              }
+              @if(canManageAdmin$ | async) {
+                <li nz-menu-item nzMatchRouter>
+                  <a routerLink="/alta-demanda/admin">Administrar acceso</a>
+                </li>
+              }
             </ul>
         </li>
         }

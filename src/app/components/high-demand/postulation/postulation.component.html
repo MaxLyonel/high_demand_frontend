@@ -96,9 +96,9 @@
 
             <!-- Sección de cursos para seleccionar -->
             <div nz-row [nzGutter]="16" nzJustify="start">
-              <div nz-col [nzSpan]="10" class="course border-partial-init">
+              <div nz-col [nzSpan]="9" class="course border-partial-init">
                 <div style="padding: 5px;">
-                  <span nz-typography ><strong>NIVELES</strong></span>
+                  <span nz-typography ><strong>NIVEL</strong></span>
                   <nz-radio-group
                     [(ngModel)]="selectedLevelId"
                     (ngModelChange)="onLevelSelected($event)"
@@ -113,9 +113,9 @@
                 </div>
               </div>
               <!-- grados -->
-              <div nz-col [nzSpan]="4" class="course">
+              <div nz-col [nzSpan]="5" class="course">
                 <div style="padding: 5px;">
-                  <span nz-typography><strong>GRADOS</strong></span>
+                  <span nz-typography><strong>AÑO ESCOLARIDAD</strong></span>
                   <nz-radio-group
                     [(ngModel)]="selectedGradeId"
                     (ngModelChange)="onGradeSelected($event)"
@@ -129,9 +129,9 @@
                 </div>
               </div>
               <!-- paralelos -->
-              <div nz-col [nzSpan]="4" class="course border-partial-end">
+              <div nz-col [nzSpan]="5" class="course border-partial-end">
                 <div style="padding: 5px;">
-                  <span nz-typography><strong>PARALELOS</strong></span>
+                  <span nz-typography><strong>PARALELO</strong></span>
                   <nz-radio-group
                     [(ngModel)]="selectedParallelId"
                     nzButtonStyle="solid"
@@ -142,7 +142,7 @@
                   </nz-radio-group>
                 </div>
               </div>
-              <div nz-col [nzSpan]="6">
+              <div nz-col [nzSpan]="5">
                 <div class="parallel-form">
                   <label class="form-label">Número de plazas</label>
                   <nz-input-group [nzSuffix]="inputClearTpl" class="quota-input">
@@ -179,7 +179,7 @@
           </div>
           <!-- Sección de cursos seleccionados -->
           <div nz-col [nzSpan]="9">
-            <h5 nz-typography class="section-title">CURSOS SELECCIONADOS</h5>
+            <h5 nz-typography class="section-title">AÑOS DE ESCOLARIDAD REGISTRADOS</h5>
             <nz-list
               class="course-list"
               [nzLoading]="initLoading"

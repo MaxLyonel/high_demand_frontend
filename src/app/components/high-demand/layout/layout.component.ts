@@ -60,6 +60,11 @@ export default class LayoutComponent implements OnInit{
     map(ability => ability?.can('manage', 'admin') ?? false)
   )
 
+  canReadDashboard$ = this.abilities.ability$.pipe(
+    filter(ability => !!ability),
+    map(ability => ability?.can('read', 'dashboard') ?? false)
+  )
+
   canReadPostulation$ = this.abilities.ability$.pipe(
     filter((ability): ability is AppAbility => !!ability),
     map(ability => ability?.can('read', 'postulation') ?? false)

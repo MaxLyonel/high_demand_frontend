@@ -45,7 +45,7 @@
 
   .custom-table {
     border: 1px solid fade(@text-color, 25%);
-    
+
     .header-row {
       background-color: @background-light;
 
@@ -118,4 +118,110 @@
 }
 .custom-table .acciones-cell button:last-child {
   margin-right: 0;
+}
+
+.inscription-card {
+  border: 1px solid fade(@primary-color, 60%);
+  border-radius: 8px;
+}
+
+.course-list {
+  border: 1px solid @border-color;
+  border-radius: 8px;
+  padding: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 8px;
+
+  .course-item {
+    padding: 12px 8px;
+    border-bottom: 1px solid @border-color;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .course-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+  }
+  .consolidate-btn {
+    display: flex;
+    justify-content: center;
+    margin-top: 16px;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+.action-buttons {
+  position: sticky !important;
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  margin-top: 16px;
+  padding: 8px 0;
+  border-top: 1px solid #f0f0f0;
+
+  .flex-button {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 0;
+  }
+}
+
+.full-width-radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.full-width-radio-group label {
+  flex: 1 1 auto;
+  text-align: center;
+}
+
+[nz-radio-button] {
+  height: 38px;
+  line-height: 38px;
+  display: flex;
+  margin-bottom: 3px;
+  flex-direction: column;
+}
+
+.parallel-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  margin-right: 10px;
+  border-radius: 5px;
+  background-color: rgb(224, 225, 225);
+
+  .form-label {
+    color: @text-secondary;
+    font-weight: 500;
+  }
+  .quota-input {
+    width: 120px;
+
+    input {
+      text-align: center;
+    }
+  }
+  .register-btn {
+    margin-top: 8px;
+    width: 120px;
+  }
+}
+.course {
+  padding: 10px;
 }

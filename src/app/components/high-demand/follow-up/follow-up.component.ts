@@ -1,6 +1,6 @@
 import { Component, computed, inject, Inject, OnInit, signal } from '@angular/core';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalService, NzModalModule } from 'ng-zorro-antd/modal';
+import { NzModalService, NzModalModule, NzModalRef } from 'ng-zorro-antd/modal';
 import { NzCardModule } from "ng-zorro-antd/card";
 import { NzSpaceModule } from "ng-zorro-antd/space";
 import { NzTagModule } from "ng-zorro-antd/tag";
@@ -26,7 +26,13 @@ import { AppStore } from '../../../infrastructure/store/app.store';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { AbilityService } from '../../../infrastructure/services/ability.service';
-import { switchMap } from 'rxjs';
+import { finalize, of, switchMap, tap } from 'rxjs';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
+import IManagerInstitution from '../../../domain/ports/i-manager-institution';
+import ICourseList from '../../../domain/ports/i-course-list';
+import { NotificationService } from '../../../infrastructure/services/notify.service';
+import { Router } from '@angular/router';
 
 interface Registration {
   id: number;
@@ -67,8 +73,10 @@ interface EventHistory {
     NzDividerModule,
     NzIconModule,
     NzInputModule,
+    NzGridModule,
     NzListModule,
     NzModalModule,
+    NzRadioModule,
     NzSelectModule,
     NzSpaceModule,
     NzTableModule,
@@ -107,6 +115,30 @@ export class SeguimientoComponent implements OnInit {
   user!: any
   selectedRole!: any
 
+  // *** variables para editar postulación ***
+  levels!: any;
+  institution = signal<any>(null);
+  inputValue: number | null = null;
+
+  selectedLevelId: number | null = null;
+  selectedGradeId: number | null = null;
+  selectedParallelId: number | null = null;
+  gradesToShow: any[] = [];
+  parallelsToShow: any[] = [];
+  errorMessage: string = '';
+  highDemand: any;
+  isLoading: boolean = false;
+  initLoading = false;
+  listCourse: Array<any> = [];
+  selectedCourses = signal<Array<any>>([])
+  courseKeys = new Set<string>();
+  haveCoursesSaved: boolean = false;
+  showApplication = signal<boolean>(false)
+
+  confirmModal?: NzModalRef;
+  notificationService = inject(NotificationService)
+  router = inject(Router)
+
   // Computed signal para el filtrado reactivo
   filteredRegistrations = computed(() => {
     if(!this.abilitiesLoaded()) {
@@ -143,10 +175,13 @@ export class SeguimientoComponent implements OnInit {
     public abilityService: AbilityService,
     @Inject('IHistory') private readonly _history: IHistory,
     @Inject('IHighDemand') private readonly _highDemand: IHighDemand,
+    @Inject('IManagerInstitution') private _institution: IManagerInstitution,
+    @Inject('ICourseList') private _courses: ICourseList
   ) {}
 
   ngOnInit(): void {
     const { user } = this.appStore.snapshot;
+    this.user = user;
     this.abilityService.loadAbilities(user.userId).subscribe(() => {
       this.abilitiesLoaded.set(true);
       this.loadData();
@@ -200,6 +235,10 @@ export class SeguimientoComponent implements OnInit {
   seeDetail(solicitud: Registration): void {
     this.solicitudSeleccionada = solicitud;
     this.isVisibleModal = true;
+
+    const { institutionInfo } = this.appStore.snapshot
+    const { id: institutionId } = institutionInfo
+    this.getFullInfo(institutionId)
   }
 
   handleCancel(): void {
@@ -217,9 +256,9 @@ export class SeguimientoComponent implements OnInit {
 
   cancelRequest(request: any): void {
     this.modal.confirm({
-      nzTitle: `¿Cancelar solicitud de ${request.educationalInstitutionName}?`,
-      nzContent: 'Esta acción no se puede deshacer',
-      nzOkText: 'Sí, cancelar',
+      nzTitle: `¿Anular la postulación de la Unidad Educativa ${request.educationalInstitutionName}?`,
+      nzContent: 'Esta acción no se reversible',
+      nzOkText: 'Sí, anular',
       nzOkType: 'primary',
       nzOkDanger: true,
       nzCancelText: 'No',
@@ -271,14 +310,18 @@ export class SeguimientoComponent implements OnInit {
 
   // **  ============== ACCESOS ===================== **
   canViewAllRequests(): boolean {
-    //! El recurso 'follow' (seguimiento) puede ser administrado
-    //! siempre y cuando el Rol del usuario sea 'VER'
-    return this.abilityService.getAbility()?.can('manage', { __typename: 'history' }) || false;
+    const subject = { __typename: 'history'}
+    return this.abilityService.getAbility()?.can('manage', subject) || false;
   }
 
   canAnnularRequest(request: Registration): boolean {
-    const subject = { __typename: 'postulation', user_id: request.userId }
+    const subject = { __typename: 'postulation' }
     return this.abilityService.can('delete', subject)
+  }
+
+  canUpdateRequest(request: Registration): boolean {
+    const subject = { __typename: 'postulation'}
+    return this.abilityService.can('update', subject)
   }
 
   canDownloadRequest(request: Registration): boolean {
@@ -302,6 +345,212 @@ export class SeguimientoComponent implements OnInit {
       const subject = { __typename: 'history', educationalInstitutionId: request.educationalInstitutionId }
       return this.abilityService.can('read', subject)
     } else return false
+  }
+
+  // *** funciones para editar la postulacioń ***
+  getFullInfo(sie: number) {
+    this._institution.getInfo(sie).pipe(
+      tap(institution => {
+        if(!institution) this.errorMessage = 'No se encontró Unidad Educativa con el SIE introducido';
+        this.institution.set(institution);
+      }),
+      switchMap(() =>
+        this._courses.showCourses(sie, 2025)
+      ),
+      tap(courses => {
+        this.levels = courses
+      }),
+      switchMap(() =>
+        this._highDemand.getHighDemandByInstitution(sie)
+      ),
+      switchMap((highDemand) => {
+        if (!highDemand) {
+          return of([]);
+        }
+        const { rolId, workflowStateId } = highDemand;
+        // Si aún está con el director, y su estado es EN REVISIÓN
+        if (rolId === 9 && workflowStateId === 2) {
+          this.appStore.setHighDemandCoursesSaved(false);
+        } else {
+          this.appStore.setHighDemandCoursesSaved(true);
+        }
+        this.highDemand = highDemand;
+        return this._highDemand.getCoures(highDemand.id);
+      }),
+      finalize(() => {
+        this.isLoading = false;
+        this.initLoading = false;
+      })
+    ).subscribe({
+      next: (courses) => {
+        this.listCourse = courses.map((course:any) => ({
+          checked: true,
+          name: `${course.levelName} - ${course.gradeName} ${course.parallelName} - cupo:${course.totalQuota}`,
+          quota: course.levelId!,
+          levelId: course.levelId,
+          gradeId: course.gradeId,
+          parallelId: course.parallelId
+        }));
+        this.courseKeys = new Set(
+          this.listCourse.map(c =>
+            `${c.levelId}-${c.gradeId}-${c.parallelId}`
+          )
+        );
+        if(this.listCourse.length) this.haveCoursesSaved = true
+        else this.haveCoursesSaved = false
+        this.selectedCourses.set(this.listCourse);
+        this.showApplication.set(true);
+      },
+      error: (err) => {
+        this.showApplication.set(false);
+        console.error('Error cargando datos', err);
+      }
+    });
+  }
+
+  onLevelSelected(levelId: number) {
+    this.inputValue = null;
+    this.selectedGradeId = null;
+    this.selectedParallelId = null;
+    this.gradesToShow = []
+    this.parallelsToShow = []
+    const level = this.levels.find((l:any) => l.id === levelId)
+    this.gradesToShow = level ? level.grades : []
+  }
+
+  onGradeSelected(gradeId: number) {
+    this.inputValue = null;
+    this.selectedParallelId = null;
+    this.parallelsToShow = [];
+    const grade = this.gradesToShow.find((g:any) => g.id === gradeId)
+    this.parallelsToShow = grade ? grade.parallels : []
+  }
+
+  disabledButtonRegisterCourse() {
+    if(
+      this.inputValue === null ||
+      this.inputValue === 0 ||
+      this.inputValue > 40 ||
+      this.haveCoursesSaved === null ||
+      this.selectedLevelId === null ||
+      this.selectedGradeId === null ||
+      this.selectedParallelId === null
+    ) {
+      return true
+    } else return false
+  }
+
+  showConfirmRegistrationQuota(): void { // Modal cuando se registra el cursos y la cuota
+    this.confirmModal = this.modal.confirm({
+      nzTitle: 'Registrar la cantidad de cupos',
+      nzContent: 'Asegurese de registrar la cantidad correcta de cupos',
+      nzOnOk: () => this.addCourseForRegister()
+    });
+  }
+
+  addCourseForRegister() { // Agregar cursos a la lista
+    const { level, grade, parallel } = this.getStructure(this.selectedLevelId!, this.selectedGradeId!, this.selectedParallelId!)
+    const key = `${this.selectedLevelId}-${this.selectedGradeId}-${this.selectedParallelId}`
+    if(this.courseKeys.has(key)) {
+      this.notificationService.showMessage(
+        'El curso ya fue agregado',
+        'Solicitud inválida',
+        'warning'
+      )
+      return;
+    }
+    this.initLoading = true
+    this.listCourse.push({
+      checked: true,
+      name: `${level.name} ${grade.name} ${parallel.name} - cupo:${this.inputValue}`,
+      quota: this.inputValue!,
+      levelId: this.selectedLevelId!,
+      gradeId: this.selectedGradeId!,
+      parallelId: this.selectedParallelId!
+    })
+    this.courseKeys.add(key)
+    this.selectedCourses.set(this.listCourse)
+    // Limpiar valores del formulario
+    this.inputValue = null
+    this.selectedLevelId = null;
+    this.selectedGradeId = null;
+    this.selectedParallelId = null;
+    this.gradesToShow = [];
+    this.parallelsToShow = [];
+
+    setTimeout(() => {
+      this.initLoading = false
+    }, 300)
+  }
+
+  getStructure(levelId: number, gradeId: number, parallelId: number) {
+    const level = this.levels.find((e: any) => e.id == levelId)
+    const grade = level.grades.find((e: any) => e.id == gradeId)
+    const parallel = grade.parallels.find((e: any) => e.id == parallelId)
+    return {
+      level,
+      grade,
+      parallel
+    }
+  }
+
+  deleteSelection(index: any) {
+    const course = this.listCourse[index]
+    if(!course) return
+    const key = `${course.levelId}-${course.gradeId}-${course.parallelId}`
+    this.listCourse.splice(index, 1)
+    this.courseKeys.delete(key)
+    this.selectedCourses.set(this.listCourse)
+  }
+
+  showConfirmRegistrationHighDemand(): void { // Modal cuando se registra la institución como alta demanda
+    this.confirmModal = this.modal.confirm({
+      nzTitle: '¿Finalizar la postulación de la Unidad Educativa?',
+      nzContent: 'Favor aproximarse al distrito correspondiente para ratificar su solicitud',
+      nzOnOk: () => {
+        this.submitHighDemand()
+      }
+    })
+  }
+
+  canUpdatePostulation() {
+    const subject = { __typename: 'postulation'}
+    return this.abilityService.can('update', subject)
+  }
+
+  submitHighDemand() { // Registrar institución con sus cursos como alta demanda
+    const { id: educationalInstitutionId } = this.institution();
+    const { user } = this.appStore.snapshot
+    const { userId, selectedRole } = user
+    const rolAllowed = selectedRole.role.id
+
+    const highDemand = {
+      educationalInstitutionId,
+      userId,
+      rolId: rolAllowed
+    };
+
+    const courses = this.selectedCourses().map((item: any) => ({
+      levelId: item.levelId,
+      gradeId: item.gradeId,
+      parallelId: item.parallelId,
+      totalQuota: item.quota
+    }));
+
+    const requestData = {
+      highDemand,
+      courses
+    };
+
+    this._highDemand.registerHighDemand(requestData).subscribe({
+      next: (response: any) => {
+        this.highDemand = response.data
+        this.router.navigate(['/alta-demanda/follow-up'])
+      },
+      error: (err) => {
+        console.error('Error durante el  flujo de alta demanda: ', err)
+      }
+    })
   }
 
 }
