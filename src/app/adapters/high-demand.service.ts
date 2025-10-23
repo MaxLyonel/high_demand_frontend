@@ -17,6 +17,17 @@ export class HighDemandAdapterService implements IManagerHighDemand {
     )
   }
 
+  editHighDemand(obj: any): Observable<any> {
+    return this.http.post(`high-demand/edit`, obj, {
+      context: new HttpContext().set(IS_USER_ACTION, true)
+    }).pipe(
+      catchError(err => {
+        console.error("salio mal al editar la alta demanda")
+        return throwError(() => err)
+      })
+    )
+  }
+
   sendHighDemand(obj: any): Observable<any> {
     return this.http.post(`high-demand/send`, obj, {
       context: new HttpContext().set(IS_USER_ACTION, true)

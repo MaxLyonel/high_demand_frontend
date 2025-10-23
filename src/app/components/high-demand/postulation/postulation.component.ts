@@ -30,6 +30,7 @@ import { AbilityService } from "../../../infrastructure/services/ability.service
 import { User } from "../../../domain/models/user.model";
 import IManagerInstitution from "../../../domain/ports/i-manager-institution";
 import { NotificationService } from "../../../infrastructure/services/notify.service";
+import { APP_CONSTANTS } from "../../../infrastructure/constants/constants";
 
 
 interface CourseList {
@@ -130,7 +131,7 @@ export class PostulationComponent implements OnInit {
         this.institution.set(institution);
       }),
       switchMap(() =>
-        this._courses.showCourses(sie, 2025)
+        this._courses.showCourses(sie, APP_CONSTANTS.CURRENT_YEAR)
       ),
       tap(courses => {
         this.levels = courses
@@ -144,7 +145,7 @@ export class PostulationComponent implements OnInit {
         }
         const { rolId, workflowStateId } = highDemand;
         // Si aún está con el director, y su estado es EN REVISIÓN
-        if (rolId === 9 && workflowStateId === 2) {
+        if (rolId === APP_CONSTANTS.ROLES.DIRECTOR_ROLE && workflowStateId === 2) {
           this.appStore.setHighDemandCoursesSaved(false);
         } else {
           this.appStore.setHighDemandCoursesSaved(true);

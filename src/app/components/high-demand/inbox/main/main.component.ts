@@ -26,6 +26,8 @@ import IHistory from '../../../../domain/ports/i-history';
 import { AbilityService } from '../../../../infrastructure/services/ability.service';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import IPreRegistration from '../../../../domain/ports/i-pre-registration';
+import EditModalComponent from '../../shared/edit-modal.component';
+import { APP_CONSTANTS } from '../../../../infrastructure/constants/constants';
 
 interface Institution {
   id: number;
@@ -80,7 +82,8 @@ interface HighDemand {
     NzModalModule,
     NzListModule,
     NzSelectModule,
-    NzModalContentDirective
+    NzModalContentDirective,
+    EditModalComponent
 ],
   providers: [NzModalService],
 })
@@ -129,6 +132,8 @@ export class BandejaComponent implements OnInit {
   // Para selección de distrito
   selectedDistrict = null;
   districtByDepartment: Array<{id: number, place: string}> = []
+  isVisibleModal = false
+  institutionId!: any;
 
   constructor(
     public ability: AbilityService,
@@ -327,11 +332,11 @@ export class BandejaComponent implements OnInit {
     let rolName = ''
     let title = ''
     let message = ''
-    if(rolId == 9) {
+    if(rolId == APP_CONSTANTS.ROLES.DIRECTOR_ROLE) {
       rolName = 'Director Unidad Educativa'
       title = `¿Rechazar la Alta Demanda de ${highDemand.institution.name}`
       message = `Se ha rechazado la Alta Demanda de ${highDemand.institution.name}`
-    } else if(rolId == 37){
+    } else if(rolId == APP_CONSTANTS.ROLES.DISTRICT_ROLE){
       rolName = 'Director Distrital'
       title = `¿Devolver la Alta Demanda de ${highDemand.institution.name} a rol ${rolName}?`
       message = `Se ha devuelto la Alta Demanda de ${highDemand.institution.name}`
@@ -545,6 +550,19 @@ export class BandejaComponent implements OnInit {
     }
   }
 
+  openEditor(data: any) {
+    this.institutionId = data.institution.id
+    this.isVisibleModal = true;
+  }
+
+  handleOk() {
+    this.isVisibleModal = false
+  }
+
+  handleCancel() {
+    this.isVisibleModal = false
+  }
+
   // ** ===================== ACCESOS ====================== **
   canReceive() {
     const subject = { __typename: 'HighDemandRegistration'}
@@ -554,6 +572,16 @@ export class BandejaComponent implements OnInit {
   canDerive() {
     const subject = { __typename: 'HighDemandRegistration'}
     return this.ability.can('derive', subject)
+  }
+
+  canUpdateRequest(): boolean {
+    const subject = { __typename: 'postulation' }
+    return this.ability.can('update', subject)
+  }
+
+  canSeeAffidavit(): boolean {
+    const subject = { __typename: 'affidavit'}
+    return this.ability.can('read', subject)
   }
 
 }

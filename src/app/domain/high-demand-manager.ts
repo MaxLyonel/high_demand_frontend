@@ -18,6 +18,11 @@ export default class HighDemandManager implements IHighDemand {
     return result
   }
 
+  editHighDemand(obj: any): Observable<any> {
+    const result = this._highDemandAdapter.editHighDemand(obj)
+    return result
+  }
+
   getHighDemandByInstitution(educationalInstitutionId: number): Observable<any> {
     const result = this._highDemandAdapter.getHighDemandByInstitution(educationalInstitutionId)
     return result

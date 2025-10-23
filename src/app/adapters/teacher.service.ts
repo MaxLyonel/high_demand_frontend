@@ -3,6 +3,7 @@ import { inject, Injectable } from "@angular/core";
 import IManagerTeacher from "../domain/ports/i-manager-teacher";
 import { catchError, Observable, tap, throwError } from "rxjs";
 import { Teacher } from "../domain/models/teacher.model";
+import { APP_CONSTANTS } from "../infrastructure/constants/constants";
 
 
 @Injectable({ providedIn: 'root'})
@@ -13,7 +14,7 @@ export class TeacherAdapterService implements IManagerTeacher {
   getInfoTeacher(personId: number): Observable<Teacher> {
     const params = new HttpParams()
       .set('personId', personId)
-      .set('gestionId', 2025) //TODO
+      .set('gestionId', APP_CONSTANTS.CURRENT_YEAR) //TODO
 
     return this.http.get<Teacher>(`auth/info-teacher`, { params }).pipe(
       catchError(err => {

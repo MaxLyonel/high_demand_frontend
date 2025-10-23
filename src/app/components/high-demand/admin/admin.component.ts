@@ -13,6 +13,7 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import IOperative from '../../../domain/ports/i-operative';
+import { APP_CONSTANTS } from '../../../infrastructure/constants/constants';
 
 interface PhaseConfig {
   id: string;
@@ -137,7 +138,7 @@ export class OperativoConfigComponent implements OnInit {
 
   loadCurrentConfig(): void {
     this.isLoading = true;
-    this._operative.getOperative(2025).subscribe({
+    this._operative.getOperative(APP_CONSTANTS.CURRENT_YEAR).subscribe({
       next: (config) => {
         if(config && config.data) {
           this.currentConfig = config.data;

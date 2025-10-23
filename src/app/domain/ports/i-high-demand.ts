@@ -3,6 +3,7 @@ import { Observable } from "rxjs";
 
 export default interface IHighDemand {
   registerHighDemand(obj: any): Observable<any>;
+  editHighDemand(obj: any): Observable<any>;
   sendHighDemand(obj: any): Observable<any>;
   receiveHighDemands(obj: any): Observable<any>;
   deriveHighDemand(obj: any): Observable<any>;

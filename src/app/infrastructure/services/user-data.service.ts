@@ -7,6 +7,7 @@ import { switchMap, tap } from "rxjs";
 import IManagerTeacher from '../../domain/ports/i-manager-teacher';
 import IInstituionDetail from "../../domain/ports/i-institution-detail";
 import { AppStore } from "../store/app.store";
+import { APP_CONSTANTS } from "../constants/constants";
 
 
 @Injectable({ providedIn: 'root'})
@@ -26,7 +27,8 @@ export class UserDataService {
     }
     const roleId = user.selectedRole.role.id
     switch(roleId) {
-      case 9:
+      case APP_CONSTANTS.ROLES.DIRECTOR_ROLE:
+      case APP_CONSTANTS.ROLES.VER_ROLE:
         this._teacher.getInfoTeacher(user.person.id).pipe(
           tap((teacherInfo: any) => this.appStore.setTeacherInfo(teacherInfo.data)),
           switchMap((teacherInfo:any) => {
@@ -43,12 +45,11 @@ export class UserDataService {
           }
         });
         break;
-      case 37:
-      case 38:
-      case 48:
+      case APP_CONSTANTS.ROLES.DISTRICT_ROLE:
+      case APP_CONSTANTS.ROLES.DEPARTMENT_ROLE:
         this.router.navigate(['/alta-demanda/main-inbox'])
         break;
-      case 50:
+      case APP_CONSTANTS.ROLES.ADMIN_ROLE:
         this.router.navigate(['/alta-demanda/admin'])
     }
   }

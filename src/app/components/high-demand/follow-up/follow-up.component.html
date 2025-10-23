@@ -90,7 +90,7 @@
               <td>
                 <div class="acciones-cell">
                   @if(first && request.workflowState === 'ENVIADO' && request.registrationStatus === 'REGISTRADO') {
-                    @if(selectedRole?.role?.id === 9 && canUpdateRequest(request)) {
+                    @if(selectedRole?.role?.id === 9 && canUpdateRequest()) {
                       <button
                         nz-button
                         nzType="link"
@@ -112,7 +112,7 @@
                         <i nz-icon nzType="download"></i>
                       </button>
                     }
-                    @if(canAnnularRequest(request)) {
+                    @if(canAnnularRequest()) {
                       <button
                         nz-button
                         nzType="link"
@@ -172,184 +172,15 @@
     }
   </nz-tabset>
 
-  <!-- Modal de detalle -->
-  <nz-modal
-    [(nzVisible)]="isVisibleModal"
-    [nzTitle]="nzModalTitle"
-    (nzOnCancel)="handleCancel()"
-    (nzOnOk)="handleOk()"
-    [nzFooter]="modalFooter"
-    [nzWidth]="1300"
-  >
-    <ng-template #nzModalTitle>
-      <b style="color: #045e56">Detalle de Solicitud</b>
-    </ng-template>
-    <ng-container *nzModalContent>
-      <nz-descriptions nzBordered [nzColumn]="2">
-        <nz-descriptions-item [nzTitle]="nombreTpl">{{ solicitudSeleccionada?.educationalInstitutionName }}</nz-descriptions-item>
-        <nz-descriptions-item [nzTitle]="sieTpl">{{ solicitudSeleccionada?.educationalInstitutionId }}</nz-descriptions-item>
-        <nz-descriptions-item [nzTitle]="dateRequestTpl">{{ solicitudSeleccionada?.createdAt | date:'dd/MM/yyyy' }}</nz-descriptions-item>
-        <nz-descriptions-item [nzTitle]="statusTpl">
-          <nz-tag [nzColor]="getColorEstado(solicitudSeleccionada?.registrationStatus)">{{ solicitudSeleccionada?.registrationStatus }}</nz-tag>
-        </nz-descriptions-item>
-        <nz-descriptions-item [nzTitle]="resTpl">{{ solicitudSeleccionada?.userName }}</nz-descriptions-item>
-        <nz-descriptions-item [nzTitle]="updatedTpl">{{ solicitudSeleccionada?.updatedAt | date:'dd/MM/yyyy HH:mm' }}</nz-descriptions-item>
-      </nz-descriptions>
+  <!-- Modal de edicón -->
+  <edit-modal
+    [(isVisible)]="isVisibleModal"
+    [title]="'hola mundo'"
+    (ok)="handleOk()"
+    (cancel)="handleCancel()"
+    [sie]="institutionId"
+    [request]="solicitudSeleccionada"
+    [canUpdated]="canUpdateRequest()"
+  ></edit-modal>
 
-      <ng-template #nombreTpl> <b>Unidad Educativa</b> </ng-template>
-      <ng-template #sieTpl> <b>SIE</b> </ng-template>
-      <ng-template #dateRequestTpl> <b>Fecha Solicitud</b> </ng-template>
-      <ng-template #statusTpl> <b>Estado</b> </ng-template>
-      <ng-template #resTpl> <b>Responsable</b> </ng-template>
-      <ng-template #updatedTpl> <b>Última Actualización</b> </ng-template>
-
-      <nz-divider [nzText]="coursesTpl"></nz-divider>
-
-      <ng-template #coursesTpl>
-        <b>Sección de cursos</b>
-      </ng-template>
-
-      <nz-card class="inscription-card">
-        <div nz-row [nzGutter]="15">
-          <div nz-col [nzSpan]="16">
-            <h5 nz-typography class="section-title">INSCRIPCIÓN DE LA UNIDAD EDUCATIVA</h5>
-
-            <div nz-row [nzGutter]="16" nzJustify="start">
-              <div nz-col [nzSpan]="9" class="course border-partial-init">
-                <div style="padding: 5px;">
-                  <span nz-typography ><strong>NIVEL</strong></span>
-                  <nz-radio-group
-                    nzButtonStyle="solid"
-                    class="full-width-radio-group"
-                    [(ngModel)]="selectedLevelId"
-                    (ngModelChange)="onLevelSelected($event)"
-                  >
-                    @for(level of levels; track level) {
-                      <label nz-radio-button [nzValue]="level.id">{{level.name}}</label>
-                    }
-                  </nz-radio-group>
-                </div>
-              </div>
-              <div nz-col [nzSpan]="5" class="course">
-                <div style="padding: 5px;">
-                  <span nz-typography><strong>AÑO ESCOLARIDAD</strong></span>
-                  <nz-radio-group
-                    nzButtonStyle="solid"
-                    class="full-width-radio-group"
-                    [(ngModel)]="selectedGradeId"
-                    (ngModelChange)="onGradeSelected($event)"
-                  >
-                    @for(grade of gradesToShow; track grade) {
-                      <label nz-radio-button [nzValue]="grade.id">{{grade.name}}</label>
-                    }
-                  </nz-radio-group>
-                </div>
-              </div>
-              <div nz-col [nzSpan]="5" class="course border-partial-end">
-                <div style="padding: 5px;">
-                  <span nz-typography><strong>PARALELO</strong></span>
-                  <nz-radio-group
-                    nzButtonStyle="solid"
-                    [(ngModel)]="selectedParallelId"
-                  >
-                    @for(parallel of parallelsToShow; track parallel) {
-                      <label nz-radio-button [nzValue]="parallel.id">Paralelo {{parallel.name}}</label>
-                    }
-                  </nz-radio-group>
-                </div>
-              </div>
-              <div nz-col [nzSpan]="5">
-                <div class="parallel-form">
-                  <label class="form-label">Número de plazas</label>
-                  <nz-input-group [nzSuffix]="inputClearTpl" class="quota-input">
-                    <input
-                      type="number"
-                      nz-input
-                      placeholder="Nro plaza"
-                      [(ngModel)]="inputValue"
-                    />
-                  </nz-input-group>
-
-                  <ng-template #inputClearTpl>
-                    <nz-icon
-                      class="ant-input-clear-icon"
-                      nzTheme="fill"
-                      nzType="close-circle"
-                      *ngIf="inputValue"
-                      (click)="inputValue = null"
-                    ></nz-icon>
-                  </ng-template>
-
-                  <button
-                    nz-button
-                    nzType="primary"
-                    class="register-btn"
-                    [disabled]="disabledButtonRegisterCourse()"
-                    (click)="showConfirmRegistrationQuota()"
-                  >
-                    REGISTRAR
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- Sección de cursos seleccionados -->
-          <div nz-col [nzSpan]="8">
-            <h5 nz-typography class="section-title">AÑOS DE ESCOLARIDAD REGISTRADOS</h5>
-            <nz-list
-              class="course-list"
-              [nzLoading]="initLoading"
-              nzItemLayout="horizontal"
-              [nzDataSource]="listCourse"
-              [nzRenderItem]="item"
-            >
-              <ng-template #item let-item let-i="index">
-                <nz-list-item class="course-item">
-                  <div class="course-content">
-                    <nz-list-item-meta [nzDescription]="item.name"></nz-list-item-meta>
-                    <button
-                      nz-button
-                      nzDanger
-                      nzType="primary"
-                      nzShape="circle"
-                      nzSize="small"
-                      (click)="deleteSelection(i)"
-                      [disabled]="selectedCourses().length === 0"
-                    >
-                      <nz-icon nzType="delete"></nz-icon>
-                    </button>
-                  </div>
-                </nz-list-item>
-              </ng-template>
-              <ng-template #nzEmpty>
-                <div class="empty-list-message" style="text-align: center; padding: 20px;">
-                  No hay cursos agregados aún
-                </div>
-              </ng-template>
-            </nz-list>
-              <div class="action-buttons">
-                <button
-                  nz-button
-                  nzType="primary"
-                  class="mr-2"
-                  (click)="showConfirmRegistrationHighDemand()"
-                  class="flex-button"
-                  [disabled]="
-                    !canUpdatePostulation() ||
-                    selectedCourses().length === 0"
-                >
-                  <i nz-icon nzType="check-circle"></i> CONSOLIDAR
-                </button>
-              </div>
-          </div>
-        </div>
-      </nz-card>
-
-    </ng-container>
-
-    <ng-template #modalFooter>
-      <button nz-button nzType="default" (click)="handleCancel()">Cerrar</button>
-      <button nz-button nzType="primary" (click)="handleOk()">Aceptar</button>
-    </ng-template>
-  </nz-modal>
 </nz-card>

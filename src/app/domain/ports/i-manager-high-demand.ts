@@ -5,7 +5,9 @@ import { Observable } from "rxjs";
 
 export default interface IManagerHighDemand {
   // ** guardar alta demanda **
-  saveHighDemand(obj: any): Observable<any>
+  saveHighDemand(obj: any): Observable<any>;
+  // ** editar alta demanda **
+  editHighDemand(obj: any): Observable<any>;
   // ** enviar alta demanda **
   sendHighDemand(obj: any): Observable<any>;
   // ** recepcionar alta demanda **
