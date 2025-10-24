@@ -23,6 +23,7 @@ import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NotificationService } from '../../infrastructure/services/notify.service';
 import { startWith } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { NzPopoverModule } from 'ng-zorro-antd/popover';
 
 @Component({
   selector: 'app-formulario-inscripcion',
@@ -49,7 +50,8 @@ import { CommonModule } from '@angular/common';
     NzTypographyModule,
     NzSelectModule,
     NzModalModule,
-    NzResultModule
+    NzResultModule,
+    NzPopoverModule
 ]
 })
 export default class FormularioInscripcionComponent implements OnInit{
@@ -77,6 +79,21 @@ export default class FormularioInscripcionComponent implements OnInit{
   preRegistration: any
 
   rudeCodeSearch: string = '';
+
+  popovers: Array<{title: string, content: string}> = [
+    {
+      title: 'Preinscripción por hermanos',
+      content: 'Realice su preinscripción si tiene hermanos del postulante en la misma Unidad Educativa a la que postula'
+    },
+    {
+      title: 'Preinscripción por cercanía de vivienda',
+      content: 'Realice su preinscripción si el estudiante vive cerca de la Unidad Educativa a la que postula'
+    },
+    {
+      title: 'Preinscripción por cercanía del lugar de trabajo del apoderado',
+      content: 'Realice su preinscripción si el apoderado trabaja cerca de la Unidad Educativa a la que postula'
+    }
+  ]
 
   constructor(
     private fb: FormBuilder,

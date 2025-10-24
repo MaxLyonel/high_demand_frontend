@@ -16,6 +16,9 @@
                     <nz-form-label nzRequired>DEPARTAMENTO</nz-form-label>
                     <nz-form-control>
                       <nz-select
+                        nz-popover
+                        [nzPopoverTitle]="titleDep"
+                        nzPopoverContent="Seleccione el departamento donde se encuentra la Unidad Educativa a la que quiere postular"
                         formControlName="departmentId"
                         [nzDisabled]="false"
                         nzAllowClear
@@ -26,6 +29,9 @@
                           <nz-option [nzValue]="department" [nzLabel]="department.place"></nz-option>
                         }
                       </nz-select>
+                      <ng-template #titleDep>
+                        <b><i><u>Seleccione el departamento</u></i></b>
+                      </ng-template>
                     </nz-form-control>
                   </nz-form-item>
                 </div>
@@ -51,7 +57,17 @@
                   <nz-form-item>
                     <nz-form-label>SIE</nz-form-label>
                     <nz-form-control>
-                      <input nz-input formControlName="institutionId" readonly>
+                      <input
+                        nz-popover
+                        [nzPopoverTitle]="titleSie"
+                        nzPopoverContent="Este campo se autocompletara automáticamente al seleccionar el departamento y Unidad Educativa"
+                        nz-input
+                        formControlName="institutionId"
+                        readonly
+                      >
+                      <ng-template #titleSie>
+                        <b><i><u>Campo no editable y autocompletable</u></i></b>
+                      </ng-template>
                     </nz-form-control>
                   </nz-form-item>
                 </div>
@@ -62,7 +78,17 @@
                   <nz-form-item>
                     <nz-form-label>ÁMBITO</nz-form-label>
                     <nz-form-control>
-                      <input nz-input formControlName="institutionType" readonly>
+                      <input
+                        nz-popover
+                        [nzPopoverTitle]="titleAmbito"
+                        nzPopoverContent="Este campo se autocompletara automáticamente al seleccionar el departamento y Unidad Educativa"
+                        nz-input
+                        formControlName="institutionType"
+                        readonly
+                      >
+                        <ng-template #titleAmbito>
+                          <b><i><u>Campo no editable y autocompletable</u></i></b>
+                        </ng-template>
                     </nz-form-control>
                   </nz-form-item>
                 </div>
@@ -70,7 +96,17 @@
                   <nz-form-item>
                     <nz-form-label>DEPENDENCIA</nz-form-label>
                     <nz-form-control>
-                      <input nz-input formControlName="institutionDependency" readonly>
+                      <input
+                        nz-popover
+                        [nzPopoverTitle]="titleDepen"
+                        nzPopoverContent="Este campo se autocompletara automáticamente al seleccionar el departamento y Unidad Educativa"
+                        nz-input
+                        formControlName="institutionDependency"
+                        readonly
+                      >
+                      <ng-template #titleDepen>
+                        <b><i><u>Campo no editable y autocompletable</u></i></b>
+                      </ng-template>
                     </nz-form-control>
                   </nz-form-item>
                 </div>
@@ -81,7 +117,17 @@
                   <nz-form-item>
                     <nz-form-label>DEPARTAMENTO</nz-form-label>
                     <nz-form-control>
-                      <input nz-input formControlName="institutionDepartment" readonly >
+                      <input
+                        nz-input
+                        nz-popover
+                        [nzPopoverTitle]="titleDepa"
+                        nzPopoverContent="Este campo se autocompletara automáticamente al seleccionar el departamento y Unidad Educativa"
+                        formControlName="institutionDepartment"
+                        readonly
+                      >
+                      <ng-template #titleDepa>
+                        <b><i><u>Campo no editable y autocompletable</u></i></b>
+                      </ng-template>
                     </nz-form-control>
                   </nz-form-item>
                 </div>
@@ -89,7 +135,15 @@
                   <nz-form-item>
                     <nz-form-label>DISTRITO</nz-form-label>
                     <nz-form-control>
-                      <input nz-input formControlName="institutionMunicipie" readonly>
+                      <input
+                        nz-popover
+                        [nzPopoverTitle]="titleDis"
+                        nzPopoverContent="Este campo se autocompletara automáticamente al seleccionar el departamento y Unidad Educativa"
+                        nz-input formControlName="institutionMunicipie" readonly
+                      >
+                      <ng-template #titleDis>
+                        <b><i><u>Campo no editable y autocompletable</u></i></b>
+                      </ng-template>
                     </nz-form-control>
                   </nz-form-item>
                 </div>
@@ -112,6 +166,9 @@
                     <nz-form-label nzRequired>NIVEL DE EDUCACIÓN</nz-form-label>
                     <nz-form-control>
                       <nz-select
+                        nz-popover
+                        [nzPopoverTitle]="titleLevel"
+                        nzPopoverContent="Seleccione el nivel de educación a la que se postula"
                         formControlName="educationalLevel"
                         [nzDisabled]="false"
                         nzAllowClear
@@ -121,6 +178,9 @@
                         @for(level of educationalLevels; track level) {
                           <nz-option [nzValue]="level" [nzLabel]="level.name"></nz-option>
                         }
+                        <ng-template #titleLevel>
+                          <b><i><u>Seleccione el nivel de educación</u></i></b>
+                        </ng-template>
                       </nz-select>
                     </nz-form-control>
                   </nz-form-item>
@@ -130,6 +190,9 @@
                     <nz-form-label nzRequired>AÑO DE ESCOLARIDAD</nz-form-label>
                     <nz-form-control>
                       <nz-select
+                        nz-popover
+                        [nzPopoverTitle]="titleGrade"
+                        nzPopoverContent="Primero seleccione el nivel educativo para generar el año de escolaridad"
                         formControlName="yearOfSchoolign"
                         [nzDisabled]="false"
                         nzAllowClear
@@ -139,6 +202,9 @@
                         @for(grade of grades; track grade) {
                           <nz-option [nzValue]="grade" [nzLabel]="grade.name"></nz-option>
                         }
+                        <ng-template #titleGrade>
+                          <b><i><u>Año de escolaridad según nivel educativo seleccionado</u></i></b>
+                        </ng-template>
                       </nz-select>
                     </nz-form-control>
                   </nz-form-item>
@@ -169,8 +235,19 @@
                     <nz-form-label nzRequired>JUSTIFICATIVO</nz-form-label>
                     <nz-form-control>
                       <nz-radio-group formControlName="justification">
-                      @for(criteria of criterias; track criteria) {
-                        <label nz-radio [nzValue]="criteria.id">{{criteria.name}}</label>
+                      @for(criteria of criterias; track criteria; let i = $index) {
+                        <label
+                          nz-radio
+                          [nzValue]="criteria.id"
+                          nz-popover
+                          [nzPopoverTitle]="boldTitle"
+                          [nzPopoverContent]="popovers[i].content"
+                        >
+                          {{criteria.name}}
+                        </label>
+                        <ng-template #boldTitle>
+                          <b><i><u>{{ popovers[i].title }}</u></i></b>
+                        </ng-template>
                       }
                       </nz-radio-group>
                     </nz-form-control>
@@ -282,7 +359,16 @@
                     <nz-form-item>
                       <nz-form-label nzRequired>Avenida / Calle / N°</nz-form-label>
                       <nz-form-control>
-                        <input nz-input formControlName="postulantAddressResidence">
+                        <input
+                          nz-popover
+                          [nzPopoverTitle]="titleAddresEst"
+                          nzPopoverContent="La dirección del estudiante debe estar en el formato (Avenida / Calle / N°) y debe contener el caracter '/'"
+                          nz-input
+                          formControlName="postulantAddressResidence"
+                        >
+                        <ng-template #titleAddresEst>
+                          <b><i><u>Dirección del estudiante</u></i></b>
+                        </ng-template>
                       </nz-form-control>
                     </nz-form-item>
                   </div>
@@ -600,7 +686,16 @@
                   <nz-form-item>
                     <nz-form-label nzRequired>DIRECCIÓN DE SU RESIDENCIA (zona / avenida / calle / N° / teléfono)</nz-form-label>
                     <nz-form-control>
-                      <input nz-input formControlName="guardianAddress">
+                      <input
+                        nz-popover
+                        [nzPopoverTitle]="titleAddresTutor"
+                        nzPopoverContent="La dirección de residencia del apoderado debe estar en el formato (zona / avenida / calle / N° / telefono) debe incluri el caracter '/' "
+                        nz-input
+                        formControlName="guardianAddress"
+                      >
+                      <ng-template #titleAddresTutor>
+                        <b><i><u>Dirección de residencia</u></i></b>
+                      </ng-template>
                     </nz-form-control>
                   </nz-form-item>
                 </div>
