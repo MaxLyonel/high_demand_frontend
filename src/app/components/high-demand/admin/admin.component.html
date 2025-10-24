@@ -34,6 +34,7 @@
                   [(ngModel)]="selectedDateRanges[phase.id]"
                   (ngModelChange)="onDateRangeChange($event, phase)"
                   [ngModelOptions]="{standalone: true}"
+                  (nzOnOk)="onAcceptDateRange($event, phase)"
                   style="width: 100%">
                 </nz-range-picker>
               </nz-form-control>
@@ -63,6 +64,7 @@
                   [nzDisabledDate]="getDisabledDateForPhase(phase.id)"
                   (ngModelChange)="onLotteryDateChange($event, phase)"
                   [ngModelOptions]="{standalone: true}"
+                  (nzOnOk)="onAcceptDateRange($event, phase)"
                   style="width: 100%">
                 </nz-range-picker>
               </nz-form-control>

@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzCardModule } from "ng-zorro-antd/card";
@@ -107,6 +107,7 @@ export class OperativoConfigComponent implements OnInit {
 
   selectedDateRanges: { [key: string]: Date[] } = {};
   selectedLotteryDate: { [key: string]: Date[] } = {};
+  modal = inject(NzModalService)
 
   constructor(
     private fb: FormBuilder,
@@ -123,7 +124,6 @@ export class OperativoConfigComponent implements OnInit {
       dateRevDepEnd: [null, Validators.required],
       dateOpeIni: [null, Validators.required],
       dateOpeEnd: [null, Validators.required],
-      // dateLottery: [null, Validators.required],
       dateLotteryIni: [null, Validators.required],
       dateLotteryEnd: [null, Validators.required],
       gestionId: [new Date().getFullYear(), Validators.required]
@@ -199,11 +199,6 @@ export class OperativoConfigComponent implements OnInit {
             this.setEmptyDateRange(phase)
           }
         } else {
-          // if(phase.id === 'lottery') {
-          //   this.selectedLotteryDate[phase.id] = []
-          // } else {
-          //   this.selectedDateRanges[phase.id] = []
-          // }
           this.setEmptyDateRange(phase)
         }
       } catch(error) {
@@ -276,6 +271,29 @@ export class OperativoConfigComponent implements OnInit {
     }
   }
 
+  onAcceptDateRange(event: any, phase: PhaseConfig): void {
+    // Si el usuario no seleccionó nada, no hacemos nada
+    if (!event) {
+      return;
+    }
+
+    // Convertimos el valor recibido (puede ser Dayjs[]) a Date[]
+    const dates = Array.isArray(event)
+      ? event.map((d: any) => d.toDate ? d.toDate() : new Date(d))
+      : [];
+
+    this.modal.confirm({
+      nzTitle: '¿Confirmar selección de fechas?',
+      nzContent: `
+        Las fechas seleccionadas son:
+        <br><b>Inicio:</b> ${dates[0]?.toLocaleString() ?? '-'}
+        <br><b>Fin:</b> ${dates[1]?.toLocaleString() ?? '-'}
+      `,
+      nzOnOk: () => this.onDateRangeChange(dates, phase),
+    });
+  }
+
+
   // Método para limpiar fases siguientes
   private clearSubsequentPhases(currentPhaseId: string): void {
     const currentPhaseIndex = this.phases.findIndex(phase => phase.id === currentPhaseId);
@@ -299,25 +317,10 @@ export class OperativoConfigComponent implements OnInit {
       } else {
         this.selectedDateRanges[subsequentPhase.id] = []
       }
-
-      // if (subsequentPhase.id === 'lottery') {
-      //   // Limpiar fecha del sorteo
-      //   this.configForm.patchValue({
-      //     dateLottery: null
-      //   });
-      //   this.selectedLotteryDate[subsequentPhase.id] = []
-      // } else {
-      //   // Limpiar rango de fechas de fases normales
-      //   this.configForm.patchValue({
-      //     [subsequentPhase.startDateControl]: null,
-      //     [subsequentPhase.endDateControl]: null
-      //   });
-      //   this.selectedDateRanges[subsequentPhase.id] = [];
-      // }
     }
 
     // Mostrar mensaje informativo
-    this.message.info('Las fases siguientes han sido limpiadas debido al cambio en la fase actual');
+    // this.message.info('Las fases siguientes han sido limpiadas debido al cambio en la fase actual');
   }
 
   onLotteryDateChange(dates: Date[], phase: PhaseConfig): void {
@@ -332,14 +335,6 @@ export class OperativoConfigComponent implements OnInit {
   }
 
   getPhaseDateRange(phase: PhaseConfig): Date[] {
-    // if (phase.id === 'lottery') {
-    //   const date = this.configForm.get('dateLottery')?.value;
-    //   if(this.selectedLotteryDate[phase.id] && this.selectedLotteryDate[phase.id].length === 2) {
-    //     return this.selectedLotteryDate[phase.id]
-    //   }
-    //   return date ? [new Date(date), new Date(date)] : [];
-    // }
-
     const startDate = this.configForm.get(phase.startDateControl)?.value;
     const endDate = this.configForm.get(phase.endDateControl)?.value;
 
