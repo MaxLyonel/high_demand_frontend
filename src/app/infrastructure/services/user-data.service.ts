@@ -28,7 +28,6 @@ export class UserDataService {
     const roleId = user.selectedRole.role.id
     switch(roleId) {
       case APP_CONSTANTS.ROLES.DIRECTOR_ROLE:
-      case APP_CONSTANTS.ROLES.VER_ROLE:
         this._teacher.getInfoTeacher(user.person.id).pipe(
           tap((teacherInfo: any) => this.appStore.setTeacherInfo(teacherInfo.data)),
           switchMap((teacherInfo:any) => {
@@ -44,6 +43,9 @@ export class UserDataService {
               console.error('Error cargando datos del usuario:', err);
           }
         });
+        break;
+      case APP_CONSTANTS.ROLES.VER_ROLE:
+        this.router.navigate(['/alta-demanda/config'])
         break;
       case APP_CONSTANTS.ROLES.DISTRICT_ROLE:
       case APP_CONSTANTS.ROLES.DEPARTMENT_ROLE:
