@@ -154,3 +154,24 @@ header .logo {
         justify-content: center;
     }
 }
+
+.card.disabled {
+    opacity: 1;
+    pointer-events: none;
+    filter: grayscale(60%);
+}
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-weight: bold;
+}
+.overlay p {
+    font-size: 18px;
+    color: fade(@primary-dark, 85%);
+}

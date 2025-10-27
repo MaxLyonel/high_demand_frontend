@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, AfterViewInit, OnInit } from "@angular/core";
+import { Component, ViewEncapsulation, OnInit, signal } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { NzButtonModule } from "ng-zorro-antd/button";
 import { NzCardModule } from "ng-zorro-antd/card";
@@ -8,6 +8,7 @@ import { NzInputModule } from "ng-zorro-antd/input";
 import { PreRegistrationComponent } from "./components/pre-registration/pre-registration.component";
 import { FollowUpComponent } from "./components/follow-up/follow-up.component";
 import { LoginComponent } from "./components/login/login.component";
+import { SocketService } from "../../infrastructure/services/socket.service";
 
 @Component({
   selector: 'app-auth-layout',
@@ -28,9 +29,26 @@ import { LoginComponent } from "./components/login/login.component";
 })
 export default class LayoutComponent implements OnInit {
 
+  isPreRegistrationEnabled = signal<boolean>(false);
+  isFollowUpEnabled = signal<boolean>(false)
+
   ngOnInit() {
     this.createParticles(200);
+    this.socketService.onCurrentOperative().subscribe((data) => {
+      if(!data) return;
+      if(data.active) {
+        this.isPreRegistrationEnabled.set(true)
+        this.isFollowUpEnabled.set(true)
+      } else {
+        this.isPreRegistrationEnabled.set(false)
+        this.isFollowUpEnabled.set(false)
+      }
+    })
   }
+
+  constructor(
+    private socketService: SocketService
+  ) {}
 
   createParticles(count: number) {
     const background = document.getElementById('background');

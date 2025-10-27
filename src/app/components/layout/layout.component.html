@@ -8,18 +8,28 @@
             <!-- <p class="subtitle">Sistema de preinscripciones y seguimiento</p> -->
         </header>
         <div class="card-grid">
-            <div class="card">
+            <div class="card" [class.disabled]="!isPreRegistrationEnabled()">
                 <h2>Preinscripción</h2>
                 <p>Completa tu proceso de preinscripción para el próximo ciclo escolar</p>
                 <div class="card-content">
                     <app-pre-registration />
+                    @if(!isPreRegistrationEnabled()) {
+                        <div class="overlay">
+                            <p>Temporalmente deshabilitado</p>
+                        </div>
+                    }
                 </div>
             </div>
-            <div class="card">
+            <div class="card" [class.disabled]="!isFollowUpEnabled()">
                 <h2>Seguimiento</h2>
                 <p>Consulta el estado de tu preinscripción</p>
                 <div class="card-content">
                     <app-follow-up />
+                    @if(!isFollowUpEnabled()) {
+                        <div class="overlay">
+                            <p>Temporalmente deshabilitado</p>
+                        </div>
+                    }
                 </div>
             </div>
             <div class="card">
