@@ -27,7 +27,7 @@ export default interface IPreRegistration {
   // ** exponer funcionalidad para obtener la lista de pre inscripciones **
   getListPreRegistration(highDemandId: number): Observable<any>;
   // ** expone funcionalidad para obtener la lista de pre inscripciones validas **
-  getListValidPreRegistration(highDemandId: number): Observable<any>;
+  getListValidPreRegistration(highDemandId: number, levelId: number, gradeId: number): Observable<any>;
   // ** exponer funcionalidad para obtener la lista de pre inscripciones para el seguimiento **
   getListPreRegistrationFollow(identityCardPostulant: string): Observable<any>;
 

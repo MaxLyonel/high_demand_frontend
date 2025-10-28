@@ -55,8 +55,8 @@ export default class PreRegistrationManager implements IPreRegistration {
     return result
   }
 
-  getListValidPreRegistration(highDemandId: number): Observable<any> {
-    const result = this._preRegistrationAdapter.getListValidPreRegistrations(highDemandId)
+  getListValidPreRegistration(highDemandId: number, levelId: number, gradeId: number): Observable<any> {
+    const result = this._preRegistrationAdapter.getListValidPreRegistrations(highDemandId, levelId, gradeId)
     return result
   }
 

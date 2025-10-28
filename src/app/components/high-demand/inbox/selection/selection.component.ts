@@ -19,8 +19,10 @@ import IPreRegistration from '../../../../domain/ports/i-pre-registration';
 import { NzCheckboxComponent } from "ng-zorro-antd/checkbox";
 import { AppStore } from '../../../../infrastructure/store/app.store';
 import IHighDemand from '../../../../domain/ports/i-high-demand';
-import { finalize, pipe, switchMap } from 'rxjs';
+import { finalize, switchMap } from 'rxjs';
+import { NzEmptyModule } from 'ng-zorro-antd/empty';
 
+// Las interfaces se mantienen igual...
 interface Student {
   id: string;
   rudeCode: string;
@@ -101,6 +103,7 @@ interface PreRegistration {
   createdAt: Date;
   selected?: boolean;
   loading?: boolean;
+  justification: string;
 }
 
 @Component({
@@ -115,6 +118,7 @@ interface PreRegistration {
     NzCheckboxComponent,
     NzColDirective,
     NzCollapseModule,
+    NzEmptyModule,
     NzFormItemComponent,
     NzFormLabelComponent,
     NzGridModule,
@@ -136,6 +140,14 @@ export class SelectionInbox implements OnInit {
   selectedPostulant: PreRegistration | null = null;
   selectedPostulants: PreRegistration[] = [];
 
+  // Selectores jerárquicos
+  selectedLevel: number | null = null;
+  selectedGrade: number | null = null;
+  selectedParallel: number | null = null;
+
+  availableGrades: Grade[] = [];
+  availableParallels: Parallel[] = [];
+
   // Filtros
   filters = {
     rudeCode: '',
@@ -143,8 +155,7 @@ export class SelectionInbox implements OnInit {
     firstName: '',
     idCard: '',
     criteria: null,
-    level: null,
-    schoolYear: ''
+    justification: ''
   };
 
   // Estados
@@ -153,7 +164,6 @@ export class SelectionInbox implements OnInit {
   isConfirmLoading = false;
   isConsolidateVisible = false;
   isConsolidateLoading = false;
-
 
   tempChecked: boolean = false;
 
@@ -175,7 +185,6 @@ export class SelectionInbox implements OnInit {
     this.sie = sie
     this.loadCriterias();
     this.loadLevels();
-    this.loadPostulants(sie);
   }
 
   loadCriterias() {
@@ -185,38 +194,137 @@ export class SelectionInbox implements OnInit {
   }
 
   loadLevels() {
-    this._preRegistration.getLevels().subscribe((response) => {
-      this.levels = response.data
-    })
-  }
-
-  loadPostulants(sie: number) {
-    this._highDemand.getHighDemandByInstitution(sie).pipe(
-      switchMap(response => {
-        this.highDemand = response
-        return this._preRegistration.getListValidPreRegistration(this.highDemand.id);
+    this._highDemand.getHighDemandByInstitution(this.sie).pipe(
+      switchMap((response: any) => {
+        this.highDemand = response;
+        // retornamos el observable interno para que switchMap lo maneje
+        return this._highDemand.getHighDemandLevels(this.highDemand.id);
       })
     ).subscribe({
-      next: preRegResponse => {
-        this.preRegistrations = preRegResponse.data.map((p:any) => ({
+      next: (response: any) => {
+        this.levels = response.data;
+      },
+      error: (err) => {
+        console.error('Error al cargar niveles:', err);
+      }
+    });
+  }
+
+  // Nuevos métodos para el flujo jerárquico
+  onLevelChange(levelId: number | null): void {
+    this.selectedGrade = null;
+    this.selectedParallel = null;
+    this.availableGrades = [];
+    this.availableParallels = [];
+    this.filteredPreRegistrations = [];
+    if (!levelId) {
+      console.warn("No se seleccionó ningún nivel");
+      return;
+    }
+    const selectedLevel: any = this.levels.find((l: any) => l.id === levelId);
+
+    if (selectedLevel) {
+      this.availableGrades = selectedLevel.grades || [];
+    } else {
+      console.warn("No se encontró el nivel con id:", levelId);
+    }
+  }
+
+  onGradeChange(gradeId: number | null): void {
+    this.selectedParallel = null;
+    this.availableParallels = [];
+    this.filteredPreRegistrations = [];
+
+    if (this.selectedLevel && this.selectedGrade) {
+      this.loadPostulantsByCourse(this.selectedLevel, this.selectedGrade);
+    }
+  }
+
+  // onParallelChange(parallelId: number | null): void {
+  //   this.filteredPreRegistrations = [];
+
+  //   if (parallelId && this.selectedLevel && this.selectedGrade) {
+  //     this.loadPostulantsByCourse(this.selectedLevel, this.selectedGrade);
+  //   }
+  // }
+
+  loadParallelsByLevelAndGrade(levelId: number, gradeId: number): void {
+    this.loading = true;
+    // Asumiendo que tienes un método para obtener paralelos por nivel y grado
+    // this._preRegistration.getParallelsByLevelAndGrade(levelId, gradeId).subscribe({
+    //   next: (response) => {
+    //     this.availableParallels = response.data;
+    //     this.loading = false;
+    //   },
+    //   error: (err) => {
+    //     console.error('Error cargando paralelos', err);
+    //     this.loading = false;
+    //     this.message.error('Error al cargar los paralelos');
+    //   }
+    // });
+  }
+
+  loadPostulantsByCourse(levelId: number, gradeId: number): void {
+    this.loading = true;
+
+    this._preRegistration.getListValidPreRegistration(this.highDemand.id, levelId, gradeId).subscribe({
+      next: response => {
+        this.preRegistrations = response.data.map((p:any) => ({
           ...p,
           selected: p.state === 'ACEPTADO'
         }))
-        this.filteredPreRegistrations = [...this.preRegistrations];
+        this.filteredPreRegistrations = [...this.preRegistrations]
         this.loading = false;
+
+        if (this.preRegistrations.length === 0) {
+          this.message.info('No se encontraron estudiantes para el curso seleccionado');
+        }
       },
       error: err => {
         console.error('Error cargando datos', err)
         this.loading = false
+        this.message.error('Error al cargar los estudiantes');
       }
     })
+
+    // this._highDemand.getHighDemandByInstitution(this.sie).pipe(
+    //   // switchMap(response => {
+    //   //   this.highDemand = response;
+    //   //   // Asumiendo que tienes un método que filtra por curso específico
+    //   //   // return this._preRegistration.getPreRegistrationsByCourse(
+    //   //   //   this.highDemand.id,
+    //   //   //   levelId,
+    //   //   //   gradeId,
+    //   //   //   parallelId
+    //   //   // );
+    //   // })
+    // ).subscribe({
+    //   next: preRegResponse => {
+    //     this.preRegistrations = preRegResponse.data.map((p: any) => ({
+    //       ...p,
+    //       selected: p.state === 'ACEPTADO'
+    //     }));
+    //     this.filteredPreRegistrations = [...this.preRegistrations];
+    //     this.loading = false;
+
+    //     if (this.preRegistrations.length === 0) {
+    //       this.message.info('No se encontraron estudiantes para el curso seleccionado');
+    //     }
+    //   },
+    //   error: err => {
+    //     console.error('Error cargando estudiantes', err);
+    //     this.loading = false;
+    //     this.message.error('Error al cargar los estudiantes');
+    //   }
+    // });
   }
 
   applyFilters(): void {
+    if (this.preRegistrations.length === 0) return;
+
     this.filteredPreRegistrations = this.preRegistrations.filter(pr => {
       const p = pr.postulant;
       const c = pr.criteria;
-      const hc = pr.highDemandCourse;
 
       return (
         (!this.filters.rudeCode || (p.codeRude && p.codeRude.includes(this.filters.rudeCode))) &&
@@ -226,8 +334,8 @@ export class SelectionInbox implements OnInit {
         (!this.filters.firstName || p.name.toLowerCase().includes(this.filters.firstName.toLowerCase())) &&
         (!this.filters.idCard || (p.identityCard && p.identityCard.includes(this.filters.idCard))) &&
         (!this.filters.criteria || (c.id && c.id === this.filters.criteria)) &&
-        (!this.filters.level || (hc.level.id && hc.level.id === this.filters.level)) &&
-        (!this.filters.schoolYear || (hc.grade.name && hc.grade.name === this.filters.schoolYear))
+        (!this.filters.justification || 
+          (pr.justification && pr.justification.toLowerCase().includes(this.filters.justification.toLowerCase())))
       );
     });
   }
@@ -239,12 +347,30 @@ export class SelectionInbox implements OnInit {
       firstName: '',
       idCard: '',
       criteria: null,
-      level: null,
-      schoolYear: ''
+      justification: ''
     };
-    this.filteredPreRegistrations = [...this.preRegistrations];
+    
+    // Si hay selección actual, recargar los estudiantes del curso
+    if (this.selectedLevel && this.selectedGrade && this.selectedParallel) {
+      this.filteredPreRegistrations = [...this.preRegistrations];
+    } else {
+      this.filteredPreRegistrations = [];
+    }
   }
 
+  clearAllSelections(): void {
+    this.selectedLevel = null;
+    this.selectedGrade = null;
+    this.selectedParallel = null;
+    this.availableGrades = [];
+    this.availableParallels = [];
+    this.preRegistrations = [];
+    this.filteredPreRegistrations = [];
+    this.selectedPostulants = [];
+    this.clearFilters();
+  }
+
+  // Los demás métodos se mantienen igual...
   handleCancel(): void {
     this.isConfirmVisible = false;
   }
@@ -270,11 +396,15 @@ export class SelectionInbox implements OnInit {
       ).subscribe({
         next: response => {
           console.log("Esto nos responde el backend: ", response)
-          this.loadPostulants(this.sie)
+          // Recargar los estudiantes del curso actual
+          if (this.selectedLevel && this.selectedGrade && this.selectedParallel) {
+            this.loadPostulantsByCourse(this.selectedLevel, this.selectedGrade);
+          }
           this.message.success(`${this.selectedPostulants.length} estudiantes consolidados`);
         },
         error: err => {
           console.log("Error: ", err)
+          this.message.error('Error al consolidar la selección');
         }
       })
   }
@@ -304,8 +434,6 @@ export class SelectionInbox implements OnInit {
     this.selectedPostulants.push(this.selectedPostulant!)
     this.isConfirmVisible = false;
     this.isConfirmLoading = false;
-      this.message.success(`Postulante ${this.selectedPostulant?.postulant.name} seleccionado`);
-    // this._preRegistration.updatedStatus(preRegistrationId).subscribe(response => {
-    // })
+    this.message.success(`Postulante ${this.selectedPostulant?.postulant.name} seleccionado`);
   }
 }

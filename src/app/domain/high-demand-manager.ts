@@ -109,4 +109,9 @@ export default class HighDemandManager implements IHighDemand {
     const result = this._highDemandAdapter.deleteHighDemandCourse(highDemandCourseId)
     return result
   }
+
+  getHighDemandLevels(highDemandId: number): Observable<any> {
+    const result = this._highDemandAdapter.getHighDemandLevels(highDemandId)
+    return result
+  }
 }

@@ -125,8 +125,12 @@ export class PreRegistrationAdapterService implements IManagerPreRegistration {
     )
   }
 
-  getListValidPreRegistrations(highDemandId: number): Observable<any> {
-    return this.http.get(`pre-registration/list-valid/${highDemandId}`).pipe(
+  getListValidPreRegistrations(highDemandId: number, levelId: number, gradeId: number): Observable<any> {
+    const params = new HttpParams()
+      .set('highDemandId', highDemandId.toString())
+      .set('levelId', levelId.toString())
+      .set('gradeId', gradeId.toString())
+    return this.http.get(`pre-registration/list-valid`, { params }).pipe(
       catchError(err => {
         console.error("Error al obtener el listado de pre inscripciones válidas")
         return throwError(() => err)

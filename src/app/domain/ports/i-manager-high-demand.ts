@@ -40,4 +40,5 @@ export default interface IManagerHighDemand {
   download(highDemandId: number): Observable<any>;
 
   deleteHighDemandCourse(highDemandCourseId: number): Observable<any>;
+  getHighDemandLevels(highDemandId: number): Observable<any>;
 }

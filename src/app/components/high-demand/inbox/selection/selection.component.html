@@ -12,12 +12,75 @@
     </div>
   </div>
 
-  <!-- Filtros -->
+  <!-- Selectores jerárquicos -->
+  <div class="selection-steps">
+    <div nz-row [nzGutter]="16" class="mb-3">
+      <!-- Nivel Educativo -->
+      <div nz-col [nzSpan]="10">
+        <nz-form-item>
+          <nz-form-label><b>Nivel Educativo</b></nz-form-label>
+          <nz-form-control>
+            <nz-select
+              [(ngModel)]="selectedLevel"
+              nzPlaceHolder="Seleccionar nivel"
+              (ngModelChange)="onLevelChange($event)"
+              [nzDisabled]="loading"
+              style="width: 350px;"
+            >
+              @for(level of levels; track level.id) {
+                <nz-option [nzValue]="level.id" [nzLabel]="level.name"></nz-option>
+              }
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <!-- Año de Escolaridad -->
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label><b>Año de Escolaridad</b></nz-form-label>
+          <nz-form-control>
+            <nz-select
+              [(ngModel)]="selectedGrade"
+              nzPlaceHolder="Seleccionar año"
+              (ngModelChange)="onGradeChange($event)"
+              [nzDisabled]="!selectedLevel || loading"
+              style="width: 200px;"
+            >
+              @for(grade of availableGrades; track grade.id) {
+                <nz-option [nzValue]="grade.id" [nzLabel]="grade.name"></nz-option>
+              }
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <!-- Paralelo -->
+      <!-- <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label>Paralelo</nz-form-label>
+          <nz-form-control>
+            <nz-select
+              [(ngModel)]="selectedParallel"
+              nzPlaceHolder="Seleccionar paralelo"
+              (ngModelChange)="onParallelChange($event)"
+              [nzDisabled]="!selectedGrade || loading">
+              @for(parallel of availableParallels; track parallel.id) {
+                <nz-option [nzValue]="parallel.id" [nzLabel]="parallel.name"></nz-option>
+              }
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div> -->
+    </div>
+  </div>
+
+  <!-- Filtros adicionales -->
   <div class="filter-section">
     <nz-collapse>
       <nz-collapse-panel nzHeader="Filtros de Búsqueda">
         <div nz-row [nzGutter]="16">
-          <div nz-col [nzSpan]="8">
+          <div nz-col [nzSpan]="6">
             <nz-form-item>
               <nz-form-label>Código RUDE</nz-form-label>
               <nz-form-control>
@@ -25,7 +88,7 @@
               </nz-form-control>
             </nz-form-item>
           </div>
-          <div nz-col [nzSpan]="8">
+          <div nz-col [nzSpan]="6">
             <nz-form-item>
               <nz-form-label>Apellidos</nz-form-label>
               <nz-form-control>
@@ -33,7 +96,7 @@
               </nz-form-control>
             </nz-form-item>
           </div>
-          <div nz-col [nzSpan]="8">
+          <div nz-col [nzSpan]="6">
             <nz-form-item>
               <nz-form-label>Nombres</nz-form-label>
               <nz-form-control>
@@ -41,10 +104,7 @@
               </nz-form-control>
             </nz-form-item>
           </div>
-        </div>
-
-        <div nz-row [nzGutter]="16" class="mt-2">
-          <div nz-col [nzSpan]="8">
+          <div nz-col [nzSpan]="6">
             <nz-form-item>
               <nz-form-label>Carnet Identidad</nz-form-label>
               <nz-form-control>
@@ -52,6 +112,9 @@
               </nz-form-control>
             </nz-form-item>
           </div>
+        </div>
+
+        <div nz-row [nzGutter]="16" class="mt-2">
           <div nz-col [nzSpan]="8">
             <nz-form-item>
               <nz-form-label>Criterio</nz-form-label>
@@ -66,13 +129,9 @@
           </div>
           <div nz-col [nzSpan]="8">
             <nz-form-item>
-              <nz-form-label>Nivel</nz-form-label>
+              <nz-form-label>Justificación</nz-form-label>
               <nz-form-control>
-                <nz-select [(ngModel)]="filters.level" nzPlaceHolder="Seleccionar nivel">
-                  @for(level of levels; track level.id) {
-                    <nz-option [nzValue]="level.id" [nzLabel]="level.name"></nz-option>
-                  }
-                </nz-select>
+                <input nz-input [(ngModel)]="filters.justification" placeholder="Buscar por justificación">
               </nz-form-control>
             </nz-form-item>
           </div>
@@ -113,6 +172,7 @@
         <th class="header-cell" nzWidth="100px">Nivel</th>
         <th class="header-cell" nzWidth="140px">Año escolaridad</th>
         <th class="header-cell" nzWidth="140px">Paralelo</th>
+        <th class="header-cell" nzWidth="200px">Justificación</th>
       </tr>
     </thead>
     <tbody>
@@ -139,12 +199,26 @@
           <td>{{ postulant.highDemandCourse.level.name }}</td>
           <td>{{ postulant.highDemandCourse.grade.name }}</td>
           <td>{{ postulant.highDemandCourse.parallel.name }}</td>
+          <td>{{ postulant.justification || 'Sin justificación' }}</td>
+        </tr>
+      }
+      @empty {
+        <tr>
+          <td colspan="11" class="text-center">
+            @if (!selectedLevel) {
+              <nz-empty nzNotFoundContent="Seleccione un nivel educativo para ver los estudiantes"></nz-empty>
+            } @else if (!selectedGrade) {
+              <nz-empty nzNotFoundContent="Seleccione un año de escolaridad"></nz-empty>
+            } @else {
+              <nz-empty nzNotFoundContent="No se encontraron estudiantes para los filtros seleccionados"></nz-empty>
+            }
+          </td>
         </tr>
       }
     </tbody>
   </nz-table>
 
-  <!-- Modal de confirmación -->
+  <!-- Los modales se mantienen igual -->
   <nz-modal
     [(nzVisible)]="isConfirmVisible"
     nzTitle="Confirmar Selección"
@@ -163,7 +237,6 @@
     </ng-container>
   </nz-modal>
 
-  <!-- Modal de consolidación -->
   <nz-modal
     [(nzVisible)]="isConsolidateVisible"
     nzTitle="Consolidar Selección"

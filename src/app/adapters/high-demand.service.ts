@@ -187,4 +187,14 @@ export class HighDemandAdapterService implements IManagerHighDemand {
     )
   }
 
+  getHighDemandLevels(highDemandId: number): Observable<any> {
+    return this.http.get(`high-demand/${highDemandId}/levels`)
+      .pipe(
+        catchError(err => {
+          console.error('algo salio mal en obtener niveles de una alta demanda')
+          return throwError(() => err)
+        })
+      )
+  }
+
 }
