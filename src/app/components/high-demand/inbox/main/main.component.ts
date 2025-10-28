@@ -584,4 +584,19 @@ export class BandejaComponent implements OnInit {
     return this.ability.can('read', subject)
   }
 
+  canApprove(): boolean {
+    const subject = {__typename: 'HighDemandRegistration'}
+    return this.ability.can('approve', subject)
+  }
+
+  canReject(): boolean {
+    const subject = {__typename: 'HighDemandRegistration'}
+    return this.ability.can('reject', subject)
+  }
+
+  canGenerateReport(): boolean {
+    const subject = { __typename: 'request-report'}
+    return this.ability.can('create', subject)
+  }
+
 }

@@ -73,7 +73,7 @@
           *nzSpaceItem
           nz-button
           nzType="primary"
-          [disabled]="false"
+          [disabled]="!canGenerateReport()"
           (click)="getHighDemands()"
         >
           <i nz-icon nzType="file-pdf"></i>
@@ -181,7 +181,7 @@
                   nzShape="circle"
                   (click)="finalize(data)"
                   nz-tooltip="Publicar"
-                  [disabled]="data.registrationStatus === 'RECHAZADO' || data.registrationStatus === 'APROBADO'"
+                  [disabled]="!canApprove() || data.registrationStatus === 'RECHAZADO' || data.registrationStatus === 'APROBADO'"
                 >
                   <i nz-icon nzType="check" ></i>
                 </button>
@@ -194,7 +194,7 @@
                   nzShape="circle"
                   (click)="rejected(data)"
                   nz-tooltip="Rechazar"
-                  [disabled]="data.registrationStatus === 'RECHAZADO' || data.registrationStatus === 'APROBADO'"
+                  [disabled]="!canReject() || data.registrationStatus === 'RECHAZADO' || data.registrationStatus === 'APROBADO'"
                 >
                   <i nz-icon nzType="close" ></i>
                 </button>
