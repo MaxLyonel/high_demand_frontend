@@ -720,6 +720,14 @@
           </nz-result>
         }
 
+        <ng-template #dialogTpl>
+          <nz-alert
+            nzType="warning"
+            nzShowIcon
+            [nzMessage]="alert">
+          </nz-alert>
+        </ng-template>
+
       </nz-card>
     </div>
   </nz-content>

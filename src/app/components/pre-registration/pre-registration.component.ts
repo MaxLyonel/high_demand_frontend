@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Inject, OnInit, signal, TemplateRef } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -94,6 +94,12 @@ export default class FormularioInscripcionComponent implements OnInit{
       content: 'Realice su preinscripción si el apoderado trabaja cerca de la Unidad Educativa a la que postula'
     }
   ]
+
+  @ViewChild('dialogTpl', { static: true }) dialogTpl!: TemplateRef<any>;
+
+  alert: string = `Tenga en cuenta que la información registrada se constituye en declaración jurada.
+    Verifique minuciosamente los datos ingresados, ya que no se podrán realizar cambios posteriores y
+    puede generar observaciones y anular su postulación.`
 
   constructor(
     private fb: FormBuilder,
@@ -215,65 +221,7 @@ export default class FormularioInscripcionComponent implements OnInit{
   }
 
   onSubmit(): void {
-    if (this.form.valid) {
-      const formValue = this.form.value
-      console.log("curso seleccionado: ", formValue)
-      const data = {
-        institution: {
-          institutionName: formValue.institutionName,
-          institutionId: formValue.institutionId,
-          institutionType: formValue.institutionType,
-          institutionDependency: formValue.institutionDependency,
-          institutionDepartment: formValue.institutionDepartment,
-          institutionMunicipie: formValue.institutionMunicipie,
-          neighborhoodArea: formValue.neighborhoodArea
-        },
-        postulant: {
-          identityCard: formValue.postulantIdentityCard,
-          complement: formValue.postulantComplement,
-          lastName: formValue.postulantLastName,
-          mothersLastName: formValue.postulantMothersLastName,
-          name: formValue.postulantName,
-          gender: formValue.postulantGender,
-          dateBirth: formValue.postulantDateBirth,
-          placeBirth: formValue.postulantPlaceBirth,
-          nationality: formValue.postulantNationality,
-          codeRude: formValue.rudeCodeSearch
-        },
-        postulantResidence: {
-          municipality: formValue.postulantMunicipalityResidence,
-          area: formValue.postulantAreaResidence,
-          address: formValue.postulantAddressResidence,
-          telephone: formValue.postulantTelephoneResidence
-        },
-        guardian:  {
-          nationality: formValue.guardianNationality,
-          complement: formValue.guardianComplement,
-          lastName: formValue.guardianLastName,
-          mothersLastName: formValue.guardianMothersLastName,
-          name: formValue.guardianName,
-          identityCard: formValue.guardianIdentityCard,
-          relationship: formValue.guardianRelationship,
-          dateBirth: formValue.guardianDateBirth,
-          cellphone: formValue.guardianCellphone,
-          address: formValue.guardianAddress,
-        },
-        guardianWork: {
-          placeName: formValue.guardianPlaceNameWork,
-          municipality: formValue.guardianMunicipalityWork,
-          area: formValue.guardianAreaWork,
-          addressJob: formValue.guardianAddressJob,
-          phoneJob: formValue.guardianPhoneJob
-        },
-        courseId: formValue.yearOfSchoolign.courseId,
-        justification: formValue.justification,
-        postulantSiblings: formValue.postulantSiblings
-      }
-      this._preRgistration.savePreRegistration(data).subscribe((response) => {
-        this.preRegistration = response.data
-        this.result.set(true)
-      })
-    } else {
+    if(!this.form.valid) {
       this.showInvalidFields(this.form)
       this.notification.showMessage('Por favor rellené los campos con border rojo para realizar la pre inscripción', 'Advertencia', 'warning')
       Object.values(this.form.controls).forEach(control => {
@@ -283,6 +231,85 @@ export default class FormularioInscripcionComponent implements OnInit{
         }
       });
       this.result.set(false)
+    } else {
+      this.modal.confirm({
+        nzTitle: '¿Está seguro de realizar su preinscripción?',
+        nzContent: this.dialogTpl,
+        nzOkText: 'Registrar',
+        nzCancelText: 'Cancelar',
+        nzWidth: 600,
+        nzOnOk: () => {
+          if (this.form.valid) {
+            const formValue = this.form.value
+            const data = {
+              institution: {
+                institutionName: formValue.institutionName,
+                institutionId: formValue.institutionId,
+                institutionType: formValue.institutionType,
+                institutionDependency: formValue.institutionDependency,
+                institutionDepartment: formValue.institutionDepartment,
+                institutionMunicipie: formValue.institutionMunicipie,
+                neighborhoodArea: formValue.neighborhoodArea
+              },
+              postulant: {
+                identityCard: formValue.postulantIdentityCard,
+                complement: formValue.postulantComplement,
+                lastName: formValue.postulantLastName,
+                mothersLastName: formValue.postulantMothersLastName,
+                name: formValue.postulantName,
+                gender: formValue.postulantGender,
+                dateBirth: formValue.postulantDateBirth,
+                placeBirth: formValue.postulantPlaceBirth,
+                nationality: formValue.postulantNationality,
+                codeRude: formValue.rudeCodeSearch
+              },
+              postulantResidence: {
+                municipality: formValue.postulantMunicipalityResidence,
+                area: formValue.postulantAreaResidence,
+                address: formValue.postulantAddressResidence,
+                telephone: formValue.postulantTelephoneResidence
+              },
+              guardian:  {
+                nationality: formValue.guardianNationality,
+                complement: formValue.guardianComplement,
+                lastName: formValue.guardianLastName,
+                mothersLastName: formValue.guardianMothersLastName,
+                name: formValue.guardianName,
+                identityCard: formValue.guardianIdentityCard,
+                relationship: formValue.guardianRelationship,
+                dateBirth: formValue.guardianDateBirth,
+                cellphone: formValue.guardianCellphone,
+                address: formValue.guardianAddress,
+              },
+              guardianWork: {
+                placeName: formValue.guardianPlaceNameWork,
+                municipality: formValue.guardianMunicipalityWork,
+                area: formValue.guardianAreaWork,
+                addressJob: formValue.guardianAddressJob,
+                phoneJob: formValue.guardianPhoneJob
+              },
+              courseId: formValue.yearOfSchoolign.courseId,
+              justification: formValue.justification,
+              postulantSiblings: formValue.postulantSiblings
+            }
+            this._preRgistration.savePreRegistration(data).subscribe((response) => {
+              this.preRegistration = response.data
+              this.result.set(true)
+            })
+          }
+          // else {
+          //   this.showInvalidFields(this.form)
+          //   this.notification.showMessage('Por favor rellené los campos con border rojo para realizar la pre inscripción', 'Advertencia', 'warning')
+          //   Object.values(this.form.controls).forEach(control => {
+          //     if (control.invalid) {
+          //       control.markAsDirty();
+          //       control.updateValueAndValidity({ onlySelf: true });
+          //     }
+          //   });
+          //   this.result.set(false)
+          // }
+        }
+      })
     }
   }
 
