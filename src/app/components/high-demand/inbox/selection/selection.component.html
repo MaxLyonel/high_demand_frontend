@@ -80,35 +80,35 @@
     <nz-collapse>
       <nz-collapse-panel nzHeader="Filtros de Búsqueda">
         <div nz-row [nzGutter]="16">
-          <div nz-col [nzSpan]="6">
+          <!-- <div nz-col [nzSpan]="6">
             <nz-form-item>
               <nz-form-label>Código RUDE</nz-form-label>
               <nz-form-control>
                 <input nz-input [(ngModel)]="filters.rudeCode" placeholder="Buscar por RUDE">
               </nz-form-control>
             </nz-form-item>
-          </div>
-          <div nz-col [nzSpan]="6">
+          </div> -->
+          <div nz-col [nzSpan]="8">
             <nz-form-item>
               <nz-form-label>Apellidos</nz-form-label>
               <nz-form-control>
-                <input nz-input [(ngModel)]="filters.lastName" placeholder="Buscar por apellidos">
+                <input nz-input [(ngModel)]="filters.lastName" placeholder="Buscar por apellidos" style="width: 300px;">
               </nz-form-control>
             </nz-form-item>
           </div>
-          <div nz-col [nzSpan]="6">
+          <div nz-col [nzSpan]="8">
             <nz-form-item>
               <nz-form-label>Nombres</nz-form-label>
               <nz-form-control>
-                <input nz-input [(ngModel)]="filters.firstName" placeholder="Buscar por nombres">
+                <input nz-input [(ngModel)]="filters.firstName" placeholder="Buscar por nombres" style="width: 300px;">
               </nz-form-control>
             </nz-form-item>
           </div>
-          <div nz-col [nzSpan]="6">
+          <div nz-col [nzSpan]="8">
             <nz-form-item>
               <nz-form-label>Carnet Identidad</nz-form-label>
               <nz-form-control>
-                <input nz-input [(ngModel)]="filters.idCard" placeholder="Buscar por CI">
+                <input nz-input [(ngModel)]="filters.idCard" placeholder="Buscar por CI" style="width: 200px;">
               </nz-form-control>
             </nz-form-item>
           </div>
@@ -119,7 +119,7 @@
             <nz-form-item>
               <nz-form-label>Criterio</nz-form-label>
               <nz-form-control>
-                <nz-select [(ngModel)]="filters.criteria" nzPlaceHolder="Seleccionar criterio">
+                <nz-select [(ngModel)]="filters.criteria" nzPlaceHolder="Seleccionar criterio" nzAllowClear>
                   @for(criteria of criterias; track criteria.id) {
                     <nz-option [nzValue]="criteria.id" [nzLabel]="criteria.name"></nz-option>
                   }
@@ -127,14 +127,14 @@
               </nz-form-control>
             </nz-form-item>
           </div>
-          <div nz-col [nzSpan]="8">
+          <!-- <div nz-col [nzSpan]="8">
             <nz-form-item>
               <nz-form-label>Justificación</nz-form-label>
               <nz-form-control>
                 <input nz-input [(ngModel)]="filters.justification" placeholder="Buscar por justificación">
               </nz-form-control>
             </nz-form-item>
-          </div>
+          </div> -->
         </div>
 
         <div class="filter-actions">
@@ -171,8 +171,8 @@
         <th class="header-cell" nzWidth="120px">Criterio</th>
         <th class="header-cell" nzWidth="100px">Nivel</th>
         <th class="header-cell" nzWidth="140px">Año escolaridad</th>
-        <th class="header-cell" nzWidth="140px">Paralelo</th>
-        <th class="header-cell" nzWidth="200px">Justificación</th>
+        <!-- <th class="header-cell" nzWidth="140px">Paralelo</th> -->
+        <!-- <th class="header-cell" nzWidth="200px">Justificación</th> -->
       </tr>
     </thead>
     <tbody>
@@ -198,8 +198,8 @@
           </td>
           <td>{{ postulant.highDemandCourse.level.name }}</td>
           <td>{{ postulant.highDemandCourse.grade.name }}</td>
-          <td>{{ postulant.highDemandCourse.parallel.name }}</td>
-          <td>{{ postulant.justification || 'Sin justificación' }}</td>
+          <!-- <td>{{ postulant.highDemandCourse.parallel.name }}</td> -->
+          <!-- <td>{{ postulant.justification || 'Sin justificación' }}</td> -->
         </tr>
       }
       @empty {
@@ -218,22 +218,55 @@
     </tbody>
   </nz-table>
 
-  <!-- Los modales se mantienen igual -->
   <nz-modal
     [(nzVisible)]="isConfirmVisible"
     nzTitle="Confirmar Selección"
     (nzOnCancel)="handleCancel()"
     (nzOnOk)="handleOk()"
     [nzOkLoading]="isConfirmLoading"
+    [nzOkDisabled]="!criteriaPost || !selectedParallel"
   >
     <ng-container *nzModalContent>
-      <p>¿Está seguro que desea seleccionar al estudiante <strong>{{selectedPostulant?.postulant?.name}} {{selectedPostulant?.postulant?.lastName}}</strong>?</p>
+      <p>¿Está seguro que desea seleccionar al estudiante <strong>{{selectedPostulant?.postulant?.name}} {{selectedPostulant?.postulant?.lastName}}</strong> para su inscripción automática en la siguiente gestión?</p>
       <nz-alert
         *ngIf="selectedPostulant"
         nzType="info"
-        [nzMessage]="'Curso: ' + selectedPostulant.highDemandCourse.level.name + ' - ' + selectedPostulant.highDemandCourse.grade.name + ' - ' + selectedPostulant.highDemandCourse.parallel.name"
+        [nzMessage]="'Curso: ' + selectedPostulant.highDemandCourse.level.name + ' - ' + selectedPostulant.highDemandCourse.grade.name"
         class="mt-2"
+        [nzShowIcon]="true"
       ></nz-alert>
+      <div class="mt-2">
+        <p>Seleccione el criterio de la selección del estudiante: </p>
+        <nz-radio-group [(ngModel)]="criteriaPost">
+          @for(criteria of criterias; track criteria; let i = $index) {
+            <label
+              nz-radio
+              [nzValue]="criteria"
+              nz-popover
+            >
+              {{criteria.name}}
+            </label>
+          }
+        </nz-radio-group>
+      </div>
+      <div class="mt-2">
+        <nz-alert
+          [nzShowIcon]="true"
+          nzType="warning"
+          nzMessage="Tome en cuenta que el estudiante será inscrito automáticamente en la siguiente gestión en el paralelo que seleccione"
+        ></nz-alert>
+        <p class="mt-2">Escoja el paralelo para el estudiante: </p>
+        <nz-radio-group [(ngModel)]="selectedParallel">
+        @for(parallel of availableParallels; track parallel) {
+          <label
+            nz-radio
+            [nzValue]="parallel"
+          >
+            Paralelo - {{ parallel.name }}
+          </label>
+        }
+        </nz-radio-group>
+      </div>
     </ng-container>
   </nz-modal>
 

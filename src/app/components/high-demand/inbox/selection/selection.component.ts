@@ -21,6 +21,7 @@ import { AppStore } from '../../../../infrastructure/store/app.store';
 import IHighDemand from '../../../../domain/ports/i-high-demand';
 import { finalize, switchMap } from 'rxjs';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
 
 // Las interfaces se mantienen igual...
 interface Student {
@@ -104,6 +105,8 @@ interface PreRegistration {
   selected?: boolean;
   loading?: boolean;
   justification: string;
+  criteriaPost: Criteria;
+  selectedParallel: any;
 }
 
 @Component({
@@ -130,6 +133,7 @@ interface PreRegistration {
     NzTableModule,
     NzTagModule,
     NzTypographyModule,
+    NzRadioModule
   ],
   providers: [NzModalService]
 })
@@ -172,6 +176,8 @@ export class SelectionInbox implements OnInit {
   highDemand: any
   sie: any;
 
+  criteriaPost: any;
+
   constructor(
     private message: NzMessageService,
     private appStore: AppStore,
@@ -197,7 +203,6 @@ export class SelectionInbox implements OnInit {
     this._highDemand.getHighDemandByInstitution(this.sie).pipe(
       switchMap((response: any) => {
         this.highDemand = response;
-        // retornamos el observable interno para que switchMap lo maneje
         return this._highDemand.getHighDemandLevels(this.highDemand.id);
       })
     ).subscribe({
@@ -234,6 +239,9 @@ export class SelectionInbox implements OnInit {
     this.selectedParallel = null;
     this.availableParallels = [];
     this.filteredPreRegistrations = [];
+
+    const parallels:any = this.availableGrades.find((g: any) => g.id === gradeId)
+    this.availableParallels = parallels.parallels
 
     if (this.selectedLevel && this.selectedGrade) {
       this.loadPostulantsByCourse(this.selectedLevel, this.selectedGrade);
@@ -370,9 +378,9 @@ export class SelectionInbox implements OnInit {
     this.clearFilters();
   }
 
-  // Los demás métodos se mantienen igual...
   handleCancel(): void {
     this.isConfirmVisible = false;
+    this.criteriaPost = null;
   }
 
   confirmSelection(): void {
@@ -395,7 +403,6 @@ export class SelectionInbox implements OnInit {
         })
       ).subscribe({
         next: response => {
-          console.log("Esto nos responde el backend: ", response)
           // Recargar los estudiantes del curso actual
           if (this.selectedLevel && this.selectedGrade && this.selectedParallel) {
             this.loadPostulantsByCourse(this.selectedLevel, this.selectedGrade);
@@ -403,8 +410,8 @@ export class SelectionInbox implements OnInit {
           this.message.success(`${this.selectedPostulants.length} estudiantes consolidados`);
         },
         error: err => {
-          console.log("Error: ", err)
-          this.message.error('Error al consolidar la selección');
+          this.criteriaPost = null
+          this.isConsolidateLoading = false;
         }
       })
   }
@@ -426,11 +433,15 @@ export class SelectionInbox implements OnInit {
   }
 
   handleOk(): void {
+    console.log("aqui se muere")
     if(!this.selectedPostulant) return;
+    if(!this.criteriaPost) return;
+    if(!this.selectedParallel) return;
 
     this.isConfirmLoading = true;
-    const { id: preRegistrationId } = this.selectedPostulant
     this.selectedPostulant!.selected = this.tempChecked;
+    this.selectedPostulant!.criteriaPost = this.criteriaPost;
+    this.selectedPostulant!.selectedParallel = this.selectedParallel
     this.selectedPostulants.push(this.selectedPostulant!)
     this.isConfirmVisible = false;
     this.isConfirmLoading = false;
