@@ -63,6 +63,7 @@ export default class EditModalComponent {
   request    = input<Registration | null>(null);
   sie        = input<number | null>(null);
   canUpdated = input<boolean>(false);
+  currentRole = input<number | null>(null);
 
 
   notificationService = inject(NotificationService);
@@ -245,7 +246,8 @@ export default class EditModalComponent {
 
     const requestData = {
       highDemand,
-      courses
+      courses,
+      currentRole: this.currentRole()
     };
 
     this._highDemand.editHighDemand(requestData).subscribe({
@@ -302,7 +304,7 @@ export default class EditModalComponent {
 
   // Modal cuando se registra la institución como alta demanda
   showConfirmRegistrationHighDemand(): void {
-    this.confirmModal = this.modal.confirm({
+    this.modal.confirm({
       nzTitle: '¿Está seguro de editar la postulación de la Unidad Educativa?',
       nzContent: 'Esta edición es posible siempre y cuando no lo recepcione su distrital',
       nzOnOk: () => {

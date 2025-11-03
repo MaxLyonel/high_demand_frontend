@@ -31,6 +31,7 @@ import { User } from "../../../domain/models/user.model";
 import IManagerInstitution from "../../../domain/ports/i-manager-institution";
 import { NotificationService } from "../../../infrastructure/services/notify.service";
 import { APP_CONSTANTS } from "../../../infrastructure/constants/constants";
+import { NzPopoverDirective, NzPopoverModule } from "ng-zorro-antd/popover";
 
 
 interface CourseList {
@@ -62,7 +63,8 @@ interface CourseList {
     NzTabsModule,
     NzTagComponent,
     NzTypographyModule,
-  ],
+    NzPopoverModule
+],
   selector: 'app-postulation',
   templateUrl: './postulation.component.html',
   styleUrl: './postulation.component.less'

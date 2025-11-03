@@ -73,7 +73,7 @@
           *nzSpaceItem
           nz-button
           nzType="primary"
-          [disabled]="!canGenerateReport()"
+          [disabled]="!canGenerateReport() || filteredHighDemands.length === 0"
           (click)="getHighDemands()"
         >
           <i nz-icon nzType="file-pdf"></i>
@@ -328,6 +328,7 @@
     (cancel)="handleCancel()"
     [sie]="institutionId"
     [request]="null"
+    [currentRole]="selectedRole"
     [canUpdated]="canUpdateRequest()"
   ></edit-modal>
 </nz-card>

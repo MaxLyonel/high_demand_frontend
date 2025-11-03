@@ -221,11 +221,13 @@ export class SeguimientoComponent implements OnInit {
 
   handleCancel(): void {
     this.isVisibleModal = false;
+    this.loadData()
   }
 
   handleOk(): void {
     this.message.success('Acción confirmada');
     this.isVisibleModal = false;
+    this.loadData()
   }
 
   descargarDocumentos(solicitud: any): void {

@@ -134,6 +134,7 @@ export class BandejaComponent implements OnInit {
   districtByDepartment: Array<{id: number, place: string}> = []
   isVisibleModal = false
   institutionId!: any;
+  selectedRole: any
 
   constructor(
     public ability: AbilityService,
@@ -163,6 +164,7 @@ export class BandejaComponent implements OnInit {
   loadData(type: 'entrada' | 'recepcion'): void {
     this.loading = true;
     const { user } = this.appStore.snapshot
+    this.selectedRole = user.selectedRole
     this.rolId = user.selectedRole.role.id
     const placeTypeId = user.selectedRole.placeType.id
 
@@ -385,9 +387,7 @@ export class BandejaComponent implements OnInit {
           this.message.success(
             `Se ha registrado la Unidad Educativa ${highDemand.institution.name} como Alta Demanda`
           );
-          this._highDemand.getListReceive(this.rolId!, placeTypeId).subscribe((response) => {
-            this.highDemands = response.data;
-          });
+          this.onDistrictChange(this.selectedDistrict)
         });
       },
     });
@@ -409,9 +409,7 @@ export class BandejaComponent implements OnInit {
           this.message.success(
             `Se ha rechazado la Unidad Educativa ${highDemand.institution.name} como Alta Demanda`
           );
-          this._highDemand.getListReceive(this.rolId!, placeTypeId).subscribe((response) => {
-            this.highDemands = response.data;
-          });
+          this.onDistrictChange(this.selectedDistrict)
         });
       },
     });
