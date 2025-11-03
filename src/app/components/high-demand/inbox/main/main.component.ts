@@ -278,7 +278,7 @@ export class BandejaComponent implements OnInit {
         const obj = {
           highDemandIds: [...this.setOfCheckedIdDerive],
           rolId: nextRolId,
-          observation: cite
+          cite: cite
         };
         this._highDemand.deriveHighDemand(obj).subscribe((response) => {
           this.message.success(response.message);
