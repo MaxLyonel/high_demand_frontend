@@ -218,6 +218,7 @@
             }
             <ng-template #motivoTpl>
               <div>
+                <nz-alert nzType="warning" nzMessage="Por favor asegurese que la Unidad Educativa realmente no corresponda como Alta Demanda"></nz-alert>
                 <label>Ingrese el motivo de la observación:</label>
                 <input id="motivoInput" nz-input [(ngModel)]="motivo" />
               </div>

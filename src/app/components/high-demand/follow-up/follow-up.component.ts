@@ -1,4 +1,4 @@
-import { Component, computed, inject, Inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, Inject, OnInit, signal, TemplateRef } from '@angular/core';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService, NzModalModule } from 'ng-zorro-antd/modal';
 import { NzCardModule } from "ng-zorro-antd/card";
@@ -31,6 +31,7 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
 import IManagerInstitution from '../../../domain/ports/i-manager-institution';
 import ICourseList from '../../../domain/ports/i-course-list';
 import EditModalComponent from '../shared/edit-modal.component';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
 
 interface Registration {
   id: number;
@@ -85,6 +86,7 @@ interface EventHistory {
     NzTimePickerModule,
     NzToolTipModule,
     NzTypographyModule,
+    NzAlertModule,
     NzDatePickerModule,
     EditModalComponent
   ]
@@ -146,6 +148,8 @@ export class SeguimientoComponent implements OnInit {
       return matchesSearch && matchesEstado && matchesFecha && matchesWorkflow;
     });
   });
+
+  cancellationMessage='Una vez que se anule la postulación, no podrá recuperase y no se enviará al Director Distrital para su revisión. ¿Está seguro de continuar?'
 
   constructor(
     private message: NzMessageService,
@@ -234,14 +238,16 @@ export class SeguimientoComponent implements OnInit {
     this.message.info(`Descargando documentos de ${solicitud.unidadEducativa}`);
   }
 
-  cancelRequest(request: any): void {
+  cancelRequest(request: any, tpl: TemplateRef<{}>): void {
     this.modal.confirm({
-      nzTitle: `¿Anular la postulación de la Unidad Educativa ${request.educationalInstitutionName}?`,
-      nzContent: 'Esta acción no se reversible',
-      nzOkText: 'Sí, anular',
+      nzTitle: `¿Está seguro de que quiere anular la postulación de la Unidad Educativa ${request.educationalInstitutionName}?`,
+      // nzContent: 'Una vez que se anule la postulación, no podrá recuperase y no se enviará al Director Distrital para su revisión. ¿Está seguro de continuar?',
+      nzContent: tpl,
+      nzOkText: 'Sí, anular mi postulación',
       nzOkType: 'primary',
       nzOkDanger: true,
       nzCancelText: 'No',
+      nzWidth: 600,
       nzOnOk: () => {
         this._highDemand.cancelHighDemand(request).subscribe(response => {
           this.loading = true;

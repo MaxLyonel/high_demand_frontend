@@ -118,11 +118,14 @@
                         nzType="link"
                         nzSize="small"
                         nzDanger
-                        (click)="cancelRequest(request)"
+                        (click)="cancelRequest(request, message)"
                         nz-tooltip="Cancelar solicitud"
                       >
                         <i nz-icon nzType="close-circle"></i>
                       </button>
+                      <ng-template #message>
+                        <nz-alert nzType="warning" [nzMessage]="cancellationMessage"></nz-alert>
+                      </ng-template>
                     }
                   }
                 </div>

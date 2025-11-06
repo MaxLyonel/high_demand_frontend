@@ -28,6 +28,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import IPreRegistration from '../../../../domain/ports/i-pre-registration';
 import EditModalComponent from '../../shared/edit-modal.component';
 import { APP_CONSTANTS } from '../../../../infrastructure/constants/constants';
+import { NzAlertComponent, NzAlertModule } from 'ng-zorro-antd/alert';
 
 interface Institution {
   id: number;
@@ -83,7 +84,8 @@ interface HighDemand {
     NzListModule,
     NzSelectModule,
     NzModalContentDirective,
-    EditModalComponent
+    EditModalComponent,
+    NzAlertModule
 ],
   providers: [NzModalService],
 })
@@ -336,7 +338,7 @@ export class BandejaComponent implements OnInit {
     let message = ''
     if(rolId == APP_CONSTANTS.ROLES.DIRECTOR_ROLE) {
       rolName = 'Director Unidad Educativa'
-      title = `¿Rechazar la Alta Demanda de ${highDemand.institution.name}`
+      title = `¿Está seguro de rechazar la solicitud de Alta Demanda de la Unidad Educativa ${highDemand.institution.name}`
       message = `Se ha rechazado la Alta Demanda de ${highDemand.institution.name}`
     } else if(rolId == APP_CONSTANTS.ROLES.DISTRICT_ROLE){
       rolName = 'Director Distrital'
@@ -349,6 +351,7 @@ export class BandejaComponent implements OnInit {
       nzOkText: 'Confirmar',
       nzOkDanger: true,
       nzCancelText: 'Cancelar',
+      nzWidth: 700,
       nzOnOk: () => {
         const inputEl = document.getElementById(
           'motivoInput'
@@ -397,8 +400,8 @@ export class BandejaComponent implements OnInit {
     const { user } = this.appStore.snapshot
     const placeTypeId = user.selectedRole.placeType.id
     this.modal.confirm({
-      nzTitle: `¿Está seguro de rechazar a la Unidad Educativa ${highDemand.institution.name} como Alta Demanda?`,
-      nzContent: 'Por favor revise bien si corresponde',
+      nzTitle: `¿Está seguro que quiere rechazar a la solicitud de la Unidad Educativa ${highDemand.institution.name} como Alta Demanda?`,
+      nzContent: 'Tenga en cuenta que esta acción no se puede revertir',
       nzOkText: 'Confirmar',
       nzCancelText: 'Cancelar',
       nzOnOk: () => {
