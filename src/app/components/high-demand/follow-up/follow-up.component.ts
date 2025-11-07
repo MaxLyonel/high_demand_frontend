@@ -149,7 +149,7 @@ export class SeguimientoComponent implements OnInit {
     });
   });
 
-  cancellationMessage='Una vez que se anule la postulación, no podrá recuperase y no se enviará al Director Distrital para su revisión. ¿Está seguro de continuar?'
+  cancellationMessage='Una vez que se anule la postulación, no podrá recuperase y no se enviará al Director Distrital para su revisión. Además que ya no podrá generar otra postulación. ¿Está seguro de continuar?'
 
   constructor(
     private message: NzMessageService,

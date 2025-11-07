@@ -73,9 +73,10 @@
           *nzSpaceItem
           nz-button
           nzType="primary"
-          [disabled]="!canGenerateReport() || filteredHighDemands.length === 0"
+          [disabled]="!canGenerateReport()"
           (click)="getHighDemands()"
         >
+          <!-- [disabled]="!canGenerateReport() || filteredHighDemands.length === 0" -->
           <i nz-icon nzType="file-pdf"></i>
           GENERAR REPORTE
         </button>
