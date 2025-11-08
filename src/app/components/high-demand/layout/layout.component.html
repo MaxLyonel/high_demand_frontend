@@ -144,7 +144,7 @@
             @if(user.selectedRole.role.id == 37) {
               <nz-descriptions-item [nzTitle]="distritoTpl" [nzSpan]="2">{{ user.selectedRole.placeType.id == 0 ? 'Bolivia' : user.selectedRole.placeType.name | uppercase }}</nz-descriptions-item>
               <nz-descriptions-item [nzTitle]="departmentTpl" [nzSpan]="2">{{ user.selectedRole.placeType?.parent.id == 0 ? 'Bolivia' : user.selectedRole.placeType?.parent.name | uppercase }}</nz-descriptions-item>
-            } @else if(user.selectedRole.role.id == 38){
+            } @else if(user.selectedRole.role.id == 850){
               <nz-descriptions-item [nzTitle]="departmentTpl" [nzSpan]="2">{{ user.selectedRole.placeType.id == 0 ? 'Bolivia' : user.selectedRole.placeType.name | uppercase }}</nz-descriptions-item>
             } @else {
               <nz-descriptions-item [nzTitle]="place" [nzSpan]="2">{{ user.selectedRole.placeType.id == 0 ? 'Bolivia' : user.selectedRole.placeType.name | uppercase }}</nz-descriptions-item>

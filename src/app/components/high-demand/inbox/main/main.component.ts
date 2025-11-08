@@ -512,7 +512,7 @@ export class BandejaComponent implements OnInit {
         const url = URL.createObjectURL(blob)
         this.reportPdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url)
       })
-    } else if(role.id == 38) { // departamental
+    } else if(role.id == 850) { // departamental
       this._history.downloadReportDepartment(placeType.id).subscribe((blob: Blob) => {
         const url = URL.createObjectURL(blob)
         this.reportPdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url)
@@ -536,7 +536,7 @@ export class BandejaComponent implements OnInit {
       recepcion: () => this._highDemand.getListReceive(this.rolId!, district)
     };
 
-    if([37, 38].includes(this.rolId!) && actions[this.activeTray]) {
+    if([37, 850].includes(this.rolId!) && actions[this.activeTray]) {
       setTimeout(() => {
         actions[this.activeTray]().subscribe((response) => {
           this.highDemands = response.data
