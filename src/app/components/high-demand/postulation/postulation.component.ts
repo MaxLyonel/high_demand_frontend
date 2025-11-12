@@ -224,7 +224,11 @@ export class PostulationComponent implements OnInit {
     this._highDemand.registerHighDemand(requestData).subscribe({
       next: (response: any) => {
         this.highDemand = response.data
-        this.router.navigate(['/alta-demanda/follow-up'])
+        if(this.selectedRole === APP_CONSTANTS.ROLES.VER_ROLE) {
+          this.institution.set(null)
+        } else {
+          this.router.navigate(['/alta-demanda/follow-up'])
+        }
       },
       error: (err) => {
         console.error('Error durante el  flujo de alta demanda: ', err)
