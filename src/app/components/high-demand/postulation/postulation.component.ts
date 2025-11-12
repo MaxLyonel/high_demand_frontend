@@ -1,7 +1,7 @@
 // framework angular
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
-import { Component, EventEmitter, inject, Inject, OnInit, Output, signal } from "@angular/core";
+import { Component, EventEmitter, inject, Inject, NgZone, OnInit, Output, signal } from "@angular/core";
 // external dependencies
 import { FormsModule } from "@angular/forms";
 import { finalize, of, switchMap, tap } from 'rxjs';
@@ -109,16 +109,20 @@ export class PostulationComponent implements OnInit {
   errorMessage: string = '';
 
   haveCoursesSaved: boolean = false
+  selectedRole: any
+  canCreate: boolean = false
+  message: string = ''
 
   constructor(
     @Inject('ICourseList')   private _courses    : ICourseList,
     @Inject('IHighDemand')   private _highDemand : IHighDemand,
-    @Inject('IManagerInstitution') private _institution: IManagerInstitution
+    @Inject('IManagerInstitution') private _institution: IManagerInstitution,
   ) {}
 
   ngOnInit(): void {
     this.initLoading = true;
     this.user = this.appStore.snapshot.user
+    this.selectedRole = this.user.selectedRole.role.id
     const { institutionInfo } = this.appStore.snapshot
     if (!institutionInfo) { return; }
     const { id: institutionId } = institutionInfo
@@ -138,10 +142,17 @@ export class PostulationComponent implements OnInit {
       tap(courses => {
         this.levels = courses
       }),
-      switchMap(() =>
-        this._highDemand.getHighDemandByInstitution(sie)
-      ),
-      switchMap((highDemand) => {
+      switchMap(() => {
+        if(this.selectedRole === APP_CONSTANTS.ROLES.DIRECTOR_ROLE) {
+          return this._highDemand.getHighDemandByInstitution(sie)
+        } else if(this.selectedRole === APP_CONSTANTS.ROLES.VER_ROLE) {
+          return this._highDemand.getHighDemandByInstitutionExceptional(sie)
+        }
+        return of(null)
+      }),
+      switchMap(({ canCreate, highDemand, message }) => {
+        this.canCreate = canCreate
+        this.message = message
         if (!highDemand) {
           return of([]);
         }
@@ -285,13 +296,46 @@ export class PostulationComponent implements OnInit {
   }
 
   showConfirmRegistrationHighDemand(): void { // Modal cuando se registra la institución como alta demanda
-    this.confirmModal = this.modal.confirm({
-      nzTitle: '¿Finalizar la postulación de la Unidad Educativa?',
-      nzContent: 'Favor aproximarse al distrito correspondiente para ratificar su solicitud',
-      nzOnOk: () => {
-        this.submitHighDemand()
+    if(this.selectedRole === APP_CONSTANTS.ROLES.VER_ROLE) {
+      if(this.canCreate) {
+        this.modal.confirm({
+          nzTitle: '¿Desea aprobar la Unidad Educativa como Alta demanda?',
+          nzOkText: 'Sí, aprobar',
+          nzCancelText: 'No, cancelar',
+          nzContent: this.message,
+          nzOnOk: () => {
+            this.submitHighDemand()
+          },
+          nzOnCancel: () => {
+            this.institution.set(null);
+            return;
+          }
+        })
+      } else {
+        this.modal.confirm({
+          nzTitle: '¿Desea aprobar la Unidad Educativa como Alta demanda?',
+          nzContent: this.message,
+          nzOkText: 'Retornar',
+          nzCancelText: '',
+          nzOnOk: () => {
+            this.institution.set(null);
+            return;
+          },
+          nzOnCancel: () => {
+            this.institution.set(null);
+            return;
+          }
+        })
       }
-    })
+    } else {
+      this.confirmModal = this.modal.confirm({
+        nzTitle: '¿Finalizar la postulación de la Unidad Educativa?',
+        nzContent: 'Favor aproximarse al distrito correspondiente para ratificar su solicitud',
+        nzOnOk: () => {
+          this.submitHighDemand()
+        }
+      })
+    }
   }
   //  ====================== FIN MODALES ============================
 

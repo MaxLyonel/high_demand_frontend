@@ -28,6 +28,11 @@ export default class HighDemandManager implements IHighDemand {
     return result
   }
 
+  getHighDemandByInstitutionExceptional(institionId: number): Observable<any> {
+    const result = this._highDemandAdapter.getHighDemandByInstitutionExceptional(institionId)
+    return result
+  }
+
   getCoures(highDemandId: number): Observable<any> {
     const result = this._highDemandAdapter.getCourse(highDemandId)
     return result

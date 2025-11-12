@@ -16,6 +16,8 @@ export default interface IHighDemand {
   getActionFromRoles(rolId: number): Observable<any>;
 
   getHighDemandByInstitution(educationalInstitutionId: number): Observable<any>;
+  getHighDemandByInstitutionExceptional(institionId: number): Observable<any>;
+
   getCoures(highDemandId: number): Observable<any>;
   getListInbox(rolId: number, placeTypeId: number): Observable<any>;
   getListReceive(rolId: number, placeTypeId: number): Observable<any>;

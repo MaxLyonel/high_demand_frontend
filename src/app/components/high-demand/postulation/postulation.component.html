@@ -221,9 +221,10 @@
                   (click)="showConfirmRegistrationHighDemand()"
                   class="flex-button"
                   [disabled]="
+                    selectedRole !== 4100 && (
                     !(canCreatePostulation() || canUpdatePostulation()) ||
                     haveCoursesSaved ||
-                    selectedCourses().length === 0"
+                    selectedCourses().length === 0)"
                 >
                   <i nz-icon nzType="check-circle"></i> CONSOLIDAR
                 </button>

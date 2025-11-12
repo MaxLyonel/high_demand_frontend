@@ -30,6 +30,8 @@ export default interface IManagerHighDemand {
   getActionFromRoles(rolId: number): Observable<any>;
 
   getHighDemandByInstitution(educationalInstitutionId: number): Observable<any>;
+  getHighDemandByInstitutionExceptional(institutionId: number): Observable<any>;
+
   getCourse(highDemandId: number): Observable<any>
   updateWorkflowState(obj: any): Observable<any>;
 

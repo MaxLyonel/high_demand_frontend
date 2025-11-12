@@ -45,6 +45,15 @@ export class HighDemandAdapterService implements IManagerHighDemand {
     )
   }
 
+  getHighDemandByInstitutionExceptional(institutionId: number): Observable<any> {
+    return this.http.get(`high-demand/${institutionId}/by-institution-exceptional`).pipe(
+      catchError(err => {
+        console.error('Error al obtener instituciones excepcionales', err)
+        return throwError(() => err)
+      })
+    )
+  }
+
   getCourse(highDemandId: number): Observable<any> {
     return this.http.get(`high-demand-course/courses/${highDemandId}`).pipe(
       tap(highDemand => {
