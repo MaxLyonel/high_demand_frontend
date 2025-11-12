@@ -200,8 +200,9 @@
                       nzShape="circle"
                       nzSize="small"
                       (click)="deleteSelection(i)"
-                      [disabled]="haveCoursesSaved || selectedCourses().length === 0"
+                      [disabled]="selectedCourses().length === 0"
                     >
+                      <!-- [disabled]="haveCoursesSaved || selectedCourses().length === 0" TODO-->
                       <nz-icon nzType="delete"></nz-icon>
                     </button>
                   </div>

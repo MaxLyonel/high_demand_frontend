@@ -386,7 +386,7 @@ export class PostulationComponent implements OnInit {
       this.inputValue === null ||
       this.inputValue === 0 ||
       this.inputValue > 40 ||
-      this.haveCoursesSaved ||
+      // this.haveCoursesSaved || //TODO
       this.selectedLevelId === null ||
       this.selectedGradeId === null ||
       this.selectedParallelId === null
