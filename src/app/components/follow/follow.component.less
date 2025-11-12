@@ -1,3 +1,4 @@
+// follow.component.less
 @primary-color: #0D9488;
 @primary-light: #14B8A6;
 @primary-dark: #045e56;
@@ -20,7 +21,7 @@
 
 .tracking-content {
   width: 100%;
-  max-width: 900px;
+  max-width: 1200px;
   background-color: #fff;
   padding: 32px;
   border-radius: 12px;
@@ -77,127 +78,244 @@
   }
 }
 
-.results-card {
-  padding: 25px;
+// Estilos para la tabla de resultados
+.results-table-container {
+  margin-top: 20px;
   border-radius: 10px;
   border: 1px solid fade(@primary-color, 50%);
-  margin-bottom: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.results-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 15px;
-  border-bottom: 1px solid @border-color;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 15px;
-    align-items: flex-start;
+.applicant-header {
+  background: linear-gradient(135deg, @primary-color, @primary-dark);
+  color: white;
+  padding: 20px 25px;
+  
+  .applicant-name {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+  
+  .applicant-info {
+    font-size: 16px;
+    opacity: 0.9;
   }
 }
 
-.applicant-name {
-  font-size: 20px;
-  font-weight: 600;
-  color: @text-color;
+.table-wrapper {
+  overflow-x: auto;
 }
 
-.download-button {
-  padding: 8px 16px;
-  background-color: @primary-light;
-  color: white;
+.preinscription-table {
+  width: 100%;
+  border-collapse: collapse;
+  
+  thead {
+    background-color: #f8f9fa;
+    
+    th {
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      color: @text-color;
+      border-bottom: 2px solid @border-color;
+      white-space: nowrap;
+    }
+  }
+  
+  tbody {
+    tr {
+      border-bottom: 1px solid @border-color;
+      transition: background-color 0.2s;
+      
+      &:hover {
+        background-color: #f8f9fa;
+      }
+      
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+    
+    td {
+      padding: 15px;
+      vertical-align: top;
+    }
+  }
+}
+
+// Estados de preinscripción
+.status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-ACEPTADO {
+  background-color: fade(@success-color, 15%);
+  color: darken(@success-color, 10%);
+  border: 1px solid fade(@success-color, 30%);
+}
+
+.status-VALIDADO {
+  background-color: fade(@processing-color, 15%);
+  color: darken(@processing-color, 10%);
+  border: 1px solid fade(@processing-color, 30%);
+}
+
+.status-REGISTRADO {
+  background-color: fade(@warning-color, 15%);
+  color: darken(@warning-color, 10%);
+  border: 1px solid fade(@warning-color, 30%);
+}
+
+.status-INVALIDADO, .status-NO_ACEPTADO {
+  background-color: fade(@error-color, 15%);
+  color: darken(@error-color, 10%);
+  border: 1px solid fade(@error-color, 30%);
+}
+
+// Botones de acción
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 6px 12px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 500;
   display: flex;
   align-items: center;
-  gap: 5px;
-  transition: background-color 0.3s ease;
+  gap: 4px;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
 
-  &:hover {
+.btn-details {
+  background-color: @primary-light;
+  color: white;
+  
+  &:hover:not(:disabled) {
     background-color: @primary-color;
   }
 }
 
-.status-section {
-  text-align: center;
-  margin: 25px 0;
-  padding: 20px;
-  border-radius: 8px;
-  background-color: #f8fafc;
-}
-
-.status-label {
-  font-size: 16px;
-  color: @text-secondary;
-  margin-bottom: 10px;
-}
-
-.status-value {
-  font-size: 28px;
-  font-weight: 700;
-  padding: 10px 20px;
-  border-radius: 6px;
-  display: inline-block;
-}
-
-.status-aprobado {
-  background-color: fade(@success-color, 15%);
-  color: @success-color;
-  border: 2px solid @success-color;
-}
-
-.status-pendiente {
-  background-color: fade(@warning-color, 15%);
-  color: @warning-color;
-  border: 2px solid @warning-color;
-}
-
-.status-rechazado {
-  background-color: fade(@error-color, 15%);
-  color: @error-color;
-  border: 2px solid @error-color;
-}
-
-.status-procesando {
-  background-color: fade(@processing-color, 15%);
-  color: @processing-color;
-  border: 2px solid @processing-color;
-}
-
-.details-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-  margin-top: 20px;
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+.btn-pdf {
+  background-color: @success-color;
+  color: white;
+  
+  &:hover:not(:disabled) {
+    background-color: darken(@success-color, 10%);
   }
 }
 
-.detail-item {
-  margin-bottom: 15px;
+// Responsive
+@media (max-width: 768px) {
+  .tracking-content {
+    padding: 20px 15px;
+  }
+  
+  .applicant-header {
+    padding: 15px 20px;
+    
+    .applicant-name {
+      font-size: 18px;
+    }
+    
+    .applicant-info {
+      font-size: 14px;
+    }
+  }
+  
+  .preinscription-table {
+    thead th, tbody td {
+      padding: 10px 8px;
+      font-size: 13px;
+    }
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .btn {
+    font-size: 11px;
+    padding: 5px 8px;
+    justify-content: center;
+  }
 }
 
-.detail-label {
-  font-weight: 600;
-  color: @text-secondary;
-  font-size: 14px;
-  margin-bottom: 5px;
-}
-
-.detail-value {
-  color: @text-color;
-  font-size: 16px;
-}
-
+// Mensaje cuando no hay resultados
 .no-results {
   text-align: center;
-  padding: 30px;
+  padding: 40px 20px;
   color: @text-secondary;
+  
+  nz-alert {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+}
+
+// Estados de loading para botones
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+// Mejoras visuales para los botones de acción
+.action-buttons {
+  .btn {
+    transition: all 0.3s ease;
+    
+    &:not(:disabled):hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+  }
+}
+
+// Mensajes de estado
+.status-badge {
+  &.status-ACEPTADO {
+    background-color: fade(@success-color, 20%);
+    color: darken(@success-color, 15%);
+    border: 1px solid fade(@success-color, 40%);
+  }
+  
+  &.status-VALIDADO {
+    background-color: fade(@processing-color, 20%);
+    color: darken(@processing-color, 15%);
+    border: 1px solid fade(@processing-color, 40%);
+  }
+  
+  &.status-REGISTRADO {
+    background-color: fade(@warning-color, 20%);
+    color: darken(@warning-color, 15%);
+    border: 1px solid fade(@warning-color, 40%);
+  }
+  
+  &.status-INVALIDADO, &.status-NO_ACEPTADO {
+    background-color: fade(@error-color, 20%);
+    color: darken(@error-color, 15%);
+    border: 1px solid fade(@error-color, 40%);
+  }
 }
