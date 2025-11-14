@@ -82,6 +82,17 @@ export class PreRegistrationAdapterService implements IManagerPreRegistration {
     )
   }
 
+  updatePreRegistration(obj: any): Observable<any> {
+    return this.http.post(`pre-registration/update`, obj, {
+      context: new HttpContext().set(IS_USER_ACTION, true)
+    }).pipe(
+      catchError(err => {
+        console.error("Error al actualizar una pre inscripción")
+        return throwError(() => err)
+      })
+    )
+  }
+
   invalidatePreRegistration(obj: any): Observable<any> {
     return this.http.post(`pre-registration/invalidate`, obj, {
       context: new HttpContext().set(IS_USER_ACTION, true)

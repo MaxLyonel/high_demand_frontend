@@ -74,10 +74,13 @@
                   </td>
                   <td>
                     <div class="action-buttons">
-                      <!-- <button
-                        class="btn btn-details"                         (click)="viewDetails(preinscripcion)">
-                        <i nz-icon nzType="eye"></i> Ver Detalle
-                      </button> -->
+                      <button
+                        class="btn btn-details"
+                        (click)="viewDetails(preinscripcion)"
+                        [disabled]="preinscripcion.isUpdated"
+                      >
+                        <i nz-icon nzType="edit"></i>Editar
+                      </button>
                       <button
                         nz-button
                         class="btn btn-pdf"
@@ -99,3 +102,239 @@
     }
   </div>
 </div>
+<ng-template #dialogTpl>
+  <nz-alert
+    nzType="error"
+    nzShowIcon
+    nzMessage="¡IMPORTANTE! Solo tiene un intento de actualización."
+  ></nz-alert>
+  <nz-alert
+    nzType="warning"
+    nzShowIcon
+    [nzMessage]="alert"
+  ></nz-alert>
+</ng-template>
+<ng-template #dialogEditTpl>
+  <form nz-form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div nz-row>
+      <div nz-col nzSpan="24">
+        <nz-alert nzShowIcon nzType="warning" nzMessage="Solo llene la dirección en caso de que no se muestre en su formulario"></nz-alert>
+      </div>
+      <div nz-col nzSpan="24">
+        <nz-form-item>
+          <nz-form-label nzRequired>DIRECCIÓN DE SU RESIDENCIA (zona / avenida / calle / N° / teléfono)</nz-form-label>
+          <nz-form-control>
+            <input
+              formControlName="addressTutor"
+              type="text"
+              nz-input
+            >
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row>
+      <div nz-col nzSpan="24">
+        <nz-form-item>
+          <nz-form-label nzRequired>JUSTIFICATIVO</nz-form-label>
+          <nz-form-control>
+            <nz-radio-group formControlName="justification">
+              @for(criteria of criterias; track criteria; let i = $index) {
+                <label
+                  nz-radio
+                  [nzValue]="criteria.id"
+                >
+                  {{ criteria.name }}
+                </label>
+              }
+            </nz-radio-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    @if(justification === 1){
+    <nz-card nzTitle="HERMANA(S) O HERMANO(S) EN ETAPA DE ESCOLARIDAD EN LA UNIDAD EDUCATIVA A LA QUE POSTULA EN LA PRESENTE GESTIÓN" class="section-card">
+      <div nz-row>
+        <div nz-col nzSpan="24">
+          <nz-alert nzShowIcon nzType="warning" nzMessage="Solo llene en caso de tener hermanas/os en la Unidad Educativa que postula"></nz-alert>
+          <nz-form-item>
+            <nz-form-label nzRequired [nzSpan]="24">Hermanos</nz-form-label>
+            <nz-form-control
+              [nzValidateStatus]="form.get('postulantSiblings')!"
+              nzErrorTip="Debe agregar al menos un hermano"
+            >
+              <nz-table
+                #hermanosTable
+                [nzData]="postulantSiblings.value || []"
+                nzSize="small"
+                [nzShowPagination]="false"
+              >
+                <thead>
+                  <tr>
+                    <th>Código Rude</th>
+                    <th>Nombre</th>
+                    <th>Nivel de educación</th>
+                    <th>Año de escolaridad</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @if(postulantSiblings.length === 0) {
+                    <tr>
+                      <td colspan="4" class="text-center">No hay hermanos registrados</td>
+                    </tr>
+                  } @else {
+                    @for(sibling of postulantSiblings.value; track $index; let i = $index) {
+                      <tr [formGroup]="sibling">
+                        <td class="text-center">{{ sibling.codeRude }}</td>
+                        <td class="text-center">{{ sibling.name }}</td>
+                        <td class="text-center">{{ sibling.level }}</td>
+                        <td class="text-center">{{ sibling.grade }}</td>
+                      </tr>
+                    }
+                  }
+                </tbody>
+              </nz-table>
+            </nz-form-control>
+          </nz-form-item>
+          <button nz-button nzType="dashed" nzSize="small" nzBlock (click)="addBrother(rudeTpl)" type="button">
+            <i nz-icon nzType="plus"></i> Agregar hermano
+          </button>
+        </div>
+        <ng-template #rudeTpl>
+          <div>
+            <label>Ingrese el código RUDE del hermano(a)</label>
+            <nz-input-group [nzSuffix]="suffixIconSearch">
+              <input id="rudeInput" nz-input [(ngModel)]="rude" [ngModelOptions]="{standalone: true}" />
+            </nz-input-group>
+            <ng-template #suffixIconSearch>
+              <nz-icon nzType="search" />
+            </ng-template>
+          </div>
+        </ng-template>
+      </div>
+    </nz-card>
+    }
+    @if(justification === 2) {
+    <nz-card nzTitle="DIRECCIÓN ACTUAL DE RESIDENCIA DE LA O EL ESTUDIANTE" class="section-card">
+      <div nz-row nzGutter="16">
+        <div nz-col nzSpan="12">
+          <nz-form-item>
+            <nz-form-label nzRequired>Municipio</nz-form-label>
+            <nz-form-control>
+              <nz-select
+                formControlName="postulantMunicipalityResidence"
+                [nzDisabled]="false"
+                nzAllowClear
+                nzShowSearch
+                nzPlaceHolder="Seleccione un municipio"
+              >
+                @for(municipie of municipies; track municipie) {
+                  <nz-option [nzValue]="municipie" [nzLabel]="municipie.place"></nz-option>
+                }
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col nzSpan="12">
+          <nz-form-item>
+            <nz-form-label nzRequired>Zona / Villa</nz-form-label>
+            <nz-form-control>
+              <input nz-input formControlName="postulantAreaResidence">
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+
+      <div nz-row nzGutter="16">
+        <div nz-col nzSpan="16">
+          <nz-form-item>
+            <nz-form-label nzRequired>Avenida / Calle / N°</nz-form-label>
+            <nz-form-control>
+              <input
+                nz-popover
+                [nzPopoverTitle]="titleAddresEst"
+                nzPopoverContent="La dirección del estudiante debe estar en el formato (Avenida / Calle / N°) y debe contener el caracter '/'"
+                nz-input
+                formControlName="postulantAddressResidence"
+              >
+              <ng-template #titleAddresEst>
+                <b><i><u>Dirección del estudiante</u></i></b>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col nzSpan="8">
+          <nz-form-item>
+            <nz-form-label>Teléfono / Celular</nz-form-label>
+            <nz-form-control>
+              <input nz-input formControlName="postulantTelephoneResidence">
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+    </nz-card>
+    }
+    @if(justification === 3) {
+    <nz-card nzTitle="DIRECCIÓN ACTUAL DEL TRABAJO DEL PADRE, MADRE Y/O TUTOR" class="section-card">
+      <div nz-row nzGutter="16">
+        <div nz-col nzSpan="12">
+          <nz-form-item>
+            <nz-form-label nzRequired>NOMBRE DEL LUGAR DE TRABAJO</nz-form-label>
+            <nz-form-control>
+              <input nz-input formControlName="guardianPlaceNameWork">
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col nzSpan="12">
+          <nz-form-item>
+            <nz-form-label nzRequired>MUNICIPIO</nz-form-label>
+            <nz-form-control>
+              <nz-select
+                formControlName="guardianMunicipalityWork"
+                [nzDisabled]="false"
+                nzAllowClear
+                nzShowSearch
+                nzPlaceHolder="Seleccione un municipio"
+              >
+                @for(municipie of municipies; track municipie) {
+                  <nz-option [nzValue]="municipie" [nzLabel]="municipie.place"></nz-option>
+                }
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+
+      <div nz-row nzGutter="16">
+        <div nz-col nzSpan="12">
+          <nz-form-item>
+            <nz-form-label nzRequired>ZONA / VILLA</nz-form-label>
+            <nz-form-control>
+              <input nz-input formControlName="guardianAreaWork">
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col nzSpan="12">
+          <nz-form-item>
+            <nz-form-label nzRequired>AVENIDA / CALLE / N°</nz-form-label>
+            <nz-form-control>
+              <input nz-input formControlName="guardianAddressJob">
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+
+      <div nz-row nzGutter="16">
+        <div nz-col nzSpan="12">
+          <nz-form-item>
+            <nz-form-label>TELÉFONO / CELULAR</nz-form-label>
+            <nz-form-control>
+              <input nz-input formControlName="guardianPhoneJob">
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+    </nz-card>
+    }
+  </form>
+</ng-template>

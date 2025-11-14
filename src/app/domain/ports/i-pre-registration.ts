@@ -15,6 +15,8 @@ export default interface IPreRegistration {
 
   // ** exponer funcionalidad para guardar una pre inscripción **
   savePreRegistration(obj: any): Observable<any>;
+  // ** exponer funcionalidad para actualizar una pre inscripción **
+  updatePreRegistration(obj: any): Observable<any>;
   // ** exponer funcionalidad para invalidar una pre inscripción **
   invalidatePreRegistration(obj: any): Observable<any>;
   // ** exponer funcionalidad para validar un pre inscripción **

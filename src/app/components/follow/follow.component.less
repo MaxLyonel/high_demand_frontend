@@ -319,3 +319,23 @@
     border: 1px solid fade(@error-color, 40%);
   }
 }
+
+.section-card {
+  margin-bottom: 15px;
+  border: 1px solid fade(@primary-color, 50%);
+  border-radius: 10px;
+
+  ::ng-deep .ant-card-head {
+    background-color: fade(@primary-color, 10%);
+    border-bottom: 1px solid @border-color;
+    border-radius: 8px 8px 0 0;
+  }
+
+  ::ng-deep .ant-card-head-title {
+    font-weight: 600;
+    color: @primary-dark;
+    font-size: 15px;
+    border-left: 5px solid @primary-color;
+    padding-left: 10px;
+  }
+}

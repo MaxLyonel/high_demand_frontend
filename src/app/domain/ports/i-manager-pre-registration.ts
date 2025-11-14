@@ -17,6 +17,8 @@ export default interface IManagerPreRegistration {
 
   // ** guardar una pre inscripción **
   savePreRegistration(obj: any): Observable<any>;
+  // ** actualizar una pre inscripción **
+  updatePreRegistration(obj: any): Observable<any>;
   // ** invalidar una pre inscripción **
   invalidatePreRegistration(obj: any): Observable<any>;
   // ** validar una pre inscripción **
