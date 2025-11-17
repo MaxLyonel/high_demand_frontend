@@ -1,7 +1,7 @@
 // framework angular
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
-import { Component, EventEmitter, inject, Inject, NgZone, OnInit, Output, signal } from "@angular/core";
+import { Component, EventEmitter, inject, Inject, NgZone, OnInit, Output, signal, TemplateRef } from "@angular/core";
 // external dependencies
 import { FormsModule } from "@angular/forms";
 import { finalize, of, switchMap, tap } from 'rxjs';
@@ -35,6 +35,8 @@ import { NzPopoverDirective, NzPopoverModule } from "ng-zorro-antd/popover";
 
 
 interface CourseList {
+  id?: number,
+  highDemandId?: number,
   name: string;
   checked?: boolean;
   quota: number;
@@ -113,10 +115,13 @@ export class PostulationComponent implements OnInit {
   canCreate: boolean = false
   message: string = ''
 
+  cupo: any
+
   constructor(
     @Inject('ICourseList')   private _courses    : ICourseList,
     @Inject('IHighDemand')   private _highDemand : IHighDemand,
     @Inject('IManagerInstitution') private _institution: IManagerInstitution,
+    private notification: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -173,6 +178,8 @@ export class PostulationComponent implements OnInit {
     ).subscribe({
       next: (courses) => {
         this.listCourse = courses.map((course:any) => ({
+          id: course.id,
+          highDemandId: course.highDemandId,
           checked: true,
           name: `${course.levelName} - ${course.gradeName} ${course.parallelName} - cupo:${course.totalQuota}`,
           quota: course.levelId!,
@@ -379,6 +386,33 @@ export class PostulationComponent implements OnInit {
     this.listCourse.splice(index, 1)
     this.courseKeys.delete(key)
     this.selectedCourses.set(this.listCourse)
+  }
+
+  editCupo(index: any, tpl: TemplateRef<{}>) {
+    const course = this.listCourse[index]
+    if(!course) return
+    this.modal.confirm({
+      nzTitle: '¿Desea realmente actualizar el cupo?',
+      nzContent: tpl,
+      nzOkText: 'Si, editar',
+      nzCancelText: 'No',
+      nzOnOk: () => {
+        if (!this.isValidQuota()) {
+          this.notification.showMessage('Debe ingresar un cupo válido (1-40)', 'Advertencia', 'warning');
+          return;
+        }
+        this._highDemand.modifyQuota(course.id!, this.cupo).subscribe((response) => {
+          this.getFullInfo(parseInt(this.sieCode))
+        })
+      }
+    });
+  }
+
+  isValidQuota(): boolean {
+    const res = this.cupo !== null &&
+           this.cupo > 0 &&
+           this.cupo <= 40;
+    return res
   }
 
   disabledButtonRegisterCourse(){

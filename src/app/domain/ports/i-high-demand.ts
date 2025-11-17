@@ -29,4 +29,6 @@ export default interface IHighDemand {
 
   deleteHighDemandCourse(highDemandCourseId: number): Observable<any>;
   getHighDemandLevels(highDemandId: number): Observable<any>;
+
+  modifyQuota(courseId: number, newQuota: number | null): Observable<any>;
 }

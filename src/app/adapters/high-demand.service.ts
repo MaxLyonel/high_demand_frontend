@@ -61,6 +61,19 @@ export class HighDemandAdapterService implements IManagerHighDemand {
     )
   }
 
+  modifyQuota(courseId: number, newQuota: number): Observable<any> {
+    return this.http.patch(`high-demand-course/${courseId}/quota`, {
+      totalQuota: newQuota
+    }, {
+      context: new HttpContext().set(IS_USER_ACTION, true)
+    }).pipe(
+      catchError(err => {
+        console.error('Error al actualizar cupo', err);
+        return throwError(() => err);
+      })
+    );
+  }
+
   updateWorkflowState(obj: any): Observable<any> {
     return this.http.post(`high-demand/udpate-state-worfkflow`, obj, {
       context: new HttpContext().set(IS_USER_ACTION, true)

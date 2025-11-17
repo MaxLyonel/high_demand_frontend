@@ -119,4 +119,9 @@ export default class HighDemandManager implements IHighDemand {
     const result = this._highDemandAdapter.getHighDemandLevels(highDemandId)
     return result
   }
+
+  modifyQuota(courseId: number, newQuota: number | null): Observable<any> {
+    const result = this._highDemandAdapter.modifyQuota(courseId, newQuota)
+    return result
+  }
 }
