@@ -586,7 +586,7 @@ export default class FormularioInscripcionComponent implements OnInit{
 
   download() {
     const { postulant } = this.preRegistration
-    this._preRgistration.download(postulant.id).subscribe((blob: Blob) => {
+    this._preRgistration.download(this.preRegistration.id).subscribe((blob: Blob) => {
       const fileURL = window.URL.createObjectURL(blob)
       window.open(fileURL)
       const a  = document.createElement('a')
