@@ -135,7 +135,7 @@ export class RegisterInbox implements OnInit {
     this.isDocumentVisible = true
 
     const postulantId = preRegistration.postulant.id
-    this._preRegistration.download(postulantId).subscribe((blob: Blob) => {
+    this._preRegistration.downloadBlob(postulantId).subscribe((blob: Blob) => {
       const url = URL.createObjectURL(blob);
       this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
     })

@@ -189,7 +189,7 @@ export default class PreInscriptionTrackingComponent implements OnInit {
 
   downloadCertificate(preinscripcion: PreInscription): void {
     this.isDownloading[preinscripcion.id] = true;
-    this._preRegistration.download(preinscripcion.id).subscribe({
+    this._preRegistration.downloadBlobWithHeaders(preinscripcion.id).subscribe({
       next: (response) => {
         this.isDownloading[preinscripcion.id] = false;
         const blob = new Blob([response.body!], { type: 'application/pdf' });

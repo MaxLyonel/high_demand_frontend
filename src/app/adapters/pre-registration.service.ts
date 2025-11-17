@@ -196,10 +196,17 @@ export class PreRegistrationAdapterService implements IManagerPreRegistration {
     )
   }
 
-  download(postulantId: number): Observable<any> {
+  downloadBlob(postulantId: number): Observable<any> {
     return this.http.get(`pre-registration/print/${postulantId}`, {
       responseType: 'blob',
     })
+  }
+
+  downloadBlobWithHeaders(id: number): Observable<any> {
+    return this.http.get(`pre-registration/print/${id}`, {
+      responseType: 'blob',
+      observe: 'response'
+    });
   }
 
   getDistrictByDepartment(departmentId: number): Observable<any> {

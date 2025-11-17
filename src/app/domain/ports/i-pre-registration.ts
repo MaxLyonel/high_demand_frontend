@@ -45,6 +45,7 @@ export default interface IPreRegistration {
   getInfoByCodeRude(codeRude: string): Observable<any>;
 
   // ** exponer funcionalidad para descargar la preinscripción **
-  download(postulantId: number): Observable<any>;
+  downloadBlob(postulantId: number): Observable<any>;
+  downloadBlobWithHeaders(id: number): Observable<any>;
 
 }

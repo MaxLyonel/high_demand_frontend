@@ -90,8 +90,12 @@ export default class PreRegistrationManager implements IPreRegistration {
     return result
   }
 
-  download(postulantId: number): Observable<Blob> {
-    return this._preRegistrationAdapter.download(postulantId)
+  downloadBlob(postulantId: number): Observable<Blob> {
+    return this._preRegistrationAdapter.downloadBlob(postulantId)
+  }
+
+  downloadBlobWithHeaders(id: number): Observable<Blob> {
+    return this._preRegistrationAdapter.downloadBlobWithHeaders(id)
   }
 
   getInfoByCodeRude(codeRude: string): Observable<any> {
