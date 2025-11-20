@@ -33,7 +33,7 @@
     </thead>
     <tbody>
       @for(data of groupingTable.data; track data; let i = $index) {
-        <tr class="data-row" [ngClass]="{'row-invalidated': data.state === 'INVALIDADO'}">
+        <tr class="data-row" [ngClass]="{'row-invalidated': data.state === 'INVALIDADO', 'row-validated': data.state === 'VALIDADO'}">
           <td class="data-cell number-cell">{{ i+1 }}</td>
           <td class="data-cell actions-cell">
             <div class="action-buttons">
@@ -44,7 +44,7 @@
                 nzShape="circle"
                 class="action-button"
                 nz-tooltip
-                nzTooltipTitle="Generar PDF"
+                nzTooltipTitle="Revisar Formulario de Preinscripción"
                 (click)="onToogle(data)"
               >
                 <span nz-icon nzType="file-pdf" nzTheme="outline" style="color: #0D9488;"></span>
@@ -59,7 +59,7 @@
           <td class="data-cell">{{ data.highDemandCourse.level.name }}</td>
           <td class="data-cell">{{ data.highDemandCourse.grade.name }}</td>
           <td class="data-cell">{{ data.createdAt | date:'dd/MM/yyyy HH:mm'}}</td>
-          <td class="data-cell"><nz-tag [nzColor]="data.state === 'INVALIDADO' ? 'red' : 'blue'">{{ data.state }}</nz-tag></td>
+          <td class="data-cell"><nz-tag [nzColor]="data.state === 'INVALIDADO' ? 'red' : (data.state === 'VALIDADO' ? 'green' : 'blue')">{{ data.state }}</nz-tag></td>
           <td [(nzExpand)]="data.expand"  class="action-expand"></td>
         </tr>
         <tr [nzExpand]="data.expand" class="expand-cell">
@@ -91,12 +91,59 @@
   </nz-table>
   <nz-modal
     [(nzVisible)]="isDocumentVisible"
-    nzTitle="Formulario de pre inscripción"
+    [nzTitle]="modalTitle"
     (nzOnCancel)="closeModal()"
     [nzFooter]="modalFooter"
-    [nzWidth]="800"
+    [nzWidth]="1000"
   >
+    <ng-template #modalTitle>
+      <b>Revisión del Formulario de Preinscripción</b>
+    </ng-template>
     <ng-container *nzModalContent>
+      <nz-alert
+        nzShowIcon
+        nzType="warning"
+        [nzMessage]="titleTemplate"
+        [nzDescription]="msgTemplate"
+        class="alert"
+      ></nz-alert>
+      <ng-template #titleTemplate>
+        <div class="alert-big-text">
+          <strong><i>IMPORTANTE:</i></strong> <i> Por favor revise minuciosamente toda la información registrada en el formulario. Preste especial atención a los siguientes puntos:</i>
+        </div>
+      </ng-template>
+      <ng-template #msgTemplate>
+        <div class="alert-big-text">
+          <!-- <i nz-icon nzType="info-circle" class="mr-1"></i> -->
+          <ol>
+            <li><b><i>Nivel educativo y grado:</i></b> <i> Verifique que correspondan correctamente al postulante. No puede postular a niveles ya aprobados ni a cursos que no le correspondan.</i></li>
+            <li><b><i>Justificativo por hermano:</i></b> <i> Confirme que el código RUDE proporcionado corresponda efectivamente a un hermano del postulante.</i></li>
+            <li><b><i>Justificativo por ubicación:</i></b> <i> Revise que la dirección declarada sea correcta y que esté próxima a la Unidad Educativa.</i></li>
+            <li><b><i>Justificativo por trabajo:</i></b> <i> Verifique que la dirección del lugar de trabajo del padre, madre o tutor esté próxima con la ubicación de la Unidad Educativa.</i></li>
+          </ol>
+        </div>
+      </ng-template>
+      <nz-alert
+        nzShowIcon
+        nzType="info"
+        [nzMessage]="titleActionTemplate"
+        [nzDescription]="msgActionTemplate"
+        class="alert"
+      ></nz-alert>
+      <ng-template #titleActionTemplate>
+        <div class="alert-big-text">
+          <strong><i>IMPORTANTE: </i></strong> <i>Un formulario invalidado no ingresa en la bandeja de selección, por tanto, no debe ser considerado para el sorteo.</i>
+        </div>
+      </ng-template>
+      <ng-template #msgActionTemplate>
+        <div class="alert-big-text">
+          <ul>
+            <li><i>Si ha verificado toda la información registrada en el presente formulario, debe continuar presionando el botón <b>VÁLIDO</b>.</i></li>
+            <li><i>En caso de encontrar alguna observación que implique la invalidación de la postulación, debe presionar el botón <b>NO VÁLIDO</b></i></li>
+          </ul>
+        </div>
+      </ng-template>
+
       <div class="pdf-container" *ngIf="pdfUrl">
         <iframe
           [src]="pdfUrl"
@@ -115,7 +162,7 @@
         (click)="handleCancel()"
         [disabled]="selectedPostulant.state === 'ACEPTADO' || selectedPostulant.state === 'INVALIDADO'"
       >
-        <nz-icon nzType="close-circle" /> No válido
+        <nz-icon nzType="close-circle" /> NO VÁLIDO
       </button>
       <button
         nz-button
@@ -124,7 +171,7 @@
         (click)="handleOk()"
         [disabled]="selectedPostulant.state === 'ACEPTADO' || selectedPostulant.state === 'INVALIDADO'"
       >
-        <nz-icon nzType="check-circle" nzIconfont="10px"/> Válido
+        <nz-icon nzType="check-circle" nzIconfont="10px"/> VÁLIDO
       </button>
     </ng-template>
   </nz-modal>

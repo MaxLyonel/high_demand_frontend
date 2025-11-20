@@ -11,6 +11,8 @@ import { switchMap, finalize } from 'rxjs';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 
 
 interface Postulant {
@@ -58,6 +60,8 @@ interface PreRegistration {
     NzTagComponent,
     NzTypographyModule,
     NzModalModule,
+    NzAlertModule,
+    NzToolTipModule
 ],
   selector: 'register-inbox',
   templateUrl: './register.component.html',
@@ -145,5 +149,4 @@ export class RegisterInbox implements OnInit {
     this.isDocumentVisible = false
     this.pdfUrl = null
   }
-
 }
