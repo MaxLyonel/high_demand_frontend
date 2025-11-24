@@ -21,6 +21,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { startWith } from 'rxjs';
+import { SocketService } from '../../infrastructure/services/socket.service';
 
 interface PreInscription {
   id: number;
@@ -76,6 +77,7 @@ export default class PreInscriptionTrackingComponent implements OnInit {
   form: FormGroup;
   rude: any
   preinscripcion: any
+  active: boolean = false
 
   @ViewChild('dialogTpl', { static: true }) dialogTpl!: TemplateRef<any>
   @ViewChild('dialogEditTpl', { static: true }) dialogEditTpl!: TemplateRef<any>
@@ -88,7 +90,8 @@ export default class PreInscriptionTrackingComponent implements OnInit {
     private message: NzMessageService,
     private modal: NzModalService,
     private fb: FormBuilder,
-    private notification: NotificationService
+    private notification: NotificationService,
+    private socketService: SocketService
   ) {
     this.form = this.fb.group({
       justification: [1, Validators.required],
@@ -112,6 +115,12 @@ export default class PreInscriptionTrackingComponent implements OnInit {
 
   ngOnInit(): void {
     this.dynamicValidations()
+    this.socketService.onCurrentOperative().subscribe((data) => {
+      if(!data) return;
+      const startDate = new Date(data.start)
+      const now = new Date()
+      this.active = data.active
+    })
   }
 
   get justification(): number {

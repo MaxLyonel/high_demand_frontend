@@ -77,7 +77,7 @@
                       <button
                         class="btn btn-details"
                         (click)="viewDetails(preinscripcion)"
-                        [disabled]="preinscripcion.isUpdated"
+                        [disabled]="!active || preinscripcion.isUpdated"
                       >
                         <i nz-icon nzType="edit"></i>Editar
                       </button>

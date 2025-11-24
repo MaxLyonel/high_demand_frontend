@@ -36,11 +36,13 @@ export default class LayoutComponent implements OnInit {
     this.createParticles(200);
     this.socketService.onCurrentOperative().subscribe((data) => {
       if(!data) return;
-      if(data.active) {
-        this.isPreRegistrationEnabled.set(true)
+      const startDate = new Date(data.start)
+      const endDate = new Date(data.end)
+      const now = new Date()
+      this.isPreRegistrationEnabled.set(data.active)
+      if(now >= startDate) {
         this.isFollowUpEnabled.set(true)
       } else {
-        this.isPreRegistrationEnabled.set(false)
         this.isFollowUpEnabled.set(false)
       }
     })
