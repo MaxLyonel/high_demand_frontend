@@ -181,6 +181,7 @@ export class SelectionInbox implements OnInit {
   constructor(
     private message: NzMessageService,
     private appStore: AppStore,
+    private modal: NzModalService,
     @Inject('IPreRegistration') private _preRegistration: IPreRegistration,
     @Inject('IHighDemand') private _highDemand: IHighDemand
   ) {}
@@ -378,10 +379,10 @@ export class SelectionInbox implements OnInit {
     this.clearFilters();
   }
 
-  handleCancel(): void {
-    this.isConfirmVisible = false;
-    this.criteriaPost = null;
-  }
+  // handleCancel(): void {
+  //   this.isConfirmVisible = false;
+  //   this.criteriaPost = null;
+  // }
 
   confirmSelection(): void {
     if (this.selectedPostulants.length === 0) return;
@@ -425,26 +426,117 @@ export class SelectionInbox implements OnInit {
     }
   }
 
+  // onToggleStudent(checked: boolean, postulant: any): void {
+  //   this.selectedPostulant = postulant
+
+  //   if(postulant.selected && !checked) {
+  //     this.modal.confirm({
+  //       nzTitle: '¿Desea deseleccionar este postulante?',
+  //       nzContent: `El estudiante ${postulant.postulant.name} será removido de la selección.`,
+  //       nzOkText: 'Sí, deseleccionar',
+  //       nzCancelText: 'Cancelar',
+  //       nzOnOk: () => {
+  //         postulant.selected = false;
+  //         this.selectedPostulants = this.selectedPostulants.filter(p => p.id !== postulant.id)
+  //         this.message.info(`Postulante ${postulant.postulant.name} deseleccionado`)
+  //       },
+  //       nzOnCancel: () => {
+  //         postulant.selected = true;
+  //       }
+  //     });
+  //     return;
+  //   }
+
+  //   this.tempChecked = checked
+  //   // postulant.selected = !checked;
+  //   postulant.selected = true;
+  //   this.isConfirmVisible = true;
+  // }
+
   onToggleStudent(checked: boolean, postulant: any): void {
-    this.selectedPostulant = postulant
-    this.tempChecked = checked
-    postulant.selected = !checked;
-    this.isConfirmVisible = true;
+    // Si ya está seleccionado y quieren deseleccionar
+    if (this.isPostulantSelected(postulant) && !checked) {
+      this.modal.confirm({
+        nzTitle: '¿Desea deseleccionar este postulante?',
+        nzContent: `El estudiante ${postulant.postulant.name} será removido de la selección.`,
+        nzOkText: 'Sí, deseleccionar',
+        nzCancelText: 'Cancelar',
+        nzOnOk: () => {
+          this.uncheck()
+          this.removePostulantFromSelection(postulant);
+          this.message.info(`Postulante ${postulant.postulant.name} deseleccionado`);
+        },
+        nzOnCancel: () => {
+          postulant.selected = true
+        }
+      });
+      return;
+    }
+    // Si quieren seleccionar (checked = true)
+    if (checked && !this.isPostulantSelected(postulant)) {
+      this.selectedPostulant = postulant;
+      this.isConfirmVisible = true;
+    }
   }
 
+  // Verifica si un postulante está seleccionado
+  isPostulantSelected(postulant: any): boolean {
+    return this.selectedPostulants.some(p => p.id === postulant.id);
+  }
+
+  // Remueve un postulante de la selección
+  removePostulantFromSelection(postulant: any): void {
+    this.selectedPostulants = this.selectedPostulants.filter(p => p.id !== postulant.id);
+  }
+
+  // Maneja el OK del diálogo de confirmación
   handleOk(): void {
-    console.log("aqui se muere")
-    if(!this.selectedPostulant) return;
-    if(!this.criteriaPost) return;
-    if(!this.selectedParallel) return;
+    if (!this.selectedPostulant || !this.criteriaPost || !this.selectedParallel) {
+      this.isConfirmVisible = false;
+      return;
+    }
 
     this.isConfirmLoading = true;
-    this.selectedPostulant!.selected = this.tempChecked;
-    this.selectedPostulant!.criteriaPost = this.criteriaPost;
-    this.selectedPostulant!.selectedParallel = this.selectedParallel
-    this.selectedPostulants.push(this.selectedPostulant!)
+    // Asignar los valores seleccionados
+    this.selectedPostulant.criteriaPost = this.criteriaPost;
+    this.selectedPostulant.selectedParallel = this.selectedParallel;
+    // Agregar a la selección solo si no está ya incluido
+    if (!this.isPostulantSelected(this.selectedPostulant)) {
+      this.selectedPostulants.push(this.selectedPostulant);
+    }
     this.isConfirmVisible = false;
     this.isConfirmLoading = false;
-    this.message.success(`Postulante ${this.selectedPostulant?.postulant.name} seleccionado`);
+    this.message.success(`Postulante ${this.selectedPostulant.postulant.name} seleccionado`);
+    // Limpiar selección temporal
+    this.selectedPostulant = null;
+    this.criteriaPost = null;
+    this.selectedParallel = null;
+  }
+
+  uncheck() {
+    const res: PreRegistration | undefined = this.filteredPreRegistrations.find(p => {
+      return p?.postulant?.id == this.selectedPostulant?.postulant?.id
+    })
+    if(res) {
+      res.selected = false
+    }
+  }
+  check() {
+    const res: PreRegistration | undefined = this.filteredPreRegistrations.find(p => {
+      return p?.postulant?.id == this.selectedPostulant?.postulant?.id
+    })
+    if(res) {
+      res.selected = true
+    }
+
+  }
+
+// Maneja el cancelar del diálogo
+  handleCancel(): void {
+    this.uncheck()
+    this.isConfirmVisible = false;
+    this.selectedPostulant = null;
+    this.criteriaPost = null;
+    this.selectedParallel = null;
   }
 }

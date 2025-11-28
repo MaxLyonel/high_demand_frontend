@@ -157,7 +157,7 @@
     [nzPageSize]="10"
     [nzShowPagination]="true"
     class="student-table"
-    [nzScroll]="{ y: '220px' }"
+    [nzScroll]="{ y: '420px' }"
     [nzSize]="'small'"
   >
     <thead>
@@ -182,10 +182,13 @@
           <td>
             <label
               nz-checkbox
-              [ngModel]="postulant.selected"
+              [nzValue]="selectedPostulant?.selected"
+              [(ngModel)]="postulant.selected"
               [nzDisabled]="postulant.state === 'ACEPTADO'"
               (ngModelChange)="onToggleStudent($event, postulant)"
             ></label>
+              <!-- [(ngModel)]="postulant.selected" -->
+              <!-- [ngModel]="postulant.selected" -->
           </td>
           <td>{{ postulant.postulant.lastName }}</td>
           <td>{{ postulant.postulant.mothersLastName }}</td>
