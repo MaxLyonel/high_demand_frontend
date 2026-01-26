@@ -37,7 +37,8 @@ export class UserDataService {
           tap(instInfo => this.appStore.setInstitutionInfo(instInfo))
         ).subscribe({
           next: () => {
-            this.router.navigate(['/alta-demanda/postulacion'])
+            this.router.navigate(['/alta-demanda/follow-up'])
+            // this.router.navigate(['/alta-demanda/postulacion'])
           },
           error: (err) => {
               console.error('Error cargando datos del usuario:', err);
@@ -49,7 +50,8 @@ export class UserDataService {
         break;
       case APP_CONSTANTS.ROLES.DISTRICT_ROLE:
       case APP_CONSTANTS.ROLES.DEPARTMENT_ROLE:
-        this.router.navigate(['/alta-demanda/main-inbox'])
+        this.router.navigate(['/alta-demanda/follow-up'])
+        // this.router.navigate(['/alta-demanda/main-inbox'])
         break;
       case APP_CONSTANTS.ROLES.ADMIN_ROLE:
         this.router.navigate(['/alta-demanda/admin'])
