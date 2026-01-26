@@ -358,7 +358,7 @@ export class SelectionInbox implements OnInit {
       criteria: null,
       justification: ''
     };
-    
+
     // Si hay selección actual, recargar los estudiantes del curso
     if (this.selectedLevel && this.selectedGrade && this.selectedParallel) {
       this.filteredPreRegistrations = [...this.preRegistrations];
@@ -405,14 +405,16 @@ export class SelectionInbox implements OnInit {
       ).subscribe({
         next: response => {
           // Recargar los estudiantes del curso actual
-          if (this.selectedLevel && this.selectedGrade && this.selectedParallel) {
+          if (this.selectedLevel && this.selectedGrade) {
             this.loadPostulantsByCourse(this.selectedLevel, this.selectedGrade);
           }
           this.message.success(`${this.selectedPostulants.length} estudiantes consolidados`);
+          this.isConsolidateLoading = false;
         },
         error: err => {
           this.criteriaPost = null
           this.isConsolidateLoading = false;
+          this.uncheckMassive()
         }
       })
   }
@@ -521,6 +523,7 @@ export class SelectionInbox implements OnInit {
       res.selected = false
     }
   }
+
   check() {
     const res: PreRegistration | undefined = this.filteredPreRegistrations.find(p => {
       return p?.postulant?.id == this.selectedPostulant?.postulant?.id
@@ -528,7 +531,14 @@ export class SelectionInbox implements OnInit {
     if(res) {
       res.selected = true
     }
+  }
 
+  uncheckMassive() {
+    this.filteredPreRegistrations.map(p => {
+      if(p.state !== 'ACEPTADO') {
+        p.selected = false
+      }
+    })
   }
 
 // Maneja el cancelar del diálogo

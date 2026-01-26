@@ -3,7 +3,7 @@ import { HttpContextToken } from '@angular/common/http';
 export const IS_USER_ACTION = new HttpContextToken(() => false);
 
 export const APP_CONSTANTS = {
-  CURRENT_YEAR: new Date().getFullYear(),
+  CURRENT_YEAR: new Date().getFullYear() - 1, //TODO luego quitar el -1
   BROTHER_JUSTIFICATION: 1,
   HOUSING_JUSTIFICATION: 2,
   WORKPLACE_JUSTIFICATION: 3,
