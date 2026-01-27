@@ -20,4 +20,20 @@ export class InstitutionAdapterService implements IManagerInstitution {
     )
   }
 
+  consolidate(id: number): Observable<any> {
+    return this.http.post<any>(`educational-institution/consolidate`, { sie: id }).pipe(
+      catchError(err => {
+        return throwError(() => err); // relanza el error
+      })
+    )
+  }
+
+  verifyConsolidate(id: number): Observable<any> {
+    return this.http.get<any>(`educational-institution/consolidation-status/${id}`).pipe(
+      catchError(err => {
+        return throwError(() => err); // relanza el error
+      })
+    )
+  }
+
 }

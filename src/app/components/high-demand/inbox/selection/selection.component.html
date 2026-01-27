@@ -3,8 +3,12 @@
   <div class="header-section">
     <h5 nz-typography class="section-title">BANDEJA DE SELECCIÓN DE ESTUDIANTES</h5>
     <div class="action-buttons">
-      <button nz-button nzType="primary" (click)="confirmSelection()" [disabled]="selectedPostulants.length === 0">
-        <i nz-icon nzType="check-square"></i> Consolidar Selección ({{selectedPostulants.length}})
+      <button nz-button nzType="primary" (click)="confirmSelection()" [disabled]="disableButton || selectedPostulants.length === 0">
+        @if(disableButton) {
+          <i nz-icon nzType="check-circle"></i> Consolidado
+        } @else {
+          <i nz-icon nzType="info-circle"></i> Consolidar ({{selectedPostulants.length}})
+        }
       </button>
       <button nz-button nzType="default" (click)="clearFilters()">
         <i nz-icon nzType="redo"></i> Limpiar Filtros

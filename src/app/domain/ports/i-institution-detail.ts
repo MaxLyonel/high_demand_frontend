@@ -7,4 +7,6 @@ import { InstitutionInfo } from "../models/institution-info.model";
 export default interface IInstituionDetail {
 
   getInfoInstitution(id: number): Observable<InstitutionInfo>;
+  consolidate(id: number): Observable<any>;
+  verifyConsolidation(id: number): Observable<any>;
 }

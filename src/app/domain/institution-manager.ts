@@ -18,4 +18,14 @@ export default class InstitutionManager implements IInstituionDetail {
     return resu
   }
 
+  consolidate(id: number): Observable<any> {
+    const result = this._institutionAdapter.consolidate(id)
+    return result
+  }
+
+  verifyConsolidation(id: number): Observable<any> {
+    const result = this._institutionAdapter.verifyConsolidate(id)
+    return result
+  }
+
 }

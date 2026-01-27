@@ -22,6 +22,7 @@ import IHighDemand from '../../../../domain/ports/i-high-demand';
 import { finalize, switchMap } from 'rxjs';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
+import IInstituionDetail from '../../../../domain/ports/i-institution-detail';
 
 // Las interfaces se mantienen igual...
 interface Student {
@@ -177,13 +178,15 @@ export class SelectionInbox implements OnInit {
   sie: any;
 
   criteriaPost: any;
+  disableButton: boolean = false;
 
   constructor(
     private message: NzMessageService,
     private appStore: AppStore,
     private modal: NzModalService,
     @Inject('IPreRegistration') private _preRegistration: IPreRegistration,
-    @Inject('IHighDemand') private _highDemand: IHighDemand
+    @Inject('IHighDemand') private _highDemand: IHighDemand,
+    @Inject('IInstituionDetail') private _institution: IInstituionDetail
   ) {}
 
   ngOnInit(): void {
@@ -192,6 +195,7 @@ export class SelectionInbox implements OnInit {
     this.sie = sie
     this.loadCriterias();
     this.loadLevels();
+    this.verifyConsolidate();
   }
 
   loadCriterias() {
@@ -214,6 +218,50 @@ export class SelectionInbox implements OnInit {
         console.error('Error al cargar niveles:', err);
       }
     });
+  }
+
+  consolidate() {
+    this._institution.consolidate(this.sie).pipe(
+      finalize(() => {
+        this.loading = false
+      })
+    ).subscribe({
+      next: (response) => {
+        if(response.data) {
+          this.message.success('Consolidación realizada con éxito');
+          this.disableButton = true
+        } else
+          this.message.error('Consolidación no realizada')
+      },
+      error: (err) => {
+        console.error('Error en la consolidación:', err);
+        this.message.error('Error al realizar la consolidación');
+      }
+    })
+  }
+
+  verifyConsolidate() {
+    return this._institution.verifyConsolidation(this.sie).pipe(
+      finalize(() => {
+        this.loading = false
+      })
+    ).subscribe({
+      next: (response) => {
+        if(response.data) {
+          this.disableButton = true
+          return true;
+          // this.message.info('La consolidación ya fue realizada anteriormente');
+        } else
+          this.disableButton = false
+          return false;
+          // this.message.info('La consolidación aún no ha sido realizada');
+      },
+      error: (err) => {
+        console.error('Error al verificar la consolidación:', err);
+        this.message.error('Error al verificar la consolidación');
+        return false;
+      }
+    })
   }
 
   // Nuevos métodos para el flujo jerárquico
@@ -395,6 +443,14 @@ export class SelectionInbox implements OnInit {
 
   handleConsolidateOk(): void {
     this.isConsolidateLoading = true;
+    if(this.verifyConsolidate()) {
+      this.message.info('La consolidación ya fue realizada anteriormente');
+      this.isConsolidateLoading = false;
+      this.isConsolidateVisible = false
+      this.selectedPostulants = []
+      return;
+    }
+
     this._preRegistration.acceptPreRegistrations(this.selectedPostulants)
       .pipe(
         finalize(() => {
@@ -408,7 +464,8 @@ export class SelectionInbox implements OnInit {
           if (this.selectedLevel && this.selectedGrade) {
             this.loadPostulantsByCourse(this.selectedLevel, this.selectedGrade);
           }
-          this.message.success(`${this.selectedPostulants.length} estudiantes consolidados`);
+          // this.message.success(`${this.selectedPostulants.length} estudiantes consolidados`);
+          this.consolidate()
           this.isConsolidateLoading = false;
         },
         error: err => {
