@@ -44,8 +44,11 @@ export default interface IPreRegistration {
   // ** exponer la funcionalidad de buscar información por Código Rude **
   getInfoByCodeRude(codeRude: string): Observable<any>;
 
+  getCounts(courseId: number): Observable<any>;
+
   // ** exponer funcionalidad para descargar la preinscripción **
   downloadBlob(postulantId: number): Observable<any>;
   downloadBlobWithHeaders(id: number): Observable<any>;
+  downloadReportByCourse(highDemandId: number, levelId: number, gradeId: number): Observable<any>;
 
 }

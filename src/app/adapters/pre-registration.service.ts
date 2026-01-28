@@ -218,4 +218,29 @@ export class PreRegistrationAdapterService implements IManagerPreRegistration {
     )
   }
 
+  getCounts(courseId: number): Observable<any> {
+    return this.http.get(`pre-registration/number-accepted-remaining/${courseId}`).pipe(
+      catchError(err => {
+        console.error("Error al obtener el conteos de preinscripción")
+        return throwError(() => err)
+      })
+    )
+  }
+
+  downloadReportByCourse(highDemandId: number, levelId: number, gradeId: number): Observable<Blob> {
+    return this.http.post(`pre-registration/report-by-course`, {
+      highDemandId,
+      levelId,
+      gradeId
+    }, {
+      responseType: 'blob',
+      context: new HttpContext().set(IS_USER_ACTION, true),
+    }).pipe(
+      catchError(err => {
+        console.error("Error al descargar el reporte por curso", err)
+        return throwError(() => err)
+      })
+    )
+  }
+
 }

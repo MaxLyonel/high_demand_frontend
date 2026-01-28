@@ -3,12 +3,19 @@
   <div class="header-section">
     <h5 nz-typography class="section-title">BANDEJA DE SELECCIÓN DE ESTUDIANTES</h5>
     <div class="action-buttons">
+      <button nz-button nzType="primary" (click)="confirmConsolidation()" [disabled]="disableButton">
+        <i nz-icon nzType="file"></i>
+        Consolidar operativo
+      </button>
       <button nz-button nzType="primary" (click)="confirmSelection()" [disabled]="disableButton || selectedPostulants.length === 0">
         @if(disableButton) {
           <i nz-icon nzType="check-circle"></i> Consolidado
         } @else {
           <i nz-icon nzType="info-circle"></i> Consolidar ({{selectedPostulants.length}})
         }
+      </button>
+      <button nz-button nzType="primary" [disabled]="true">
+        <i nz-icon nzType="file"></i>Descargar reporte
       </button>
       <button nz-button nzType="default" (click)="clearFilters()">
         <i nz-icon nzType="redo"></i> Limpiar Filtros
@@ -278,11 +285,11 @@
   </nz-modal>
 
   <nz-modal
-    [(nzVisible)]="isConsolidateVisible"
-    nzTitle="Consolidar Selección"
-    (nzOnCancel)="handleConsolidateCancel()"
-    (nzOnOk)="handleConsolidateOk()"
-    [nzOkLoading]="isConsolidateLoading"
+    [(nzVisible)]="isDialogVisible"
+    nzTitle="Selección de sorteados"
+    (nzOnCancel)="handleSelectionCancel()"
+    (nzOnOk)="handleSelectionOk()"
+    [nzOkLoading]="isDialogLoading"
     [nzOkText]="'Confirmar (' + selectedPostulants.length + ')'"
   >
     <ng-container *nzModalContent>
@@ -299,6 +306,26 @@
           </nz-list-item>
         }
       </nz-list>
+    </ng-container>
+  </nz-modal>
+
+
+  <nz-modal
+    [(nzVisible)]="isConsolidateVisible"
+    nzTitle="Consolidar operativo"
+    (nzOnCancel)="handleConsolidateCancel()"
+    (nzOnOk)="consolidate()"
+    [nzOkLoading]="isConsolidateLoading"
+    [nzOkText]="'Si estoy seguro, consolidar'"
+    [nzCancelText]="'Aún no consolidar'"
+  >
+    <ng-container *nzModalContent>
+      <p>¿Está realmente seguro de realizar la consolidación?</p>
+      <nz-alert
+        nzType="warning"
+        nzMessage="Esta acción es irreversible ya no podrá ralizar el operativo. Por favor, asegúrese de que todos los datos son correctos antes de proceder y que haya seleccionado a los sorteados y hermanitos."
+        [nzShowIcon]="true">
+      </nz-alert>
     </ng-container>
   </nz-modal>
 </div>

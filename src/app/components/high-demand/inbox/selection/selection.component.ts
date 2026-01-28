@@ -1,13 +1,13 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzFormItemComponent, NzFormLabelComponent } from "ng-zorro-antd/form";
-import { NzColDirective, NzGridModule } from "ng-zorro-antd/grid";
-import { NzSelectModule } from "ng-zorro-antd/select";
-import { NzTableModule } from "ng-zorro-antd/table";
-import { NzTagModule } from "ng-zorro-antd/tag";
-import { NzModalModule, NzModalService } from "ng-zorro-antd/modal";
-import { NzAlertComponent } from "ng-zorro-antd/alert";
-import { NzListModule } from "ng-zorro-antd/list";
+import { NzFormItemComponent, NzFormLabelComponent } from 'ng-zorro-antd/form';
+import { NzColDirective, NzGridModule } from 'ng-zorro-antd/grid';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
+import { NzAlertComponent } from 'ng-zorro-antd/alert';
+import { NzListModule } from 'ng-zorro-antd/list';
 import { FormsModule } from '@angular/forms';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -16,10 +16,10 @@ import { CommonModule } from '@angular/common';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzTypographyModule } from 'ng-zorro-antd/typography';
 import IPreRegistration from '../../../../domain/ports/i-pre-registration';
-import { NzCheckboxComponent } from "ng-zorro-antd/checkbox";
+import { NzCheckboxComponent } from 'ng-zorro-antd/checkbox';
 import { AppStore } from '../../../../infrastructure/store/app.store';
 import IHighDemand from '../../../../domain/ports/i-high-demand';
-import { finalize, switchMap } from 'rxjs';
+import { finalize, map, Observable, switchMap } from 'rxjs';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import IInstituionDetail from '../../../../domain/ports/i-institution-detail';
@@ -61,7 +61,7 @@ interface HighDemandCourse {
   createdAt: Date;
   level: Level;
   grade: Grade;
-  parallel: Parallel
+  parallel: Parallel;
 }
 
 interface Representative {
@@ -134,9 +134,9 @@ interface PreRegistration {
     NzTableModule,
     NzTagModule,
     NzTypographyModule,
-    NzRadioModule
+    NzRadioModule,
   ],
-  providers: [NzModalService]
+  providers: [NzModalService],
 })
 export class SelectionInbox implements OnInit {
   // Datos
@@ -160,7 +160,7 @@ export class SelectionInbox implements OnInit {
     firstName: '',
     idCard: '',
     criteria: null,
-    justification: ''
+    justification: '',
   };
 
   // Estados
@@ -170,11 +170,14 @@ export class SelectionInbox implements OnInit {
   isConsolidateVisible = false;
   isConsolidateLoading = false;
 
+  isDialogLoading = false;
+  isDialogVisible = false;
+
   tempChecked: boolean = false;
 
-  criterias: any[] = []
-  levels: any[] = []
-  highDemand: any
+  criterias: any[] = [];
+  levels: any[] = [];
+  highDemand: any;
   sie: any;
 
   criteriaPost: any;
@@ -190,9 +193,9 @@ export class SelectionInbox implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const { institutionInfo } = this.appStore.snapshot
-    const { id: sie } = institutionInfo
-    this.sie = sie
+    const { institutionInfo } = this.appStore.snapshot;
+    const { id: sie } = institutionInfo;
+    this.sie = sie;
     this.loadCriterias();
     this.loadLevels();
     this.verifyConsolidate();
@@ -200,68 +203,111 @@ export class SelectionInbox implements OnInit {
 
   loadCriterias() {
     this._preRegistration.getCriterias().subscribe((response) => {
-      this.criterias = response.data
-    })
+      this.criterias = response.data;
+    });
   }
 
   loadLevels() {
-    this._highDemand.getHighDemandByInstitution(this.sie).pipe(
-      switchMap((response: any) => {
-        this.highDemand = response;
-        return this._highDemand.getHighDemandLevels(this.highDemand.id);
-      })
-    ).subscribe({
-      next: (response: any) => {
-        this.levels = response.data;
+    this._highDemand
+      .getHighDemandByInstitution(this.sie)
+      .pipe(
+        switchMap((response: any) => {
+          this.highDemand = response;
+          return this._highDemand.getHighDemandLevels(this.highDemand.id);
+        })
+      )
+      .subscribe({
+        next: (response: any) => {
+          this.levels = response.data;
+        },
+        error: (err) => {
+          console.error('Error al cargar niveles:', err);
+        },
+      });
+  }
+
+  consolidate() {
+    this.isConsolidateLoading = true;
+    this.verifyConsolidate().subscribe({
+      next: (isConsolidated: boolean) => {
+        if (isConsolidated) {
+          this.message.info('La consolidación ya fue realizada anteriormente');
+          this.isConsolidateLoading = false;
+          this.isConsolidateVisible = false;
+          this.selectedPostulants = [];
+          return;
+        }
+        this._institution
+          .consolidate(this.sie)
+          .pipe(
+            finalize(() => {
+              this.loading = false;
+              this.isConfirmLoading = false;
+              this.isConsolidateVisible = false;
+              this.selectedPostulants = [];
+            })
+          )
+          .subscribe({
+            next: (response) => {
+              if (response.data) {
+                this.message.success('Consolidación realizada con éxito');
+                this.disableButton = true;
+              } else this.message.error('Consolidación no realizada');
+              this.isConfirmLoading = false;
+              this.uncheckMassive();
+            },
+            error: (err) => {
+              this.criteriaPost = null;
+              this.isConsolidateLoading = false;
+              this.uncheckMassive();
+              console.error('Error en la consolidación:', err);
+              this.message.error('Error al realizar la consolidación');
+            },
+          });
       },
-      error: (err) => {
-        console.error('Error al cargar niveles:', err);
+      error: () => {
+        this.message.error('Error al verificar la consolidación')
       }
     });
   }
 
-  consolidate() {
-    this._institution.consolidate(this.sie).pipe(
-      finalize(() => {
-        this.loading = false
-      })
-    ).subscribe({
-      next: (response) => {
-        if(response.data) {
-          this.message.success('Consolidación realizada con éxito');
-          this.disableButton = true
-        } else
-          this.message.error('Consolidación no realizada')
-      },
-      error: (err) => {
-        console.error('Error en la consolidación:', err);
-        this.message.error('Error al realizar la consolidación');
-      }
-    })
-  }
-
-  verifyConsolidate() {
+  verifyConsolidate(): Observable<boolean> {
     return this._institution.verifyConsolidation(this.sie).pipe(
-      finalize(() => {
-        this.loading = false
-      })
-    ).subscribe({
-      next: (response) => {
-        if(response.data) {
-          this.disableButton = true
+      map((response) => {
+        if (response.data) {
+          this.disableButton = true;
           return true;
-          // this.message.info('La consolidación ya fue realizada anteriormente');
-        } else
-          this.disableButton = false
+        } else {
+          this.disableButton = false;
           return false;
-          // this.message.info('La consolidación aún no ha sido realizada');
-      },
-      error: (err) => {
-        console.error('Error al verificar la consolidación:', err);
-        this.message.error('Error al verificar la consolidación');
-        return false;
-      }
-    })
+        }
+      }),
+      finalize(() => {
+        this.loading = false;
+      })
+    );
+    // return this._institution.verifyConsolidation(this.sie).pipe(
+    //   finalize(() => {
+    //     this.loading = false
+    //   })
+    // ).subscribe({
+    //   next: (response) => {
+    //     if(response.data) {
+    //       this.disableButton = true
+    //       return true;
+    //       // this.message.info('La consolidación ya fue realizada anteriormente');
+    //     } else {
+    //       this.disableButton = false
+    //       return false;
+    //     }
+    //       // this.message.info('La consolidación aún no ha sido realizada');
+    //   },
+    //   error: (err) => {
+    //     console.error('Error al verificar la consolidación:', err);
+    //     this.message.error('Error al verificar la consolidación');
+    //     return false;
+    //   }
+    // })
   }
 
   // Nuevos métodos para el flujo jerárquico
@@ -272,7 +318,7 @@ export class SelectionInbox implements OnInit {
     this.availableParallels = [];
     this.filteredPreRegistrations = [];
     if (!levelId) {
-      console.warn("No se seleccionó ningún nivel");
+      console.warn('No se seleccionó ningún nivel');
       return;
     }
     const selectedLevel: any = this.levels.find((l: any) => l.id === levelId);
@@ -280,7 +326,7 @@ export class SelectionInbox implements OnInit {
     if (selectedLevel) {
       this.availableGrades = selectedLevel.grades || [];
     } else {
-      console.warn("No se encontró el nivel con id:", levelId);
+      console.warn('No se encontró el nivel con id:', levelId);
     }
   }
 
@@ -289,8 +335,10 @@ export class SelectionInbox implements OnInit {
     this.availableParallels = [];
     this.filteredPreRegistrations = [];
 
-    const parallels:any = this.availableGrades.find((g: any) => g.id === gradeId)
-    this.availableParallels = parallels.parallels
+    const parallels: any = this.availableGrades.find(
+      (g: any) => g.id === gradeId
+    );
+    this.availableParallels = parallels.parallels;
 
     if (this.selectedLevel && this.selectedGrade) {
       this.loadPostulantsByCourse(this.selectedLevel, this.selectedGrade);
@@ -324,25 +372,29 @@ export class SelectionInbox implements OnInit {
   loadPostulantsByCourse(levelId: number, gradeId: number): void {
     this.loading = true;
 
-    this._preRegistration.getListValidPreRegistration(this.highDemand.id, levelId, gradeId).subscribe({
-      next: response => {
-        this.preRegistrations = response.data.map((p:any) => ({
-          ...p,
-          selected: p.state === 'ACEPTADO'
-        }))
-        this.filteredPreRegistrations = [...this.preRegistrations]
-        this.loading = false;
+    this._preRegistration
+      .getListValidPreRegistration(this.highDemand.id, levelId, gradeId)
+      .subscribe({
+        next: (response) => {
+          this.preRegistrations = response.data.map((p: any) => ({
+            ...p,
+            selected: p.state === 'ACEPTADO',
+          }));
+          this.filteredPreRegistrations = [...this.preRegistrations];
+          this.loading = false;
 
-        if (this.preRegistrations.length === 0) {
-          this.message.info('No se encontraron estudiantes para el curso seleccionado');
-        }
-      },
-      error: err => {
-        console.error('Error cargando datos', err)
-        this.loading = false
-        this.message.error('Error al cargar los estudiantes');
-      }
-    })
+          if (this.preRegistrations.length === 0) {
+            this.message.info(
+              'No se encontraron estudiantes para el curso seleccionado'
+            );
+          }
+        },
+        error: (err) => {
+          console.error('Error cargando datos', err);
+          this.loading = false;
+          this.message.error('Error al cargar los estudiantes');
+        },
+      });
 
     // this._highDemand.getHighDemandByInstitution(this.sie).pipe(
     //   // switchMap(response => {
@@ -379,20 +431,32 @@ export class SelectionInbox implements OnInit {
   applyFilters(): void {
     if (this.preRegistrations.length === 0) return;
 
-    this.filteredPreRegistrations = this.preRegistrations.filter(pr => {
+    this.filteredPreRegistrations = this.preRegistrations.filter((pr) => {
       const p = pr.postulant;
       const c = pr.criteria;
 
       return (
-        (!this.filters.rudeCode || (p.codeRude && p.codeRude.includes(this.filters.rudeCode))) &&
+        (!this.filters.rudeCode ||
+          (p.codeRude && p.codeRude.includes(this.filters.rudeCode))) &&
         (!this.filters.lastName ||
-          p.lastName.toLowerCase().includes(this.filters.lastName.toLowerCase()) ||
-          p.mothersLastName.toLowerCase().includes(this.filters.lastName.toLowerCase())) &&
-        (!this.filters.firstName || p.name.toLowerCase().includes(this.filters.firstName.toLowerCase())) &&
-        (!this.filters.idCard || (p.identityCard && p.identityCard.includes(this.filters.idCard))) &&
+          p.lastName
+            .toLowerCase()
+            .includes(this.filters.lastName.toLowerCase()) ||
+          p.mothersLastName
+            .toLowerCase()
+            .includes(this.filters.lastName.toLowerCase())) &&
+        (!this.filters.firstName ||
+          p.name
+            .toLowerCase()
+            .includes(this.filters.firstName.toLowerCase())) &&
+        (!this.filters.idCard ||
+          (p.identityCard && p.identityCard.includes(this.filters.idCard))) &&
         (!this.filters.criteria || (c.id && c.id === this.filters.criteria)) &&
-        (!this.filters.justification || 
-          (pr.justification && pr.justification.toLowerCase().includes(this.filters.justification.toLowerCase())))
+        (!this.filters.justification ||
+          (pr.justification &&
+            pr.justification
+              .toLowerCase()
+              .includes(this.filters.justification.toLowerCase())))
       );
     });
   }
@@ -404,7 +468,7 @@ export class SelectionInbox implements OnInit {
       firstName: '',
       idCard: '',
       criteria: null,
-      justification: ''
+      justification: '',
     };
 
     // Si hay selección actual, recargar los estudiantes del curso
@@ -434,54 +498,97 @@ export class SelectionInbox implements OnInit {
 
   confirmSelection(): void {
     if (this.selectedPostulants.length === 0) return;
+    // this.isConsolidateVisible = true;
+    this.isDialogVisible = true;
+  }
+
+  confirmConsolidation(): void {
     this.isConsolidateVisible = true;
+  }
+
+  handleSelectionCancel(): void {
+    this.isDialogVisible = false;
   }
 
   handleConsolidateCancel(): void {
     this.isConsolidateVisible = false;
   }
 
-  handleConsolidateOk(): void {
-    this.isConsolidateLoading = true;
-    if(this.verifyConsolidate()) {
-      this.message.info('La consolidación ya fue realizada anteriormente');
-      this.isConsolidateLoading = false;
-      this.isConsolidateVisible = false
-      this.selectedPostulants = []
-      return;
-    }
-
-    this._preRegistration.acceptPreRegistrations(this.selectedPostulants)
+  handleSelectionOk(): void {
+    this.isDialogVisible = true;
+    this._preRegistration
+      .acceptPreRegistrations(this.selectedPostulants)
       .pipe(
         finalize(() => {
-          this.isConfirmLoading = false
-          this.isConsolidateVisible = false
-          this.selectedPostulants = []
+          this.isConfirmLoading = false;
+          // this.isConsolidateVisible = false
+          this.isDialogVisible = false;
+          this.selectedPostulants = [];
         })
-      ).subscribe({
-        next: response => {
+      )
+      .subscribe({
+        next: (response) => {
           // Recargar los estudiantes del curso actual
           if (this.selectedLevel && this.selectedGrade) {
             this.loadPostulantsByCourse(this.selectedLevel, this.selectedGrade);
           }
           // this.message.success(`${this.selectedPostulants.length} estudiantes consolidados`);
-          this.consolidate()
-          this.isConsolidateLoading = false;
+          // this.isConsolidateLoading = false;
+          this.isDialogVisible = false;
         },
-        error: err => {
-          this.criteriaPost = null
-          this.isConsolidateLoading = false;
-          this.uncheckMassive()
-        }
-      })
+        error: (err) => {
+          this.criteriaPost = null;
+          // this.isConsolidateLoading = false;
+          this.isDialogLoading = false;
+          this.uncheckMassive();
+        },
+      });
+  }
+
+  handleConsolidateOk(): void {
+    alert('si funciona');
+  }
+
+  downloadReport(): void {
+    if (!this.selectedLevel || !this.selectedGrade) {
+      this.message.warning(
+        'Por favor, seleccione un nivel y grado para descargar el reporte.'
+      );
+      return;
+    }
+
+    this._preRegistration
+      .downloadReportByCourse(
+        this.highDemand.id,
+        this.selectedLevel,
+        this.selectedGrade
+      )
+      .subscribe({
+        next: (blob: Blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `Reporte_Postulantes_Nivel${this.selectedLevel}_Grado${this.selectedGrade}.xlsx`;
+          a.click();
+          window.URL.revokeObjectURL(url);
+        },
+        error: (err) => {
+          console.error('Error al descargar el reporte:', err);
+          this.message.error('Error al descargar el reporte');
+        },
+      });
   }
 
   getCriteriaColor(criteria: string): string {
     switch (criteria) {
-      case 'HERMANOS': return 'green';
-      case 'VIVIENDA': return 'orange';
-      case 'LUGAR_TRABAJO': return 'red';
-      default: return 'blue';
+      case 'HERMANOS':
+        return 'green';
+      case 'VIVIENDA':
+        return 'orange';
+      case 'LUGAR_TRABAJO':
+        return 'red';
+      default:
+        return 'blue';
     }
   }
 
@@ -521,13 +628,15 @@ export class SelectionInbox implements OnInit {
         nzOkText: 'Sí, deseleccionar',
         nzCancelText: 'Cancelar',
         nzOnOk: () => {
-          this.uncheck()
+          this.uncheck();
           this.removePostulantFromSelection(postulant);
-          this.message.info(`Postulante ${postulant.postulant.name} deseleccionado`);
+          this.message.info(
+            `Postulante ${postulant.postulant.name} deseleccionado`
+          );
         },
         nzOnCancel: () => {
-          postulant.selected = true
-        }
+          postulant.selected = true;
+        },
       });
       return;
     }
@@ -540,17 +649,23 @@ export class SelectionInbox implements OnInit {
 
   // Verifica si un postulante está seleccionado
   isPostulantSelected(postulant: any): boolean {
-    return this.selectedPostulants.some(p => p.id === postulant.id);
+    return this.selectedPostulants.some((p) => p.id === postulant.id);
   }
 
   // Remueve un postulante de la selección
   removePostulantFromSelection(postulant: any): void {
-    this.selectedPostulants = this.selectedPostulants.filter(p => p.id !== postulant.id);
+    this.selectedPostulants = this.selectedPostulants.filter(
+      (p) => p.id !== postulant.id
+    );
   }
 
   // Maneja el OK del diálogo de confirmación
   handleOk(): void {
-    if (!this.selectedPostulant || !this.criteriaPost || !this.selectedParallel) {
+    if (
+      !this.selectedPostulant ||
+      !this.criteriaPost ||
+      !this.selectedParallel
+    ) {
       this.isConfirmVisible = false;
       return;
     }
@@ -565,7 +680,9 @@ export class SelectionInbox implements OnInit {
     }
     this.isConfirmVisible = false;
     this.isConfirmLoading = false;
-    this.message.success(`Postulante ${this.selectedPostulant.postulant.name} seleccionado`);
+    this.message.success(
+      `Postulante ${this.selectedPostulant.postulant.name} seleccionado`
+    );
     // Limpiar selección temporal
     this.selectedPostulant = null;
     this.criteriaPost = null;
@@ -573,34 +690,38 @@ export class SelectionInbox implements OnInit {
   }
 
   uncheck() {
-    const res: PreRegistration | undefined = this.filteredPreRegistrations.find(p => {
-      return p?.postulant?.id == this.selectedPostulant?.postulant?.id
-    })
-    if(res) {
-      res.selected = false
+    const res: PreRegistration | undefined = this.filteredPreRegistrations.find(
+      (p) => {
+        return p?.postulant?.id == this.selectedPostulant?.postulant?.id;
+      }
+    );
+    if (res) {
+      res.selected = false;
     }
   }
 
   check() {
-    const res: PreRegistration | undefined = this.filteredPreRegistrations.find(p => {
-      return p?.postulant?.id == this.selectedPostulant?.postulant?.id
-    })
-    if(res) {
-      res.selected = true
+    const res: PreRegistration | undefined = this.filteredPreRegistrations.find(
+      (p) => {
+        return p?.postulant?.id == this.selectedPostulant?.postulant?.id;
+      }
+    );
+    if (res) {
+      res.selected = true;
     }
   }
 
   uncheckMassive() {
-    this.filteredPreRegistrations.map(p => {
-      if(p.state !== 'ACEPTADO') {
-        p.selected = false
+    this.filteredPreRegistrations.map((p) => {
+      if (p.state !== 'ACEPTADO') {
+        p.selected = false;
       }
-    })
+    });
   }
 
-// Maneja el cancelar del diálogo
+  // Maneja el cancelar del diálogo
   handleCancel(): void {
-    this.uncheck()
+    this.uncheck();
     this.isConfirmVisible = false;
     this.selectedPostulant = null;
     this.criteriaPost = null;
