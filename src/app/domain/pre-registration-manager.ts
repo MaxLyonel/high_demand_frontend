@@ -110,8 +110,8 @@ export default class PreRegistrationManager implements IPreRegistration {
     return this._preRegistrationAdapter.getCounts(courseId)
   }
 
-  downloadReportByCourse(highDemandId: number, levelId: number, gradeId: number): Observable<any> {
-    return this._preRegistrationAdapter.downloadReportByCourse(highDemandId, levelId, gradeId);
+  downloadReportByCourse(sie: number): Observable<any> {
+    return this._preRegistrationAdapter.downloadReportByCourse(sie);
   }
 
 }

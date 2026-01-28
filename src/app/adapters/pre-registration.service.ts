@@ -227,12 +227,8 @@ export class PreRegistrationAdapterService implements IManagerPreRegistration {
     )
   }
 
-  downloadReportByCourse(highDemandId: number, levelId: number, gradeId: number): Observable<Blob> {
-    return this.http.post(`pre-registration/report-by-course`, {
-      highDemandId,
-      levelId,
-      gradeId
-    }, {
+  downloadReportByCourse(sie: number): Observable<Blob> {
+    return this.http.get(`pre-registration/download-report-consolidate/${sie}`, {
       responseType: 'blob',
       context: new HttpContext().set(IS_USER_ACTION, true),
     }).pipe(

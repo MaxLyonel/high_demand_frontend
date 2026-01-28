@@ -550,25 +550,21 @@ export class SelectionInbox implements OnInit {
   }
 
   downloadReport(): void {
-    if (!this.selectedLevel || !this.selectedGrade) {
-      this.message.warning(
-        'Por favor, seleccione un nivel y grado para descargar el reporte.'
-      );
-      return;
-    }
+    // if (!this.selectedLevel || !this.selectedGrade) {
+    //   this.message.warning(
+    //     'Por favor, seleccione un nivel y grado para descargar el reporte.'
+    //   );
+    //   return;
+    // }
 
     this._preRegistration
-      .downloadReportByCourse(
-        this.highDemand.id,
-        this.selectedLevel,
-        this.selectedGrade
-      )
+      .downloadReportByCourse(this.sie)
       .subscribe({
         next: (blob: Blob) => {
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          a.download = `Reporte_Postulantes_Nivel${this.selectedLevel}_Grado${this.selectedGrade}.xlsx`;
+          a.download = `Reporte_Postulantes_${this.sie}.xlsx`;
           a.click();
           window.URL.revokeObjectURL(url);
         },

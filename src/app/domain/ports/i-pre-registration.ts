@@ -49,6 +49,6 @@ export default interface IPreRegistration {
   // ** exponer funcionalidad para descargar la preinscripción **
   downloadBlob(postulantId: number): Observable<any>;
   downloadBlobWithHeaders(id: number): Observable<any>;
-  downloadReportByCourse(highDemandId: number, levelId: number, gradeId: number): Observable<any>;
+  downloadReportByCourse(sie: number): Observable<any>;
 
 }
