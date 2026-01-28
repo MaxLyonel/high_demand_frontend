@@ -198,7 +198,15 @@ export class SelectionInbox implements OnInit {
     this.sie = sie;
     this.loadCriterias();
     this.loadLevels();
-    this.verifyConsolidate();
+    this.verifyConsolidate().subscribe({
+      next: (isConsolidated: boolean) => {
+        if(isConsolidated) {
+          this.disableButton = true;
+        } else {
+          this.disableButton =false;
+        }
+      }
+    });
   }
 
   loadCriterias() {
