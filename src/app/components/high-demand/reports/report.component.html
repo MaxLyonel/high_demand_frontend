@@ -1,0 +1,274 @@
+<div class="reports-container">
+  <!-- Encabezado -->
+  <div class="reports-header">
+    <h1>
+      <i nz-icon nzType="file-excel" nzTheme="outline"></i>
+      Generador de Reportes
+    </h1>
+    <!-- <div class="subtitle">
+      Exporta datos del proceso en formatos Excel, CSV o PDF
+    </div> -->
+  </div>
+
+  <div class="reports-grid">
+    <!-- Panel de Configuración -->
+    <div class="configuration-panel">
+      <div class="card">
+        <div class="card-header">
+          <h2><i nz-icon nzType="setting" nzTheme="outline"></i> Configurar Reporte</h2>
+        </div>
+        <div class="card-content">
+          <!-- Tipo de Reporte -->
+          <div class="filter-section">
+            <div class="section-title">
+              <i nz-icon nzType="appstore" nzTheme="outline"></i>
+              Tipo de Reporte
+            </div>
+            <div class="report-type-selector">
+              @for (type of reportTypes; track type.id) {
+                <div 
+                  class="report-type-card"
+                  [class.selected]="selectedReportType.id === type.id"
+                  (click)="onReportTypeSelect(type)"
+                >
+                  <div class="type-icon">
+                    <i nz-icon [nzType]="type.icon" nzTheme="outline"></i>
+                  </div>
+                  <div class="type-info">
+                    <div class="type-name">{{ type.name }}</div>
+                    <div class="type-desc">Incluye datos relevantes del proceso</div>
+                  </div>
+                  @if (selectedReportType.id === type.id) {
+                    <i nz-icon nzType="check-circle" nzTheme="fill" style="color: #10B981;"></i>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Formato de Exportación -->
+          <div class="filter-section">
+            <div class="section-title">
+              <i nz-icon nzType="export" nzTheme="outline"></i>
+              Formato de Exportación
+            </div>
+            <div class="format-selector">
+              @for (format of formatOptions; track format.value) {
+                <div 
+                  class="format-option"
+                  [class.selected]="selectedFormat === format.value"
+                  (click)="selectedFormat = format.value"
+                >
+                  <div class="format-icon">
+                    <i nz-icon [nzType]="format.icon" nzTheme="outline"></i>
+                  </div>
+                  <div class="format-label">{{ format.label }}</div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Rango de Tiempo -->
+          <div class="filter-section">
+            <div class="section-title">
+              <i nz-icon nzType="calendar" nzTheme="outline"></i>
+              Rango de Tiempo
+            </div>
+            <div class="date-range-selector">
+              <nz-select 
+                [(ngModel)]="selectedTimeRange"
+                (ngModelChange)="onTimeRangeChange()"
+                style="width: 100%"
+              >
+                @for (range of timeRangeOptions; track range.value) {
+                  <nz-option [nzValue]="range.value" [nzLabel]="range.label"></nz-option>
+                }
+              </nz-select>
+
+              @if (selectedTimeRange === 'custom') {
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                  <nz-date-picker 
+                    [(ngModel)]="customStartDate"
+                    style="width: 100%"
+                    placeholder="Fecha inicial"
+                  ></nz-date-picker>
+                  <nz-date-picker 
+                    [(ngModel)]="customEndDate"
+                    style="width: 100%"
+                    placeholder="Fecha final"
+                  ></nz-date-picker>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Departamentos -->
+          <div class="filter-section">
+            <div class="section-title">
+              <i nz-icon nzType="environment" nzTheme="outline"></i>
+              Departamentos ({{ getSelectedDepartmentsCount() }} seleccionados)
+            </div>
+            <div class="department-selector">
+              @for (dept of departmentOptions; track dept.value) {
+                <div 
+                  class="department-chip"
+                  [class.selected]="selectedDepartments.includes(dept.value)"
+                  (click)="toggleDepartment(dept.value)"
+                >
+                  {{ dept.label }}
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Opciones Adicionales -->
+          <!-- <div class="filter-section">
+            <div class="section-title">
+              <i nz-icon nzType="tool" nzTheme="outline"></i>
+              Opciones Adicionales
+            </div>
+            <div class="checkbox-options">
+              <div class="checkbox-item">
+                <input 
+                  type="checkbox" 
+                  id="includeCharts" 
+                  [(ngModel)]="includeCharts"
+                >
+                <label for="includeCharts">Incluir gráficos en el reporte</label>
+              </div>
+              <div class="checkbox-item">
+                <input 
+                  type="checkbox" 
+                  id="includeRawData" 
+                  [(ngModel)]="includeRawData"
+                >
+                <label for="includeRawData">Incluir datos crudos en hoja separada</label>
+              </div>
+            </div>
+          </div> -->
+
+          <!-- Botón Generar -->
+          <button 
+            class="generate-button"
+            (click)="generateReport()"
+            [disabled]="isGenerating"
+            [class.generating]="isGenerating"
+          >
+            @if (isGenerating) {
+              <i nz-icon nzType="loading" nzTheme="outline"></i>
+              Generando Reporte...
+            } @else {
+              <i nz-icon nzType="file-excel" nzTheme="outline"></i>
+              Generar Reporte {{ selectedFormat === 'excel' ? 'Excel' : selectedFormat === 'csv' ? 'CSV' : 'PDF' }}
+            }
+          </button>
+
+          <!-- Progreso de Generación -->
+          @if (isGenerating) {
+            <div class="generation-progress">
+              <nz-progress 
+                [nzPercent]="generationProgress" 
+                nzStrokeColor="#0D9488"
+                nzType="circle"
+                [nzWidth]="120"
+              ></nz-progress>
+              <div class="progress-value">{{ generationProgress.toFixed(0) }}%</div>
+              <div class="progress-label">Generando reporte, por favor espere...</div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel Lateral -->
+    <div class="sidebar-panel">
+      <!-- Historial de Reportes -->
+      <!-- <div class="card">
+        <div class="card-header">
+          <h2><i nz-icon nzType="history" nzTheme="outline"></i> Historial Reciente</h2>
+        </div>
+        <div class="card-content">
+          <div class="report-history">
+            @for (report of reportHistory; track report.id) {
+              <div class="history-item">
+                <div class="report-icon">
+                  <i nz-icon [nzType]="getReportIcon(report.type)" nzTheme="outline"></i>
+                </div>
+                <div class="report-info">
+                  <div class="report-name">{{ report.name }}</div>
+                  <div class="report-meta">
+                    <span>{{ report.date }}</span>
+                    <span>{{ report.size }}</span>
+                    <span>{{ report.downloadCount }} descargas</span>
+                  </div>
+                </div>
+                <div class="report-actions">
+                  <button class="download-btn" (click)="downloadReport(report)">
+                    <i nz-icon nzType="download" nzTheme="outline"></i>
+                    Descargar
+                  </button>
+                  <button (click)="deleteReport(report)">
+                    <i nz-icon nzType="delete" nzTheme="outline"></i>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div> -->
+
+      <!-- Información -->
+      <div class="card">
+        <div class="card-header">
+          <h2><i nz-icon nzType="info-circle" nzTheme="outline"></i> Información</h2>
+        </div>
+        <div class="card-content">
+          <nz-alert 
+            nzType="info" 
+            nzMessage="Consejos para mejores reportes"
+            nzDescription="Selecciona rangos de tiempo específicos para obtener datos más precisos. Los reportes con gráficos pueden tardar más en generarse."
+            nzShowIcon
+          ></nz-alert>
+
+          <div style="margin-top: 16px; font-size: 12px; color: #64748B">
+            <p><strong>Formatos soportados:</strong></p>
+            <ul style="margin-top: 8px; padding-left: 16px;">
+              <li><strong>Excel:</strong> Ideal para análisis detallado</li>
+              <li><strong>CSV:</strong> Para integración con otros sistemas</li>
+              <li><strong>PDF:</strong> Para compartir y presentar</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Métricas -->
+      <div class="card">
+        <div class="card-header">
+          <h2><i nz-icon nzType="dashboard" nzTheme="outline"></i> Métricas</h2>
+        </div>
+        <div class="card-content">
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-value">{{ reportMetrics.totalGenerated }}</div>
+              <div class="metric-label">Reportes Generados</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-value">{{ reportMetrics.totalSize }}</div>
+              <div class="metric-label">Tamaño Total</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-value">{{ reportMetrics.mostPopular }}</div>
+              <div class="metric-label">Más Popular</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-value">{{ reportMetrics.lastGenerated }}</div>
+              <div class="metric-label">Último Generado</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+</div>

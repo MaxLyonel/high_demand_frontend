@@ -8,6 +8,7 @@ import { OperativoConfigComponent } from './admin/admin.component';
 // import { ControlAccessComponent } from './control-access/control-access.component';
 import { AccessControlComponent } from './control-access/control-access.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { ReportComponent } from './reports/report.component';
 
 
 export const HIGH_DEMAND: Routes = [
@@ -23,6 +24,7 @@ export const HIGH_DEMAND: Routes = [
       { path: 'selection-inbox', component: SelectionInbox },
       { path: 'follow-up', component: SeguimientoComponent },
       { path: 'config', component: OperativoConfigComponent },
+      { path: 'reports', component: ReportComponent },
     ]
   },
   {
